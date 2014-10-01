@@ -6,11 +6,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
 
@@ -20,9 +18,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Arrays;
+import java.util.Calendar;
 
 public abstract class OperationsHelper {
 
@@ -38,7 +35,6 @@ public abstract class OperationsHelper {
             baseUrl = YamlConfigProvider.getStageParameters("baseUrl");
 
     }
-
 
     /**
      * Exits from current user
@@ -147,24 +143,8 @@ public abstract class OperationsHelper {
     public OperationsHelper waitElementForSec(By by, int seconds) {
         for (int i = 0; i < seconds; i++) {
             if (findElement(by).isDisplayed()) break;
-             else sendPause(1);
+            else sendPause(1);
         }
-        return this;
-    }
-
-
-    public OperationsHelper waitStalenessElement(final By by) {
-        waitDriver.until((WebDriver webDriver) -> {
-            try {
-                final WebElement element = driver.findElement(by);
-                if (element != null && element.isDisplayed()) {
-                    return element;
-                }
-            } catch (StaleElementReferenceException e) {
-                log.error("Stale exception");
-            }
-            return null;
-        });
         return this;
     }
 
@@ -236,26 +216,12 @@ public abstract class OperationsHelper {
         return false;
     }
 
-    public static void sendPause(int sec) {
-        try {
-            Thread.sleep(sec * 1000);
-        } catch (InterruptedException iex) {
-            Thread.interrupted();
-        }
 
-    }
 
     public String getSrcOfElement(By by) {
         return driver.findElement(by).getAttribute("src");
     }
 
-
-    public double getNumberFromElement(By by) {
-        Pattern PATTERN = Pattern.compile("\\d+");
-        Matcher MATCHER = PATTERN.matcher(getText(by));
-        boolean result = MATCHER.find();
-        return result ? Double.parseDouble(MATCHER.group(0)) : 0;
-    }
 
 
     /**
@@ -299,11 +265,6 @@ public abstract class OperationsHelper {
         return this;
     }
 
-    public OperationsHelper mouseClick() {
-        Actions actions = new Actions(driver.getDriver());
-        actions.click().build().perform();
-        return this;
-    }
 
 
     public void highlightTheElement(By by) {
@@ -322,7 +283,7 @@ public abstract class OperationsHelper {
 
 
     public final void assertThat(Runnable... assertions) {
-           Arrays.asList(assertions).forEach(Runnable::run);
+        Arrays.asList(assertions).forEach(Runnable::run);
 
     }
 
@@ -347,63 +308,6 @@ public abstract class OperationsHelper {
     }
 
 
-    protected OperationsHelper selectWindow(String windowId) {
-        for (String handle : driver.getWindowHandles()) {
-            if (handle.equals(windowId)) {
-                driver.switchToWindow(handle);
-                break;
-            }
-        }
-        return this;
-    }
-
-    protected OperationsHelper selectOtherWindow() {
-        String current = driver.getWindowHandle();
-        int timer = 0;
-        while (timer < WebDriverController.TIMEOUT) {
-            if (driver.getWindowHandles().size() > 1)
-                break;
-            else {
-                sendPause(1);
-                timer++;
-            }
-
-        }
-        for (String handle : driver.getWindowHandles()) {
-            try {
-                if (!handle.equals(current))
-                    driver.switchToWindow(handle);
-            } catch (Exception e) {
-                Assert.fail("Unable to select window");
-            }
-        }
-
-        return this;
-    }
-
-    protected OperationsHelper selectWindowAndCloseCurrent() {
-        String current = driver.getWindowHandle();
-        driver.closeWindow();
-        int timer = 0;
-        while (timer < WebDriverController.TIMEOUT) {
-            if (driver.getWindowHandles().size() > 1)
-                break;
-            else {
-                sendPause(1);
-                timer++;
-            }
-
-        }
-        for (String handle : driver.getWindowHandles()) {
-            try {
-                if (!handle.equals(current))
-                    driver.switchToWindow(handle);
-            } catch (Exception e) {
-                Assert.fail("Unable to select window");
-            }
-        }
-        return this;
-    }
 
 
     public boolean isElementPresent(By by) {
@@ -471,22 +375,6 @@ public abstract class OperationsHelper {
         return this;
     }
 
-    public OperationsHelper openUriWithCurrentUrl(String uri) {
-        openUrl(driver.getPageAddress() + uri);
-        return this;
-    }
-
-
-    /**
-     * Open url in new window
-     */
-    public OperationsHelper openInNewWindow(String url) {
-        log.info("Open page in new window : " + url);
-        openTab(url);
-        selectOtherWindow();
-        return this;
-    }
-
 
     /**
      * Opens a new tab for the given URL
@@ -508,25 +396,6 @@ public abstract class OperationsHelper {
         return this;
     }
 
-    public Object getLastElement(final Collection c) {
-        final Iterator itr = c.iterator();
-        Object lastElement = itr.next();
-        while (itr.hasNext()) {
-            lastElement = itr.next();
-        }
-        return lastElement;
-    }
-
-
-    public boolean validateElementAttribute(By by, String attribute, String value) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (findElement(by).getAttribute(attribute).equals(value)) {
-                return true;
-            }
-            sendPause(1);
-        }
-        return false;
-    }
 
 
     public boolean validateElementPresent(By by) {
@@ -592,16 +461,7 @@ public abstract class OperationsHelper {
 
     }
 
-    public boolean validateTextNotEquals(By by, String text) {
-        validateElementVisible(by);
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (!getText(by).equals(text))
-                return true;
-            sendPause(1);
-        }
-        return false;
 
-    }
 
     /**
      * Reloads page
@@ -619,11 +479,6 @@ public abstract class OperationsHelper {
     }
 
 
-    public OperationsHelper switchTo(String iFrame) {
-        sendPause(2); // for correct open iFrame and switch there
-        driver.switchTo(iFrame);
-        return this;
-    }
 
 
     public OperationsHelper hoverOn(By by) {
@@ -639,6 +494,13 @@ public abstract class OperationsHelper {
         return this;
     }
 
+    public static void sendPause(int sec) {
+        try {
+            Thread.sleep(sec * 1000);
+        } catch (InterruptedException iex) {
+            Thread.interrupted();
+        }
+    }
 
     /**
      * Returns count of elements on a page with this locator
@@ -646,15 +508,6 @@ public abstract class OperationsHelper {
     public int getCountElements(By by) {
         waitForElementPresent(by);
         return driver.findElements(by).size();
-    }
-
-
-    public static Date getChangedDate(int countDay) {
-        Calendar calendar = Calendar.getInstance();
-        Date lifeTimeDateFinish = new Date();
-        calendar.setTime(lifeTimeDateFinish);
-        calendar.add(Calendar.DATE, countDay);
-        return calendar.getTime();
     }
 
 
