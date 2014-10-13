@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import toolkit.driver.LocalDriverManager;
@@ -62,9 +63,8 @@ public abstract class OperationsHelper {
 
     private boolean isEnable(By by) {
         try {
-            if (driver.findElements(by).size() > 0)
-                if (driver.findElement(by).isEnabled())
-                    return true;
+            if (driver.findElement(by).isEnabled())
+                return true;
         } catch (Exception e) {
             return false;
         }
@@ -72,7 +72,7 @@ public abstract class OperationsHelper {
     }
 
     public WebElement findElement(By by) {
-        validateElementVisible(by);
+        waitForVisible(by);
         return driver.findElement(by);
     }
 
@@ -128,15 +128,8 @@ public abstract class OperationsHelper {
         return this;
     }
 
-    protected boolean waitForElementPresent(By by) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (isElementPresent(by)) {
-                return true;
-            }
-            sendPause(1);
-        }
-
-        return false;
+    protected void waitForElementPresent(By by) {
+        waitDriver.until(ExpectedConditions.presenceOfElementLocated(by));
     }
 
 
@@ -190,38 +183,24 @@ public abstract class OperationsHelper {
 
 
     public java.util.List<WebElement> findElements(final By by) {
-        validateElementPresent(by);
+        waitForElementPresent(by);
         return driver.findElements(by);
     }
 
 
-    protected boolean waitForVisible(By by) {
-        return waitForVisible(by, true);
+    protected void waitForVisible(By by) {
+        waitDriver.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
-    protected boolean waitForNotVisible(By by) {
-        return waitForVisible(by, false);
+    protected void waitForNotVisible(By by) {
+        waitDriver.until(ExpectedConditions.invisibilityOfElementLocated(by));
     }
-
-
-    private boolean waitForVisible(By by, boolean isVisible) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (isVisible(by) && isVisible) {
-                return true;
-            } else if (!isVisible(by) && !isVisible) {
-                return true;
-            }
-            sendPause(1);
-        }
-        return false;
-    }
-
 
 
     public String getSrcOfElement(By by) {
+        waitForElementPresent(by);
         return driver.findElement(by).getAttribute("src");
     }
-
 
 
     /**
@@ -266,7 +245,6 @@ public abstract class OperationsHelper {
     }
 
 
-
     public void highlightTheElement(By by) {
         WebElement element = driver.findElement(by);
         driver.executeScript("arguments[0].style.border='2px solid yellow'", element);
@@ -275,7 +253,7 @@ public abstract class OperationsHelper {
 
     public OperationsHelper click(By by) {
         log.debug("Click on: " + by.toString());
-        validateElementVisible(by);
+        waitForVisible(by);
         highlightTheElement(by);
         driver.findElement(by).click();
         return this;
@@ -286,7 +264,6 @@ public abstract class OperationsHelper {
         Arrays.asList(assertions).forEach(Runnable::run);
 
     }
-
 
 
     public String getText(By by) {
@@ -308,8 +285,6 @@ public abstract class OperationsHelper {
     }
 
 
-
-
     public boolean isElementPresent(By by) {
         try {
             driver.findElement(by);
@@ -324,20 +299,19 @@ public abstract class OperationsHelper {
 
     public boolean isVisible(By by) {
         try {
-            if (driver.findElements(by).size() > 0)
-                return driver.findElement(by).isDisplayed();
+            return driver.findElement(by).isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
         } catch (StaleElementReferenceException se) {
             return false;
         }
-        return false;
+
     }
 
 
     public OperationsHelper type(By by, String someText) {
         log.debug("Type:" + someText + " to:" + by.toString());
-        validateElementVisible(by);
+        waitForVisible(by);
         highlightTheElement(by);
         driver.findElement(by).clear();
         driver.findElement(by).sendKeys(someText);
@@ -397,70 +371,60 @@ public abstract class OperationsHelper {
     }
 
 
-
     public boolean validateElementPresent(By by) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (isElementPresent(by)) {
-                return true;
-            }
-            sendPause(1);
+        try {
+            waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
         }
-
-        return false;
     }
 
 
     public boolean validateElementIsNotVisible(By by) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (!isVisible(by))
-                return true;
-            sendPause(1);
+        try {
+            waitDriver.until((WebDriver webDriver) -> !isVisible(by));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
         }
-        return false;
     }
 
 
     public boolean validateElementVisible(By by) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (isVisible(by))
-                return true;
-            sendPause(1);
+        try {
+            waitDriver.until((WebDriver webDriver) -> isVisible(by));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
         }
-        return false;
 
     }
 
     public boolean validateUrlContains(String s) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (getCurrentUrl().contains(s))
-                return true;
-            sendPause(1);
+        try {
+            waitDriver.until((WebDriver webDriver) -> webDriver.getCurrentUrl().contains(s));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
         }
-        return false;
-
     }
 
 
     public boolean validateElementEnable(By by) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (isEnable(by))
-                return true;
-            sendPause(1);
+        try {
+            waitDriver.until((WebDriver webDriver) -> isEnable(by));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
         }
-        return false;
-
     }
 
     public boolean validateTextEquals(By by, String text) {
-        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
-            if (getText(by).equals(text))
-                return true;
-            sendPause(1);
-        }
-        return false;
+        waitForVisible(by);
+        return getText(by).equals(text);
 
     }
-
 
 
     /**
@@ -477,8 +441,6 @@ public abstract class OperationsHelper {
         driver.addCookie(key, value);
         return this;
     }
-
-
 
 
     public OperationsHelper hoverOn(By by) {
