@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 
-public abstract class OperationsHelper {
+public abstract class OperationsHelper implements IPage {
 
     private static Logger log = Logger.getLogger(OperationsHelper.class);
     private WebDriverWait waitDriver = WebDriverController.getInstanceWaitDriver();
@@ -48,13 +48,11 @@ public abstract class OperationsHelper {
 
     }
 
-    public OperationsHelper openPage(IPage page) {
-        openUrl(page.getPageUrl());
-        return this;
-    }
 
 
-    public OperationsHelper pressEnter() {
+
+    @Override
+    public IPage pressEnter() {
         Actions action = new Actions(LocalDriverManager.getDriverController().getDriver());
         action.sendKeys(Keys.ENTER).perform();
         return this;
@@ -71,6 +69,7 @@ public abstract class OperationsHelper {
         return false;
     }
 
+    @Override
     public WebElement findElement(By by) {
         waitForVisible(by);
         return driver.findElement(by);
@@ -89,7 +88,8 @@ public abstract class OperationsHelper {
         return "login" + longNumber.substring(4, 9);
     }
 
-    public OperationsHelper windowSetSize(Dimension windowSize) {
+    @Override
+    public IPage windowSetSize(Dimension windowSize) {
         WebDriver.Window window = driver.getDriver().manage().window();
         Dimension size = window.getSize();
         log.debug("Current windowSize = " + size);
@@ -98,14 +98,16 @@ public abstract class OperationsHelper {
         return this;
     }
 
-    protected String getAlertText() {
+    @Override
+    public String getAlertText() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
         // Get the text of the alert or prompt
         return alert.getText();
     }
 
-    protected OperationsHelper clickOkInAlert() {
+    @Override
+    public IPage clickOkInAlert() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
         // Get the text of the alert or prompt
@@ -116,7 +118,8 @@ public abstract class OperationsHelper {
     }
 
 
-    public OperationsHelper windowSetSize(int widthWindow, int heightWindow) {
+    @Override
+    public IPage windowSetSize(int widthWindow, int heightWindow) {
         java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if (((screenSize.width >= widthWindow) && (screenSize.height >= heightWindow)) ||
                 ((0 >= widthWindow) && (0 >= heightWindow))) {
@@ -128,12 +131,14 @@ public abstract class OperationsHelper {
         return this;
     }
 
-    protected void waitForElementPresent(By by) {
+    @Override
+    public void waitForElementPresent(By by) {
         waitDriver.until(ExpectedConditions.presenceOfElementLocated(by));
     }
 
 
-    public OperationsHelper waitElementForSec(By by, int seconds) {
+    @Override
+    public IPage waitElementForSec(By by, int seconds) {
         for (int i = 0; i < seconds; i++) {
             if (findElement(by).isDisplayed()) break;
             else sendPause(1);
@@ -142,7 +147,8 @@ public abstract class OperationsHelper {
     }
 
 
-    public OperationsHelper clickOnStalenessElement(final By by) {
+    @Override
+    public IPage clickOnStalenessElement(final By by) {
         waitDriver.until((WebDriver webDriver) -> {
             try {
                 final WebElement element = driver.findElement(by);
@@ -158,7 +164,8 @@ public abstract class OperationsHelper {
         return this;
     }
 
-    protected OperationsHelper clickCancelInAlert() {
+    @Override
+    public IPage clickCancelInAlert() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
         // Get the text of the alert or prompt
@@ -168,7 +175,8 @@ public abstract class OperationsHelper {
         return this;
     }
 
-    protected OperationsHelper waitForNotAttribute(final By by, final String attribute, final String value) {
+    @Override
+    public IPage waitForNotAttribute(final By by, final String attribute, final String value) {
         waitDriver.until((WebDriver d) -> d.findElement(by)
                 .getAttribute(attribute)
                 .equals(value));
@@ -176,27 +184,32 @@ public abstract class OperationsHelper {
     }
 
 
-    protected OperationsHelper waitForTextPresent(final String text) {
+    @Override
+    public IPage waitForTextPresent(final String text) {
         waitDriver.until((WebDriver d) -> d.getPageSource().contains(text));
         return this;
     }
 
 
+    @Override
     public java.util.List<WebElement> findElements(final By by) {
         waitForElementPresent(by);
         return driver.findElements(by);
     }
 
 
-    protected void waitForVisible(By by) {
+    @Override
+    public void waitForVisible(By by) {
         waitDriver.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
     }
 
-    protected void waitForNotVisible(By by) {
+    @Override
+    public void waitForNotVisible(By by) {
         waitDriver.until(ExpectedConditions.invisibilityOfElementLocated(by));
     }
 
 
+    @Override
     public String getSrcOfElement(By by) {
         waitForElementPresent(by);
         return driver.findElement(by).getAttribute("src");
@@ -208,18 +221,21 @@ public abstract class OperationsHelper {
      *
      * @return the absolute URL of the current page
      */
+    @Override
     public String getCurrentUrl() {
         return driver.getDriver().getCurrentUrl();
     }
 
-    protected OperationsHelper selectValueInDropDown(By by, String optionValue) {
+    @Override
+    public IPage selectValueInDropDown(By by, String optionValue) {
         Select select = new Select(driver.findElement(by));
         select.selectByValue(optionValue);
         return this;
     }
 
 
-    public OperationsHelper submit(By by) {
+    @Override
+    public IPage submit(By by) {
         log.debug("Submit:");
         waitForElementPresent(by);
         driver.findElement(by).submit();
@@ -231,13 +247,15 @@ public abstract class OperationsHelper {
     /**
      * Sends to API browser command back
      */
-    public OperationsHelper navigateBack() {
+    @Override
+    public IPage navigateBack() {
         driver.navigationBack();
         return this;
     }
 
 
-    public OperationsHelper moveToElement(By by) {
+    @Override
+    public IPage moveToElement(By by) {
         Actions actions = new Actions(driver.getDriver());
         waitForElementPresent(by);
         actions.moveToElement(driver.findElement(by)).build().perform();
@@ -245,13 +263,15 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public void highlightTheElement(By by) {
         WebElement element = driver.findElement(by);
         driver.executeScript("arguments[0].style.border='2px solid yellow'", element);
     }
 
 
-    public OperationsHelper click(By by) {
+    @Override
+    public IPage click(By by) {
         log.debug("Click on: " + by.toString());
         waitForVisible(by);
         highlightTheElement(by);
@@ -260,12 +280,14 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public final void assertThat(Runnable... assertions) {
         Arrays.asList(assertions).forEach(Runnable::run);
 
     }
 
 
+    @Override
     public String getText(By by) {
         log.debug("Text from: " + by.toString());
         waitForVisible(by);
@@ -273,6 +295,7 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public String getAttribute(By by, String nameAttribute) {
         log.debug("Text from: " + by.toString());
         waitForVisible(by);
@@ -280,11 +303,13 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public String getPageSource() {
         return driver.getDriver().getPageSource();
     }
 
 
+    @Override
     public boolean isElementPresent(By by) {
         try {
             driver.findElement(by);
@@ -297,6 +322,7 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public boolean isVisible(By by) {
         try {
             return driver.findElement(by).isDisplayed();
@@ -309,7 +335,8 @@ public abstract class OperationsHelper {
     }
 
 
-    public OperationsHelper type(By by, String someText) {
+    @Override
+    public IPage type(By by, String someText) {
         log.debug("Type:" + someText + " to:" + by.toString());
         waitForVisible(by);
         highlightTheElement(by);
@@ -343,7 +370,8 @@ public abstract class OperationsHelper {
     /**
      * Open page
      */
-    public OperationsHelper openUrl(String url) {
+    @Override
+    public IPage openUrl(String url) {
         log.info("Open page: " + url);
         driver.get(url);
         return this;
@@ -356,7 +384,8 @@ public abstract class OperationsHelper {
      * @param url The URL to
      * @throws JavaScriptException If unable to open tab
      */
-    public OperationsHelper openTab(String url) {
+    @Override
+    public IPage openTab(String url) {
         String script = "var d=document,a=d.createElement('a');a.target='_blank';a.href='%s';a.innerHTML='.';d.body.appendChild(a);return a";
         Object element = LocalDriverManager.getDriverController().executeScript(String.format(script, url));
         if (element instanceof WebElement) {
@@ -371,6 +400,7 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public boolean validateElementPresent(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
@@ -381,6 +411,7 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public boolean validateElementIsNotVisible(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> !isVisible(by));
@@ -391,6 +422,7 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public boolean validateElementVisible(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> isVisible(by));
@@ -401,6 +433,7 @@ public abstract class OperationsHelper {
 
     }
 
+    @Override
     public boolean validateUrlContains(String s) {
         try {
             waitDriver.until((WebDriver webDriver) -> webDriver.getCurrentUrl().contains(s));
@@ -411,6 +444,7 @@ public abstract class OperationsHelper {
     }
 
 
+    @Override
     public boolean validateElementEnable(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> isEnable(by));
@@ -420,6 +454,7 @@ public abstract class OperationsHelper {
         }
     }
 
+    @Override
     public boolean validateTextEquals(By by, String text) {
         waitForVisible(by);
         return getText(by).equals(text);
@@ -430,20 +465,23 @@ public abstract class OperationsHelper {
     /**
      * Reloads page
      */
-    public OperationsHelper refreshPage() {
+    @Override
+    public IPage refreshPage() {
         driver.refresh();
         return this;
     }
 
 
     // Set a cookie
-    public OperationsHelper addCookie(String key, String value) {
+    @Override
+    public IPage addCookie(String key, String value) {
         driver.addCookie(key, value);
         return this;
     }
 
 
-    public OperationsHelper hoverOn(By by) {
+    @Override
+    public IPage hoverOn(By by) {
         Actions action = new Actions(driver.getDriver());
         action.moveToElement(findElement(by)).build().perform();
         log.info("Action - hover on to locator: " + by.toString());
@@ -451,7 +489,8 @@ public abstract class OperationsHelper {
     }
 
 
-    public OperationsHelper scrollOnTop() {
+    @Override
+    public IPage scrollOnTop() {
         LocalDriverManager.getDriverController().executeScript("window.scrollTo(0,0)");
         return this;
     }
@@ -467,6 +506,7 @@ public abstract class OperationsHelper {
     /**
      * Returns count of elements on a page with this locator
      */
+    @Override
     public int getCountElements(By by) {
         waitForElementPresent(by);
         return driver.findElements(by).size();

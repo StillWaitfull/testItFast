@@ -25,5 +25,11 @@ public class GooglePage extends OperationsHelper implements IPage {
         return pageUrl;
     }
 
+    @Override
+    public IPage openPage() {
+        openUrl(pageUrl);
+        return this;
+    }
+
 
 }
