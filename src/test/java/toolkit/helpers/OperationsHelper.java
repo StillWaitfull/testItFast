@@ -200,7 +200,7 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public void waitForVisible(By by) {
-        waitDriver.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
+        waitDriver.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
     @Override
