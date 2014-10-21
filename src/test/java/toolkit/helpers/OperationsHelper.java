@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import toolkit.driver.LocalDriverManager;
@@ -133,7 +132,7 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public void waitForElementPresent(By by) {
-        waitDriver.until(ExpectedConditions.presenceOfElementLocated(by));
+        waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
     }
 
 
@@ -200,12 +199,12 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public void waitForVisible(By by) {
-        waitDriver.until(ExpectedConditions.visibilityOfElementLocated(by));
+        waitDriver.until((WebDriver webDriver) -> isVisible(by));
     }
 
     @Override
     public void waitForNotVisible(By by) {
-        waitDriver.until(ExpectedConditions.invisibilityOfElementLocated(by));
+        waitDriver.until((WebDriver webDriver) -> !isVisible(by));
     }
 
 
@@ -435,12 +434,12 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public boolean validateUrlContains(String s) {
-        try {
-            waitDriver.until((WebDriver webDriver) -> webDriver.getCurrentUrl().contains(s));
-            return true;
-        } catch (TimeoutException e) {
-            return false;
+        for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
+            if (driver.getDriver().getCurrentUrl().contains(s))
+                return true;
+            else sendPause(1);
         }
+        return false;
     }
 
 
