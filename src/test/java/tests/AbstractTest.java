@@ -12,6 +12,8 @@ import toolkit.driver.WebDriverListener;
 import toolkit.helpers.OperationsHelper;
 import toolkit.helpers.YamlConfigProvider;
 
+import java.util.stream.Collectors;
+
 
 /**
  * Abstract test
@@ -42,7 +44,7 @@ public abstract class AbstractTest {
         LocalDriverManager.cleanThreadPool();
         CheckingDifferentImages.deleteFileInDirectory(CheckingDifferentImages.TEST_SCREENS_PATH);
         if (!CheckingDifferentImages.failedTests.isEmpty())
-            Assert.fail("There was errors in frontend tests");
+            Assert.fail("There was errors in frontend tests \n"+CheckingDifferentImages.failedTests.stream().collect(Collectors.joining("\n")));
         ProxyHelper.stopProxy();
     }
 }
