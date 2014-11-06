@@ -9,6 +9,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import tests.AbstractTest;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
 
@@ -509,6 +510,21 @@ public abstract class OperationsHelper implements IPage {
     public int getCountElements(By by) {
         waitForElementPresent(by);
         return driver.findElements(by).size();
+    }
+
+
+    @Override
+    public void makeScreenshotForDiff(String name) {
+        String path= AbstractTest.isTest?"4test":"etalon";
+        File scrFile;
+        log.info("Screen path "+path+" name is "+name);
+        try {
+            scrFile = ((TakesScreenshot) LocalDriverManager.getDriverController().getDriver()).getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(scrFile, new File("screenshots" +
+                    File.separator + path + File.separator + name + ".png"));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 
 

@@ -3,7 +3,7 @@ configName: google.yml
 firebug: true
 firebug-version: 2.0.3
 # Browser for launching tests
-browser: chrome
+browser: firefox
 #Timeout
 Timeout: 60
 
@@ -11,5 +11,9 @@ Timeout: 60
 #For proxy
 enableProxy: false
 proxyPort: 7000
+
+
+#FRONTEND TESTS
+isTest: true
 
 #mvn clean test -DsuiteFile=src/test/resources/suite/google.xml
