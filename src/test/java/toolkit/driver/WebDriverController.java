@@ -46,7 +46,7 @@ public class WebDriverController {
     private void setBrowser() {
         String browser = System.getenv("browser");
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        if (ProxyHelper.needProxy) ProxyHelper.setCapabilities(capabilities);
+        ProxyHelper.setCapabilities(capabilities);
         if (browser == null) {
             browser = YamlConfigProvider.getAppParameters("browser");
         }
@@ -61,6 +61,8 @@ public class WebDriverController {
                     }
                     firefoxProfile.setAcceptUntrustedCertificates(true);
                     firefoxProfile.setAssumeUntrustedCertificateIssuer(false);
+                    //HUGE SPEED IS HERE
+                    //    firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
                     firefoxProfile.setPreference("browser.download.folderList", 2);
                     firefoxProfile.setPreference("browser.download.manager.showWhenStarting", false);
                     firefoxProfile.setPreference("intl.accept_languages", "ru");

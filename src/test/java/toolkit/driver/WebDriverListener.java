@@ -1,7 +1,10 @@
 package toolkit.driver;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.testng.Assert;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
@@ -9,6 +12,9 @@ import org.testng.ITestResult;
 import toolkit.IsKnownBug;
 import toolkit.helpers.OperationsHelper;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 
@@ -34,7 +40,7 @@ public class WebDriverListener implements IInvokedMethodListener {
                 Assert.fail(clazz.getBugUrl() + " " + clazz.getBugDescription());
             }
             if (!testResult.isSuccess() && method.isTestMethod()) {
-                OperationsHelper.makeScreenshot(testResult.getName());
+                makeScreenshot(testResult.getName());
                 log4j.error(
                         "Test FAILED! Method:" + testResult.getName() + ". StackTrace is " + Throwables.getStackTraceAsString(
                                 testResult.getThrowable()));
@@ -43,5 +49,22 @@ public class WebDriverListener implements IInvokedMethodListener {
         }
     }
 
+
+    public void makeScreenshot(String methodName) {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formater = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
+        new File("target" + File.separator + "failure_screenshots" + File.separator).mkdirs();
+        try {
+            if (LocalDriverManager.getDriverController() != null) {
+                File scrFile = ((TakesScreenshot) LocalDriverManager.getDriverController()
+                        .getDriver()).getScreenshotAs(OutputType.FILE);
+                FileUtils.copyFile(scrFile, new File("target" + File.separator + "failure_screenshots" +
+                        File.separator + methodName + "_" + formater.format(calendar.getTime()) + "_webdriver.png"));
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+    }
 
 }

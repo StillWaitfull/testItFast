@@ -1,5 +1,6 @@
 package toolkit.helpers;
 
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.CookieSpecs;
@@ -10,11 +11,13 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.*;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import toolkit.METHODS;
 
+import java.net.URI;
 import java.util.List;
 
 
@@ -33,14 +36,17 @@ public class RequestClient {
     }
 
 
-    public RequestClient sendRequest(METHODS method, String url, List<BasicNameValuePair> params) {
+    public RequestClient sendRequest(METHODS method, String url, List<BasicNameValuePair> params, BasicHeader... headers) {
         URIBuilder builder = new URIBuilder();
-        builder.setScheme("http").setHost(baseUrl).setPath(url);
-        for (BasicNameValuePair param : params)
-            builder.setParameter(param.getName(), param.getValue());
+        builder.setScheme("http").setHost("").setPath(url);
+        if (params != null)
+            params.forEach(param -> builder.setParameter(param.getName(), param.getValue()));
+        HttpRequestBase request;
         try {
-            HttpRequestBase request = method.getMethod(builder.build());
+            request = method.getMethod(URI.create(URIUtil.decode(builder.build().toString())));
             requestLine = request.getRequestLine().toString();
+            if (headers != null)
+                for (BasicHeader header : headers) request.addHeader(header);
             log.info("Request is " + requestLine);
             HttpResponse response = httpClient.execute(request, context);
             responseText = EntityUtils.toString(response.getEntity(), "UTF-8");
@@ -60,7 +66,7 @@ public class RequestClient {
             HttpPost request = new HttpPost(builder.build());
             request.setEntity(new UrlEncodedFormEntity(params));
             log.info("Request is " + request.getRequestLine());
-            HttpResponse response = httpClient.execute(request,context);
+            HttpResponse response = httpClient.execute(request, context);
             responseText = new BasicResponseHandler().handleResponse(response);
             log.info("Response is " + responseText);
         } catch (Exception e) {

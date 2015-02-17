@@ -7,6 +7,7 @@ import org.openqa.selenium.WebElement;
 
 public interface IPage {
     public String getPageUrl();
+
     IPage openPage();
 
     IPage pressEnter();
@@ -19,11 +20,7 @@ public interface IPage {
 
     IPage clickOkInAlert();
 
-    IPage windowSetSize(int widthWindow, int heightWindow);
-
     void waitForElementPresent(By by);
-
-    IPage waitElementForSec(By by, int seconds);
 
     IPage clickOnStalenessElement(By by);
 
@@ -54,6 +51,10 @@ public interface IPage {
     void highlightTheElement(By by);
 
     IPage click(By by);
+
+    IPage clickWithJs(By by);
+
+    IPage simpleClick(By by);
 
     void assertThat(Runnable... assertions);
 
@@ -96,6 +97,6 @@ public interface IPage {
 
     int getCountElements(By by);
 
-     void makeScreenshotForDiff(String name);
+    void makeScreenshotForDiff(String name);
 
 }

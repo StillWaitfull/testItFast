@@ -21,23 +21,26 @@ public class ProxyHelper {
     static final Integer proxyPort = Integer.valueOf(YamlConfigProvider.getAppParameters("proxyPort"));
     static ProxyServer server = new ProxyServer(proxyPort);
     static boolean needProxy = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("enableProxy"));
-    private static Proxy proxy = null;
-
+    private static Proxy proxy = new Proxy();
+    static boolean started = false;
 
     public static void initProxy() {
-        if (System.getenv("enableProxy") != null)
-            needProxy = Boolean.parseBoolean(System.getenv("enableProxy"));
-        if (needProxy) {
-            try {
+        try {
+            if (needProxy && !started) {
+                started = true;
                 server.start();
                 server.setRequestTimeout(WebDriverController.TIMEOUT * 1000);
                 proxy = server.seleniumProxy();
-            } catch (Exception e) {
-                e.printStackTrace();
+                server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
+            } else if (!needProxy) {
+                proxy.setAutodetect(true);
+            } else {
+                proxy = server.seleniumProxy();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
 
 
     public static void stopProxy() {
@@ -54,7 +57,6 @@ public class ProxyHelper {
 
     public static void setCapabilities(DesiredCapabilities capabilities) {
         capabilities.setCapability(CapabilityType.PROXY, proxy);
-        server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
     }
 
 
@@ -62,7 +64,7 @@ public class ProxyHelper {
         Har har = server.getHar();
         try {
             File file = new File("target" + File.separator + "hars" + File.separator + name + ".har");
-            file.getParentFile().mkdirs();
+            boolean mkDirs = file.getParentFile().mkdirs();
             har.writeTo(new FileOutputStream(file));
         } catch (IOException e) {
             e.printStackTrace();

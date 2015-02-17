@@ -15,8 +15,10 @@ import java.util.ArrayList;
  */
 public class CheckingDifferentImages {
     private static Logger log = Logger.getLogger(CheckingDifferentImages.class);
+    public static String ETALON_PATH = "etalon";
+    public static String TEST_PATH = "4test";
     public static ArrayList<String> failedTests = new ArrayList<>();
-    public static String TEST_SCREENS_PATH = "screenshots" + File.separator + "4test" + File.separator;
+    public static String TEST_SCREENS_PATH = "screenshots" + File.separator + TEST_PATH + File.separator;
 
     /**
      * Check difference.
@@ -31,7 +33,7 @@ public class CheckingDifferentImages {
         try {
             //loading the two pictures
             //read and load the image
-            String firstPath = "screenshots" + File.separator + "etalon" + File.separator + name + ".png";
+            String firstPath = "screenshots" + File.separator + ETALON_PATH + File.separator + name + ".png";
             String secondPath = TEST_SCREENS_PATH + name + ".png";
             BufferedImage input = ImageIO.read(new File(firstPath));
             //build an image with the same dimension of the file read

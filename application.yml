@@ -1,11 +1,11 @@
 configName: google.yml
 # To switch on the Firebug plugin
 firebug: true
-firebug-version: 2.0.3
+firebug-version: 2.0.7
 # Browser for launching tests
 browser: firefox
 #Timeout
-Timeout: 60
+Timeout: 30
 
 
 #For proxy

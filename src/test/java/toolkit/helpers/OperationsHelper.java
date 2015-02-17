@@ -5,22 +5,17 @@ import net.sourceforge.htmlunit.corejs.javascript.JavaScriptException;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import tests.AbstractTest;
+import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 
 public abstract class OperationsHelper implements IPage {
 
@@ -31,8 +26,8 @@ public abstract class OperationsHelper implements IPage {
 
 
     public static void initBaseUrl() {
-        String host = System.getenv("host");
-        if (host == null)
+        String envBaseUrl = System.getenv("baseUrl");
+        if (envBaseUrl == null)
             baseUrl = YamlConfigProvider.getStageParameters("baseUrl");
 
     }
@@ -49,8 +44,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-
-
     @Override
     public IPage pressEnter() {
         Actions action = new Actions(LocalDriverManager.getDriverController().getDriver());
@@ -61,12 +54,10 @@ public abstract class OperationsHelper implements IPage {
 
     private boolean isEnable(By by) {
         try {
-            if (driver.findElement(by).isEnabled())
-                return true;
+            return driver.findElement(by).isEnabled();
         } catch (Exception e) {
             return false;
         }
-        return false;
     }
 
     @Override
@@ -117,20 +108,6 @@ public abstract class OperationsHelper implements IPage {
         return this;
     }
 
-
-    @Override
-    public IPage windowSetSize(int widthWindow, int heightWindow) {
-        java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        if (((screenSize.width >= widthWindow) && (screenSize.height >= heightWindow)) ||
-                ((0 >= widthWindow) && (0 >= heightWindow))) {
-            Dimension targetSize = new Dimension(widthWindow, heightWindow);
-            windowSetSize(targetSize);
-        } else {
-            log.debug("it is impossible");
-        }
-        return this;
-    }
-
     @Override
     public void waitForElementPresent(By by) {
         waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
@@ -138,20 +115,10 @@ public abstract class OperationsHelper implements IPage {
 
 
     @Override
-    public IPage waitElementForSec(By by, int seconds) {
-        for (int i = 0; i < seconds; i++) {
-            if (findElement(by).isDisplayed()) break;
-            else sendPause(1);
-        }
-        return this;
-    }
-
-
-    @Override
     public IPage clickOnStalenessElement(final By by) {
         waitDriver.until((WebDriver webDriver) -> {
             try {
-                final WebElement element = driver.findElement(by);
+                final WebElement element = webDriver.findElement(by);
                 if (element != null && element.isDisplayed() && element.isEnabled()) {
                     element.click();
                     return element;
@@ -265,15 +232,37 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public void highlightTheElement(By by) {
-        WebElement element = driver.findElement(by);
-        driver.executeScript("arguments[0].style.border='2px solid yellow'", element);
+        //      WebElement element = driver.findElement(by);
+//        driver.executeScript("arguments[0].style.border='2px solid yellow'", element);
     }
 
 
     @Override
     public IPage click(By by) {
+        try {
+            log.debug("Click on: " + by.toString());
+            waitForVisible(by);
+            highlightTheElement(by);
+            new Actions(driver.getDriver()).click(driver.findElement(by)).build().perform();
+        } catch (Exception e) {
+            click(by);
+        }
+        return this;
+    }
+
+    @Override
+    public IPage clickWithJs(By by) {
         log.debug("Click on: " + by.toString());
         waitForVisible(by);
+        highlightTheElement(by);
+        driver.executeScript("arguments[0].click();", driver.findElement(by));
+        return this;
+    }
+
+    @Override
+    public IPage simpleClick(By by) {
+        log.debug("Click on: " + by.toString());
+        waitForElementPresent(by);
         highlightTheElement(by);
         driver.findElement(by).click();
         return this;
@@ -314,9 +303,7 @@ public abstract class OperationsHelper implements IPage {
         try {
             driver.findElement(by);
             return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        } catch (StaleElementReferenceException se) {
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
             return false;
         }
     }
@@ -326,12 +313,9 @@ public abstract class OperationsHelper implements IPage {
     public boolean isVisible(By by) {
         try {
             return driver.findElement(by).isDisplayed();
-        } catch (NoSuchElementException e) {
-            return false;
-        } catch (StaleElementReferenceException se) {
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
             return false;
         }
-
     }
 
 
@@ -345,27 +329,6 @@ public abstract class OperationsHelper implements IPage {
         return this;
     }
 
-
-    public static void makeScreenshot(String methodName) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat formater = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
-        Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-        BufferedImage capture;
-        try {
-            capture = new Robot().createScreenCapture(screenRect);
-            File fileScreenshot = new File("target" + File.separator + "failure_screenshots" +
-                    File.separator + methodName + "_" + formater.format(calendar.getTime()) + "_javarobot.jpg");
-            fileScreenshot.getParentFile().mkdirs();
-            ImageIO.write(capture, "jpg", fileScreenshot);
-            File scrFile = ((TakesScreenshot) LocalDriverManager.getDriverController().getDriver()).getScreenshotAs(
-                    OutputType.FILE);
-            FileUtils.copyFile(scrFile, new File("target" + File.separator + "failure_screenshots" +
-                    File.separator + methodName + "_" + formater.format(calendar.getTime()) + "_webdriver.png"));
-        } catch (AWTException | IOException awte) {
-            awte.printStackTrace();
-        }
-
-    }
 
     /**
      * Open page
@@ -482,8 +445,7 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public IPage hoverOn(By by) {
-        Actions action = new Actions(driver.getDriver());
-        action.moveToElement(findElement(by)).build().perform();
+        new Actions(driver.getDriver()).moveToElement(findElement(by)).build().perform();
         log.info("Action - hover on to locator: " + by.toString());
         return this;
     }
@@ -515,9 +477,9 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public void makeScreenshotForDiff(String name) {
-        String path= AbstractTest.isTest?"4test":"etalon";
+        String path = AbstractTest.isTest ? CheckingDifferentImages.TEST_PATH : CheckingDifferentImages.ETALON_PATH;
         File scrFile;
-        log.info("Screen path "+path+" name is "+name);
+        log.info("Screen path " + path + " name is " + name);
         try {
             scrFile = ((TakesScreenshot) LocalDriverManager.getDriverController().getDriver()).getScreenshotAs(OutputType.FILE);
             FileUtils.copyFile(scrFile, new File("screenshots" +
