@@ -8,7 +8,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import tests.AbstractTest;
 import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
@@ -476,8 +475,8 @@ public abstract class OperationsHelper implements IPage {
 
 
     @Override
-    public void makeScreenshotForDiff(String name) {
-        String path = AbstractTest.isTest ? CheckingDifferentImages.TEST_PATH : CheckingDifferentImages.ETALON_PATH;
+    public void makeScreenshotForDiff(String name,boolean isTest) {
+        String path = isTest ? CheckingDifferentImages.TEST_PATH : CheckingDifferentImages.ETALON_PATH;
         File scrFile;
         log.info("Screen path " + path + " name is " + name);
         try {

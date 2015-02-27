@@ -2,47 +2,27 @@ package tests;
 
 import composite.IPage;
 import composite.pages.GooglePage;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import toolkit.CheckingDifferentImages;
-
-import java.lang.reflect.Method;
 
 /**
  * Created by Restore on 11/6/14.
  */
 public class FrontendGoogleTest extends AbstractTest {
 
-    String nameMethod = "";
-
-    @BeforeMethod
-    public void init(Method method) {
-        nameMethod = method.getName();
-    }
 
     @Test
-    public void googleTest1() {
+    public void googleTest() {
+        String name = "googleTest";
         IPage googlePage = new GooglePage();
+        CheckingDifferentImages checkingDifferentImages=new CheckingDifferentImages();
         googlePage.openPage()
                 .type(GooglePage.query, "1")
-                .makeScreenshotForDiff(nameMethod);
-
-
-    }
-
-    @Test
-    public void googleTest2() {
-        IPage googlePage = new GooglePage();
+                .makeScreenshotForDiff(name,checkingDifferentImages.getIsTest());
+        checkingDifferentImages.turnOnInTest();
         googlePage.openPage()
-                .type(GooglePage.query, "2")
-                .makeScreenshotForDiff(nameMethod);
-    }
-
-    @AfterMethod
-    public void CheckScreens() {
-        if (AbstractTest.isTest) {
-            CheckingDifferentImages.checkDifference(nameMethod, nameMethod + "_diff", 1);
-        }
+                .type(GooglePage.query, "3")
+                .makeScreenshotForDiff(name,checkingDifferentImages.getIsTest());
+        checkingDifferentImages.checkDifference(name, name + "_diff", 100);
     }
 }

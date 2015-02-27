@@ -10,7 +10,6 @@ import toolkit.driver.LocalDriverManager;
 import toolkit.driver.ProxyHelper;
 import toolkit.driver.WebDriverListener;
 import toolkit.helpers.OperationsHelper;
-import toolkit.helpers.YamlConfigProvider;
 
 import java.util.stream.Collectors;
 
@@ -24,11 +23,8 @@ import java.util.stream.Collectors;
 public abstract class AbstractTest {
 
     protected static Logger log4j = Logger.getLogger(AbstractTest.class);
-    public static boolean isTest = Boolean.parseBoolean(System.getenv("isTest"));
 
     public AbstractTest() {
-        if (System.getenv("isTest") == null)
-            isTest = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("isTest"));
         OperationsHelper.initBaseUrl();
     }
 

@@ -97,6 +97,6 @@ public interface IPage {
 
     int getCountElements(By by);
 
-    void makeScreenshotForDiff(String name);
+    void makeScreenshotForDiff(String name,boolean isTest);
 
 }

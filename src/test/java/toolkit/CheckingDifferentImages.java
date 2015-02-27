@@ -1,12 +1,13 @@
 package toolkit;
 
 import org.apache.log4j.Logger;
+import toolkit.helpers.YamlConfigProvider;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
 
 
 /**
@@ -14,11 +15,30 @@ import java.util.ArrayList;
  * trying to catch if there is a different object or not int the scene
  */
 public class CheckingDifferentImages {
+    private boolean isTest;
+
     private static Logger log = Logger.getLogger(CheckingDifferentImages.class);
     public static String ETALON_PATH = "etalon";
     public static String TEST_PATH = "4test";
-    public static ArrayList<String> failedTests = new ArrayList<>();
+    public static java.util.List<String> failedTests = new ArrayList<>();
     public static String TEST_SCREENS_PATH = "screenshots" + File.separator + TEST_PATH + File.separator;
+
+    {
+        if (System.getenv("isTest") == null)
+            isTest = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("isTest"));
+    }
+
+    public boolean getIsTest() {
+        return isTest;
+    }
+
+    public void turnOnInTest() {
+        isTest = true;
+    }
+
+    public void turnOffInTest() {
+        isTest = false;
+    }
 
     /**
      * Check difference.
@@ -27,7 +47,7 @@ public class CheckingDifferentImages {
      * @param nameDifference the name difference
      * @param accuracy       the accuracy   1pixels
      */
-    public static void checkDifference(String name, String nameDifference, int accuracy) {
+    public void checkDifference(String name, String nameDifference, int accuracy) {
         BufferedImage im1 = null;
         BufferedImage im2 = null;
         try {
@@ -72,7 +92,6 @@ public class CheckingDifferentImages {
             int area = 0;
             for (int h = 0; h < im1.getHeight(); h++) {
                 for (int w = 0; w < im1.getWidth(); w++) {
-
                     try {
                         int red1 = 0xff & (im1.getRGB(w, h) >> 16);
                         int green1 = 0xff & (im1.getRGB(w, h) >> 8);
@@ -103,9 +122,6 @@ public class CheckingDifferentImages {
 	                    resultImage.setRGB(w, h, im1.getRGB(w, h));
 	                }*/
                     } catch (ArrayIndexOutOfBoundsException e) {
-                        log.info(im1.getRGB(w, h));
-                        throw (e);
-
                     }
                 } //w
             } //h
@@ -120,7 +136,6 @@ public class CheckingDifferentImages {
                 log.info("Everything is ok!");
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -134,7 +149,7 @@ public class CheckingDifferentImages {
                     delete(path_from + "/" + child[i]);
                 }
         } else
-            System.out.println("This isn't a directory");
+            log.info("This isn't a directory");
     }
 
     private static void delete(String path_from) {

@@ -16,7 +16,7 @@ public class GooglePage extends OperationsHelper implements IPage {
     private static final String pageUrl = baseUrl + "/";
 
 
-    public static final By query = By.id("gbqfq");
+    public static final By query = By.id("lst-ib");
     public static final By button = By.id("gbqfb");
 
 
