@@ -8,6 +8,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
@@ -24,11 +25,10 @@ public abstract class OperationsHelper implements IPage {
     public static String baseUrl;
 
 
-    public static void initBaseUrl() {
+    static {
         String envBaseUrl = System.getenv("baseUrl");
         if (envBaseUrl == null)
             baseUrl = YamlConfigProvider.getStageParameters("baseUrl");
-
     }
 
     /**
@@ -109,24 +109,33 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public void waitForElementPresent(By by) {
-        waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
+        try {
+            waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
+        } catch (TimeoutException e) {
+            Assert.fail("Element is not present after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+        }
     }
 
 
     @Override
     public IPage clickOnStalenessElement(final By by) {
-        waitDriver.until((WebDriver webDriver) -> {
-            try {
-                final WebElement element = webDriver.findElement(by);
-                if (element != null && element.isDisplayed() && element.isEnabled()) {
-                    element.click();
-                    return element;
+        try {
+            waitDriver.until((WebDriver webDriver) -> {
+                try {
+                    final WebElement element = webDriver.findElement(by);
+                    if (element != null && element.isDisplayed() && element.isEnabled()) {
+                        element.click();
+                        return element;
+                    }
+                } catch (StaleElementReferenceException e) {
+                    log.error("Stale exception");
                 }
-            } catch (StaleElementReferenceException e) {
-                log.error("Stale exception");
-            }
-            return null;
-        });
+                return null;
+            });
+
+        } catch (TimeoutException e) {
+            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+        }
         return this;
     }
 
@@ -143,16 +152,25 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public IPage waitForNotAttribute(final By by, final String attribute, final String value) {
-        waitDriver.until((WebDriver d) -> d.findElement(by)
-                .getAttribute(attribute)
-                .equals(value));
+        try {
+            waitDriver.until((WebDriver d) -> d.findElement(by)
+                    .getAttribute(attribute)
+                    .equals(value));
+
+        } catch (TimeoutException e) {
+            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+        }
         return this;
     }
 
 
     @Override
     public IPage waitForTextPresent(final String text) {
-        waitDriver.until((WebDriver d) -> d.getPageSource().contains(text));
+        try {
+            waitDriver.until((WebDriver d) -> d.getPageSource().contains(text));
+        } catch (TimeoutException e) {
+            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+        }
         return this;
     }
 
@@ -166,14 +184,22 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public void waitForVisible(By by) {
-        waitDriver.until((WebDriver webDriver) -> isVisible(by));
+        try {
+            waitDriver.until((WebDriver webDriver) -> isVisible(by));
+        } catch (TimeoutException e) {
+            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+        }
     }
 
     @Override
     public void waitForNotVisible(By by) {
-        waitDriver.until((WebDriver webDriver) -> !isVisible(by));
-    }
+        try {
+            waitDriver.until((WebDriver webDriver) -> !isVisible(by));
+        } catch (TimeoutException e) {
+            Assert.fail("Element is visible after " + WebDriverController.TIMEOUT);
+        }
 
+    }
 
     @Override
     public String getSrcOfElement(By by) {
@@ -365,7 +391,7 @@ public abstract class OperationsHelper implements IPage {
     @Override
     public boolean validateElementPresent(By by) {
         try {
-            waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
+            waitForElementPresent(by);
             return true;
         } catch (TimeoutException e) {
             return false;
@@ -475,7 +501,7 @@ public abstract class OperationsHelper implements IPage {
 
 
     @Override
-    public void makeScreenshotForDiff(String name,boolean isTest) {
+    public void makeScreenshotForDiff(String name, boolean isTest) {
         String path = isTest ? CheckingDifferentImages.TEST_PATH : CheckingDifferentImages.ETALON_PATH;
         File scrFile;
         log.info("Screen path " + path + " name is " + name);

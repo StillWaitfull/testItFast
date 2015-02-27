@@ -9,7 +9,6 @@ import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.ProxyHelper;
 import toolkit.driver.WebDriverListener;
-import toolkit.helpers.OperationsHelper;
 
 import java.util.stream.Collectors;
 
@@ -23,10 +22,6 @@ import java.util.stream.Collectors;
 public abstract class AbstractTest {
 
     protected static Logger log4j = Logger.getLogger(AbstractTest.class);
-
-    public AbstractTest() {
-        OperationsHelper.initBaseUrl();
-    }
 
 
     @AfterMethod

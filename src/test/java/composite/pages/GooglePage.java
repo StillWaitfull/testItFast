@@ -17,7 +17,7 @@ public class GooglePage extends OperationsHelper implements IPage {
 
 
     public static final By query = By.id("lst-ib");
-    public static final By button = By.id("gbqfb");
+    public static final By button = By.id("sblsbb");
 
 
     @Override
