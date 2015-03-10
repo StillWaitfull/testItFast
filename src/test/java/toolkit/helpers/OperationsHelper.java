@@ -264,14 +264,10 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public IPage click(By by) {
-        try {
-            log.debug("Click on: " + by.toString());
-            waitForVisible(by);
-            highlightTheElement(by);
-            new Actions(driver.getDriver()).click(driver.findElement(by)).build().perform();
-        } catch (Exception e) {
-            click(by);
-        }
+        log.debug("Click on: " + by.toString());
+        waitForVisible(by);
+        highlightTheElement(by);
+        new Actions(driver.getDriver()).click(driver.findElement(by)).build().perform();
         return this;
     }
 
