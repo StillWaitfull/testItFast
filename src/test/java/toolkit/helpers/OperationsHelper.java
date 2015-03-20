@@ -45,7 +45,7 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public IPage pressEnter() {
-        Actions action = new Actions(LocalDriverManager.getDriverController().getDriver());
+        Actions action = new Actions(driver.getDriver());
         action.sendKeys(Keys.ENTER).perform();
         return this;
 
@@ -371,11 +371,11 @@ public abstract class OperationsHelper implements IPage {
     @Override
     public IPage openTab(String url) {
         String script = "var d=document,a=d.createElement('a');a.target='_blank';a.href='%s';a.innerHTML='.';d.body.appendChild(a);return a";
-        Object element = LocalDriverManager.getDriverController().executeScript(String.format(script, url));
+        Object element = driver.executeScript(String.format(script, url));
         if (element instanceof WebElement) {
             WebElement anchor = (WebElement) element;
             anchor.click();
-            LocalDriverManager.getDriverController().executeScript("var a=arguments[0];a.parentNode.removeChild(a);",
+            driver.executeScript("var a=arguments[0];a.parentNode.removeChild(a);",
                     anchor);
         } else {
             throw new JavaScriptException(element, "Unable to open tab", 1);
@@ -474,7 +474,7 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public IPage scrollOnTop() {
-        LocalDriverManager.getDriverController().executeScript("window.scrollTo(0,0)");
+        driver.executeScript("window.scrollTo(0,0)");
         return this;
     }
 
@@ -502,7 +502,7 @@ public abstract class OperationsHelper implements IPage {
         File scrFile;
         log.info("Screen path " + path + " name is " + name);
         try {
-            scrFile = ((TakesScreenshot) LocalDriverManager.getDriverController().getDriver()).getScreenshotAs(OutputType.FILE);
+            scrFile = ((TakesScreenshot) driver.getDriver()).getScreenshotAs(OutputType.FILE);
             FileUtils.copyFile(scrFile, new File("screenshots" +
                     File.separator + path + File.separator + name + ".png"));
         } catch (IOException e1) {
