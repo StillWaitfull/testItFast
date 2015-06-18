@@ -1,6 +1,5 @@
 package toolkit.helpers;
 
-import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.CookieSpecs;
@@ -17,7 +16,6 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import toolkit.METHODS;
 
-import java.net.URI;
 import java.util.List;
 
 
@@ -43,7 +41,7 @@ public class RequestClient {
             params.forEach(param -> builder.setParameter(param.getName(), param.getValue()));
         HttpRequestBase request;
         try {
-            request = method.getMethod(URI.create(URIUtil.decode(builder.build().toString())));
+            request = method.getMethod(builder.build());
             requestLine = request.getRequestLine().toString();
             if (headers != null)
                 for (BasicHeader header : headers) request.addHeader(header);

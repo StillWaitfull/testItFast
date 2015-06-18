@@ -6,7 +6,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 
 public interface IPage {
-    public String getPageUrl();
+    String getPageUrl();
 
     IPage openPage();
 

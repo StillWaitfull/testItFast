@@ -39,7 +39,7 @@ public class WebDriverListener implements IInvokedMethodListener {
                 IsKnownBug clazz = testResult.getMethod().getMethod().getAnnotation(IsKnownBug.class);
                 Assert.fail(clazz.getBugUrl() + " " + clazz.getBugDescription());
             }
-            if (!testResult.isSuccess() && method.isTestMethod()) {
+            if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus()!=3) {
                 makeScreenshot(testResult.getName());
                 log4j.error(
                         "Test FAILED! Method:" + testResult.getName() + ". StackTrace is " + Throwables.getStackTraceAsString(

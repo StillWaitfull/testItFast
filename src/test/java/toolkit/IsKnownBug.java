@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsKnownBug {
-    public String getBugUrl();
+     String getBugUrl();
 
-    public String getBugDescription() default "";
+     String getBugDescription() default "";
 }
