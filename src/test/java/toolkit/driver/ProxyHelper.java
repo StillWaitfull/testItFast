@@ -1,5 +1,8 @@
 package toolkit.driver;
 
+import net.lightbody.bmp.BrowserMobProxy;
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
 import net.lightbody.bmp.proxy.ProxyServer;
 import org.apache.log4j.Logger;
@@ -13,30 +16,35 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 
 public class ProxyHelper {
 
     static Logger log = Logger.getLogger(ProxyHelper.class);
     static final Integer proxyPort = Integer.valueOf(YamlConfigProvider.getAppParameters("proxyPort"));
-    static ProxyServer server = new ProxyServer(proxyPort);
+    static BrowserMobProxy server = new BrowserMobProxyServer(proxyPort);
     static boolean needProxy = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("enableProxy"));
     private static Proxy proxy = new Proxy();
-    static boolean started = false;
+
+    static {
+        if (needProxy) {
+            server.start();
+            server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
+            server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
+        }
+    }
 
     public static void initProxy() {
         try {
-            if (needProxy && !started) {
-                started = true;
-                server.start();
-                server.setRequestTimeout(WebDriverController.TIMEOUT * 1000);
-                proxy = server.seleniumProxy();
-                server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
-            } else if (!needProxy) {
+            if (!needProxy)
                 proxy.setAutodetect(true);
-            } else {
-                proxy = server.seleniumProxy();
+            else {
+
+                proxy = ClientUtil.createSeleniumProxy(server);
+
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,13 +52,11 @@ public class ProxyHelper {
 
 
     public static void stopProxy() {
-        if (needProxy) {
-            try {
-                server.stop();
-            } catch (Exception e) {
-                log.error("There was a problem with shutdown proxy server");
-                e.printStackTrace();
-            }
+        try {
+            server.stop();
+        } catch (Exception e) {
+            log.error("There was a problem with shutdown proxy server");
+            e.printStackTrace();
         }
     }
 

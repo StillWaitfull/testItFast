@@ -9,7 +9,7 @@ Timeout: 30
 
 
 #For proxy
-enableProxy: false
+enableProxy: true
 proxyPort: 7000
 
 

@@ -5,10 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.testng.Assert;
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
-import org.testng.ITestResult;
+import org.testng.*;
 import toolkit.IsKnownBug;
 import toolkit.helpers.OperationsHelper;
 
@@ -40,6 +37,9 @@ public class WebDriverListener implements IInvokedMethodListener {
                 Assert.fail(clazz.getBugUrl() + " " + clazz.getBugDescription());
             }
             if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus()!=3) {
+                ITestNGMethod method1 = testResult.getMethod();
+                method1.setRetryAnalyzer(new RetryListener());
+                method1.getRetryAnalyzer().retry(testResult);
                 makeScreenshot(testResult.getName());
                 log4j.error(
                         "Test FAILED! Method:" + testResult.getName() + ". StackTrace is " + Throwables.getStackTraceAsString(
