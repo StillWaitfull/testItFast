@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class WebDriverListener implements IInvokedMethodListener {
     Logger log4j = Logger.getLogger(WebDriverListener.class);
 
-
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod()) {
@@ -38,7 +37,7 @@ public class WebDriverListener implements IInvokedMethodListener {
             }
             if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus()!=3) {
                 ITestNGMethod method1 = testResult.getMethod();
-                method1.setRetryAnalyzer(new RetryListener());
+                method1.setRetryAnalyzer(RetryListener.get());
                 method1.getRetryAnalyzer().retry(testResult);
                 makeScreenshot(testResult.getName());
                 log4j.error(

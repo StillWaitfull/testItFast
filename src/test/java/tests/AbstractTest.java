@@ -8,6 +8,7 @@ import org.testng.annotations.Listeners;
 import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.ProxyHelper;
+import toolkit.driver.TestListenerAd;
 import toolkit.driver.WebDriverListener;
 
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  *
  * @author Aleksey Niss,Sergey Kashapov
  */
-@Listeners(WebDriverListener.class)
+@Listeners({WebDriverListener.class,TestListenerAd.class})
 public abstract class AbstractTest {
 
     protected static Logger log4j = Logger.getLogger(AbstractTest.class);
