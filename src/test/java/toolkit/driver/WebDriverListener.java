@@ -29,9 +29,10 @@ public class WebDriverListener implements IInvokedMethodListener {
                 RetryListener.get().count = new AtomicInteger(RetryListener.maxRetryCount);
             RetryListener.get().setNameMethod(methodName);
         } else {
-            if (testResult.getParameters().length != 0) {
+            if(methodName.equals("setBrowser") && testResult.getParameters().length != 0){
                 Object br = testResult.getParameters()[0];
-                if (br != null) browser.set(br.toString());
+                if (br != null)
+                    browser.set(br.toString());
             }
         }
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod()) {
