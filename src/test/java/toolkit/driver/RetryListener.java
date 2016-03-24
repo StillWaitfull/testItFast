@@ -11,10 +11,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RetryListener implements IRetryAnalyzer {
 
-    private int maxRetryCount = 2;
-    AtomicInteger count = new AtomicInteger(maxRetryCount);
+    static int maxRetryCount = 2;
+     AtomicInteger count = new AtomicInteger(maxRetryCount);
+    private Logger logger = Logger.getLogger(RetryListener.class);
+    private static ThreadLocal<RetryListener> retryListenerThreadLocal = new ThreadLocal<>();
+    private String nameMethod="";
 
-    Logger logger = Logger.getLogger(RetryListener.class);
 
     @Override
     public boolean retry(ITestResult result) {
@@ -28,18 +30,25 @@ public class RetryListener implements IRetryAnalyzer {
 
     }
 
-    public boolean isRetryAvailable() {
+    boolean isRetryAvailable() {
         return (count.intValue() > 0);
     }
 
-    static ThreadLocal<RetryListener> retryListenerThreadLocal = new ThreadLocal<>();
 
-    public static RetryListener get() {
+    static RetryListener get() {
         if (retryListenerThreadLocal.get() == null) {
             retryListenerThreadLocal.set(new RetryListener());
         }
         return retryListenerThreadLocal.get();
 
+    }
+
+    String getNameMethod() {
+        return nameMethod;
+    }
+
+    void setNameMethod(String nameMethod) {
+        this.nameMethod = nameMethod;
     }
 }
 

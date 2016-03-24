@@ -121,7 +121,7 @@ public class CheckingDifferentImages {
 	                } else {
 	                    resultImage.setRGB(w, h, im1.getRGB(w, h));
 	                }*/
-                    } catch (ArrayIndexOutOfBoundsException e) {
+                    } catch (ArrayIndexOutOfBoundsException ignored) {
                     }
                 } //w
             } //h
@@ -135,7 +135,7 @@ public class CheckingDifferentImages {
             } else {
                 log.info("Everything is ok!");
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -145,8 +145,8 @@ public class CheckingDifferentImages {
         if (f.isDirectory()) {
             String[] child = f.list();
             if (child.length != 0)
-                for (int i = 0; i < child.length; i++) {
-                    delete(path_from + "/" + child[i]);
+                for (String aChild : child) {
+                    delete(path_from + "/" + aChild);
                 }
         } else
             log.info("This isn't a directory");

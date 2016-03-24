@@ -4,7 +4,6 @@ import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
-import net.lightbody.bmp.proxy.ProxyServer;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.remote.CapabilityType;
@@ -21,30 +20,29 @@ import java.util.concurrent.TimeUnit;
 
 public class ProxyHelper {
 
-    static Logger log = Logger.getLogger(ProxyHelper.class);
-    static final Integer proxyPort = Integer.valueOf(YamlConfigProvider.getAppParameters("proxyPort"));
-    static BrowserMobProxy server = new BrowserMobProxyServer(proxyPort);
-    static boolean needProxy = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("enableProxy"));
+    private static Logger log = Logger.getLogger(ProxyHelper.class);
+    private static final Integer proxyPort = Integer.valueOf(YamlConfigProvider.getAppParameters("proxyPort"));
+    // private static ProxyServer server = new ProxyServer(proxyPort);
+    private static BrowserMobProxy server = new BrowserMobProxyServer(proxyPort);
+    private static boolean needProxy = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("enableProxy"));
     private static Proxy proxy = new Proxy();
 
     static {
         if (needProxy) {
             server.start();
-            server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
             server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
+            server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
+
         }
     }
 
-    public static void initProxy() {
+    static void initProxy() {
         try {
             if (!needProxy)
                 proxy.setAutodetect(true);
             else {
-
                 proxy = ClientUtil.createSeleniumProxy(server);
-
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,7 +59,7 @@ public class ProxyHelper {
     }
 
 
-    public static void setCapabilities(DesiredCapabilities capabilities) {
+    static void setCapabilities(DesiredCapabilities capabilities) {
         capabilities.setCapability(CapabilityType.PROXY, proxy);
     }
 

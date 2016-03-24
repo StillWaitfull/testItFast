@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class ProcessProvider {
-    protected static Logger log = Logger.getLogger(ProcessProvider.class);
+    private static Logger log = Logger.getLogger(ProcessProvider.class);
     private static final String GET_PROCESS_LIST_LINUX = "ps aux";
     private static final String KILL_SOME_TASK_LINUX = "kill -9 %s";
     private static final String PATH_TO_TASKLIST = "\\system32\\tasklist.exe";

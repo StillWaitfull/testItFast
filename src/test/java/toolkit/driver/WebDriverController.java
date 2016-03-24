@@ -1,6 +1,5 @@
 package toolkit.driver;
 
-import com.opera.core.systems.OperaDriver;
 import common.OperationSystem;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
@@ -18,7 +17,7 @@ import org.testng.Assert;
 import toolkit.helpers.YamlConfigProvider;
 
 import java.io.File;
-import java.util.Date;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -30,11 +29,12 @@ public class WebDriverController {
     private static WebDriverWait waitDriver;
     private static Logger log = Logger.getLogger(WebDriverController.class);
     public static final int TIMEOUT = Integer.parseInt(YamlConfigProvider.getAppParameters("Timeout"));
+    private String browser = "";
 
-
-    public WebDriverController() {
+    WebDriverController(String browser) {
+        this.browser = browser;
         ProxyHelper.initProxy();
-        setBrowser();
+        setBrowser(browser);
         driver.manage().timeouts().setScriptTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.manage().window().maximize();
@@ -43,79 +43,69 @@ public class WebDriverController {
     }
 
 
-    private void setBrowser() {
-        String browser = System.getenv("browser");
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        ProxyHelper.setCapabilities(capabilities);
+    public String getBrowser() {
+        return browser;
+    }
+
+    private void setBrowser(String browser) {
         if (browser == null) {
             browser = YamlConfigProvider.getAppParameters("browser");
         }
+
+        DesiredCapabilities capabilitiesFF = createCapabilitiesFF();
+
+        DesiredCapabilities capabilitiesIe = DesiredCapabilities.internetExplorer();
+        ProxyHelper.setCapabilities(capabilitiesIe);
+        capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+
+        DesiredCapabilities capabilitiesOpera = DesiredCapabilities.operaBlink();
+        capabilitiesOpera.setCapability("opera.arguments", "-fullscreen");
+        capabilitiesOpera.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+
+        DesiredCapabilities capabilitiesChrome = DesiredCapabilities.chrome();
+        ProxyHelper.setCapabilities(capabilitiesChrome);
+
         switch (browser) {
             case "firefox": {
-                FirefoxProfile firefoxProfile = new FirefoxProfile();
                 try {
-                    String versionFirebug = YamlConfigProvider.getAppParameters("firebug-version");
-                    if (YamlConfigProvider.getAppParameters("firebug").equals("true")) {
-                        firefoxProfile.addExtension(new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "extensions" + File.separator + "firebug-" + versionFirebug + ".xpi"));
-                        firefoxProfile.setPreference("extensions.firebug.currentVersion", versionFirebug); // Avoid startup screen
-                    }
-                    firefoxProfile.setAcceptUntrustedCertificates(true);
-                    firefoxProfile.setAssumeUntrustedCertificateIssuer(false);
-                    //HUGE SPEED IS HERE
-                    //    firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
-                    firefoxProfile.setPreference("browser.download.folderList", 2);
-                    firefoxProfile.setPreference("browser.download.manager.showWhenStarting", false);
-                    firefoxProfile.setPreference("intl.accept_languages", "ru");
-                    firefoxProfile.setPreference("general.useragent.local", "ru");
-                    firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream");
-                    capabilities.setBrowserName("firefox");
-                    capabilities.setPlatform(Platform.ANY);
-                    //capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-                    capabilities.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
-                    driver = new FirefoxDriver(capabilities);
-
+                    driver = new FirefoxDriver(capabilitiesFF);
                 } catch (Exception e) {
-                    log.error("There was a problem with start firefox driver");
+                    e.printStackTrace();
+                    throw new RuntimeException("There was a problem with start firefox driver");
                 }
                 break;
             }
             case "ie":
                 try {
                     System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
-                    DesiredCapabilities capabilitiesIe = DesiredCapabilities.internetExplorer();
-                    if (ProxyHelper.needProxy) ProxyHelper.setCapabilities(capabilitiesIe);
-                    capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                     driver = new InternetExplorerDriver(capabilitiesIe);
                 } catch (Exception e) {
-                    log.error("There was a problem with start ie driver");
+                    throw new RuntimeException("There was a problem with start ie driver");
+
                 }
                 break;
             case "chrome":
                 try {
-                    System.setProperty("webdriver.chrome.driver", OperationSystem.instance.isLinux() ? "lib" + File.separator + "chromedriver" : "lib" + File.separator + "chromedriver.exe");
-                    driver = new ChromeDriver(capabilities);
+                    System.setProperty("webdriver.chrome.driver", "lib" + File.separator + (OperationSystem.instance.isLinux() ? "chromedriver" : "chromedriver.exe"));
+                    driver = new ChromeDriver(capabilitiesChrome);
                 } catch (Exception e) {
-                    log.error("There was a problem with start chrome driver");
+                    e.printStackTrace();
+                    throw new RuntimeException("There was a problem with start chrome driver");
                 }
                 break;
             case "opera": {
-                capabilities.setCapability("opera.arguments", "-fullscreen");
-                capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                 try {
-                    driver = new OperaDriver();
+                    driver = new org.openqa.selenium.opera.OperaDriver(capabilitiesOpera);
                 } catch (Exception e) {
-                    log.error("There was a problem with start opera driver");
+                    throw new RuntimeException("There was a problem with start opera driver");
                 }
                 break;
             }
             case "phantom":
                 try {
-                    DesiredCapabilities capabilitiesPhantom = DesiredCapabilities.phantomjs();
-                    capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator + (OperationSystem.instance.isLinux() ? "phantomjs" : "phantomjs.exe"));
-                    capabilitiesPhantom.setCapability("takesScreenshot", true);
-                    driver = new PhantomJSDriver(capabilitiesPhantom);
+                    driver = new PhantomJSDriver(createCapabilitiesPhantom());
                 } catch (Exception e) {
-                    log.error("There was a problem with start phantom driver");
+                    throw new RuntimeException("There was a problem with start phantom driver");
                 }
                 break;
         }
@@ -123,7 +113,47 @@ public class WebDriverController {
     }
 
 
-    public void waitForPageLoaded() {
+    private static DesiredCapabilities createCapabilitiesFF() {
+        DesiredCapabilities capabilitiesFF = new DesiredCapabilities();
+        ProxyHelper.setCapabilities(capabilitiesFF);
+        FirefoxProfile firefoxProfile = new FirefoxProfile();
+        String versionFirebug = YamlConfigProvider.getAppParameters("firebug-version");
+        if (YamlConfigProvider.getAppParameters("firebug").equals("true")) {
+            try {
+                firefoxProfile.addExtension(new File("src" + File.separator + "test" +
+                        File.separator + "resources" + File.separator + "extensions" +
+                        File.separator + "firebug-" + versionFirebug + ".xpi"));
+                firefoxProfile.setPreference("extensions.firebug.currentVersion", versionFirebug); // Avoid startup screen
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        firefoxProfile.setAcceptUntrustedCertificates(true);
+        firefoxProfile.setAssumeUntrustedCertificateIssuer(false);
+        firefoxProfile.setPreference("browser.download.folderList", 2);
+        firefoxProfile.setPreference("browser.download.manager.showWhenStarting", false);
+        firefoxProfile.setPreference("intl.accept_languages", "ru");
+        firefoxProfile.setPreference("general.useragent.local", "ru");
+        firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream");
+        capabilitiesFF.setBrowserName("firefox");
+        capabilitiesFF.setPlatform(Platform.ANY);
+        capabilitiesFF.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
+        return capabilitiesFF;
+    }
+
+
+    private static DesiredCapabilities createCapabilitiesPhantom() {
+        String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
+        DesiredCapabilities capabilitiesPhantom = DesiredCapabilities.phantomjs();
+        String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
+        capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
+        capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator + (OperationSystem.instance.isLinux() ? "phantomjs" : "phantomjs.exe"));
+        capabilitiesPhantom.setCapability("phantomjs.page.settings.userAgent", userAgent);
+        return capabilitiesPhantom;
+    }
+
+
+    private void waitForPageLoaded() {
         ExpectedCondition<Boolean> expectation = driver1 -> executeScript("return document.readyState").toString().equals("complete");
         try {
             getInstanceWaitDriver().until(expectation);
@@ -213,7 +243,7 @@ public class WebDriverController {
         try {
             driver.quit();
             driver = null;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -279,29 +309,6 @@ public class WebDriverController {
      */
     public void switchToMainContent() {
         driver.switchTo().defaultContent();
-    }
-
-    public class Cookie extends org.openqa.selenium.Cookie {
-
-        public Cookie(String name, String value, String path, Date expiry) {
-            super(name, value, path, expiry);
-        }
-
-        public Cookie(String name, String value, String domain, String path, Date expiry) {
-            super(name, value, domain, path, expiry);
-        }
-
-        public Cookie(String name, String value, String domain, String path, Date expiry, boolean isSecure) {
-            super(name, value, domain, path, expiry, isSecure);
-        }
-
-        public Cookie(String name, String value) {
-            super(name, value);
-        }
-
-        public Cookie(String name, String value, String path) {
-            super(name, value, path);
-        }
     }
 
 

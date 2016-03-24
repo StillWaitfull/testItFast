@@ -1,10 +1,7 @@
 package tests;
 
-import org.apache.log4j.Logger;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.Listeners;
+import org.testng.annotations.*;
 import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.ProxyHelper;
@@ -14,16 +11,15 @@ import toolkit.driver.WebDriverListener;
 import java.util.stream.Collectors;
 
 
-/**
- * Abstract test
- *
- * @author Aleksey Niss,Sergey Kashapov
- */
-@Listeners({WebDriverListener.class,TestListenerAd.class})
+
+@Listeners({WebDriverListener.class, TestListenerAd.class})
 public abstract class AbstractTest {
 
-    protected static Logger log4j = Logger.getLogger(AbstractTest.class);
 
+    @BeforeMethod
+    @Parameters({"browser"})
+    public void setBrowser(@Optional String browser) {
+    }
 
     @AfterMethod
     public void after() {

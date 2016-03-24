@@ -23,11 +23,11 @@ public class RequestClient {
     private String responseText = "";
     private String baseUrl = YamlConfigProvider.getStageParameters("baseUrl");
     static Logger log = Logger.getLogger(RequestClient.class);
-    String requestLine = "";
-    RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.BEST_MATCH).build();
-    CookieStore cookieStore = new BasicCookieStore();
-    HttpClientContext context = HttpClientContext.create();
-    CloseableHttpClient httpClient = HttpClients.custom().setRedirectStrategy(new LaxRedirectStrategy()).setDefaultRequestConfig(globalConfig).setDefaultCookieStore(cookieStore).build();
+    private String requestLine = "";
+    private RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.BEST_MATCH).build();
+    private CookieStore cookieStore = new BasicCookieStore();
+    private HttpClientContext context = HttpClientContext.create();
+    private CloseableHttpClient httpClient = HttpClients.custom().setRedirectStrategy(new LaxRedirectStrategy()).setDefaultRequestConfig(globalConfig).setDefaultCookieStore(cookieStore).build();
 
     {
         context.setCookieStore(cookieStore);

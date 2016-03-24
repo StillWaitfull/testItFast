@@ -1,7 +1,6 @@
 package toolkit.helpers;
 
 import composite.IPage;
-import net.sourceforge.htmlunit.corejs.javascript.JavaScriptException;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
@@ -22,7 +21,7 @@ public abstract class OperationsHelper implements IPage {
     private static Logger log = Logger.getLogger(OperationsHelper.class);
     private WebDriverWait waitDriver = WebDriverController.getInstanceWaitDriver();
     private WebDriverController driver = LocalDriverManager.getDriverController();
-    public static String baseUrl;
+    protected static String baseUrl;
 
 
     static {
@@ -257,8 +256,8 @@ public abstract class OperationsHelper implements IPage {
 
     @Override
     public void highlightTheElement(By by) {
-        //      WebElement element = driver.findElement(by);
-//        driver.executeScript("arguments[0].style.border='2px solid yellow'", element);
+        WebElement element = driver.findElement(by);
+        driver.executeScript("arguments[0].style.border='2px solid yellow'", element);
     }
 
 
@@ -362,12 +361,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    /**
-     * Opens a new tab for the given URL
-     *
-     * @param url The URL to
-     * @throws JavaScriptException If unable to open tab
-     */
     @Override
     public IPage openTab(String url) {
         String script = "var d=document,a=d.createElement('a');a.target='_blank';a.href='%s';a.innerHTML='.';d.body.appendChild(a);return a";
@@ -378,7 +371,7 @@ public abstract class OperationsHelper implements IPage {
             driver.executeScript("var a=arguments[0];a.parentNode.removeChild(a);",
                     anchor);
         } else {
-            throw new JavaScriptException(element, "Unable to open tab", 1);
+            throw new RuntimeException("Unable to open tab");
         }
         return this;
     }

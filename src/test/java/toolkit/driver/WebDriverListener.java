@@ -13,15 +13,29 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class WebDriverListener implements IInvokedMethodListener {
-    Logger log4j = Logger.getLogger(WebDriverListener.class);
+    private Logger log4j = Logger.getLogger(WebDriverListener.class);
+    private ThreadLocal<String> browser = new ThreadLocal<>();
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        String methodName = method.getTestMethod().getMethodName();
+        if (method.isTestMethod()) {
+            log4j.info(methodName);
+            if (!RetryListener.get().getNameMethod().equals(methodName))
+                RetryListener.get().count = new AtomicInteger(RetryListener.maxRetryCount);
+            RetryListener.get().setNameMethod(methodName);
+        } else {
+            if (testResult.getParameters().length != 0) {
+                Object br = testResult.getParameters()[0];
+                if (br != null) browser.set(br.toString());
+            }
+        }
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod()) {
-            LocalDriverManager.setWebDriverController(new WebDriverController());
+            LocalDriverManager.setWebDriverController(new WebDriverController(browser.get()));
         }
     }
 
@@ -35,7 +49,7 @@ public class WebDriverListener implements IInvokedMethodListener {
                 IsKnownBug clazz = testResult.getMethod().getMethod().getAnnotation(IsKnownBug.class);
                 Assert.fail(clazz.getBugUrl() + " " + clazz.getBugDescription());
             }
-            if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus()!=3) {
+            if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus() != 3) {
                 ITestNGMethod method1 = testResult.getMethod();
                 method1.setRetryAnalyzer(RetryListener.get());
                 method1.getRetryAnalyzer().retry(testResult);
