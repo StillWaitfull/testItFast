@@ -29,7 +29,7 @@ public class WebDriverListener implements IInvokedMethodListener {
                 RetryListener.get().count = new AtomicInteger(RetryListener.maxRetryCount);
             RetryListener.get().setNameMethod(methodName);
         } else {
-            if(methodName.equals("setBrowser") && testResult.getParameters().length != 0){
+            if (methodName.equals("setBrowser") && testResult.getParameters().length != 0) {
                 Object br = testResult.getParameters()[0];
                 if (br != null)
                     browser.set(br.toString());
@@ -64,7 +64,7 @@ public class WebDriverListener implements IInvokedMethodListener {
     }
 
 
-    public void makeScreenshot(String methodName) {
+    private void makeScreenshot(String methodName) {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat formater = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
         new File("target" + File.separator + "failure_screenshots" + File.separator).mkdirs();
@@ -73,7 +73,7 @@ public class WebDriverListener implements IInvokedMethodListener {
                 File scrFile = ((TakesScreenshot) LocalDriverManager.getDriverController()
                         .getDriver()).getScreenshotAs(OutputType.FILE);
                 FileUtils.copyFile(scrFile, new File("target" + File.separator + "failure_screenshots" +
-                        File.separator + methodName + "_" + formater.format(calendar.getTime()) + "_webdriver.png"));
+                        File.separator + methodName + "_" + formater.format(calendar.getTime()) + "_" + LocalDriverManager.getDriverController().getBrowser() + "_webdriver.png"));
             }
         } catch (Exception e1) {
             e1.printStackTrace();
