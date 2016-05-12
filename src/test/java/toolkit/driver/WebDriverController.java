@@ -27,7 +27,6 @@ public class WebDriverController {
 
     private WebDriver driver;
     private static WebDriverWait waitDriver;
-    private static Logger log = Logger.getLogger(WebDriverController.class);
     public static final int TIMEOUT = Integer.parseInt(YamlConfigProvider.getAppParameters("Timeout"));
     private String browser = "";
 
@@ -43,7 +42,7 @@ public class WebDriverController {
     }
 
 
-    public String getBrowser() {
+    String getBrowser() {
         return browser;
     }
 
@@ -52,22 +51,10 @@ public class WebDriverController {
             browser = YamlConfigProvider.getAppParameters("browser");
         }
 
-        DesiredCapabilities capabilitiesFF = createCapabilitiesFF();
-
-        DesiredCapabilities capabilitiesIe = DesiredCapabilities.internetExplorer();
-        ProxyHelper.setCapabilities(capabilitiesIe);
-        capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-
-        DesiredCapabilities capabilitiesOpera = DesiredCapabilities.operaBlink();
-        capabilitiesOpera.setCapability("opera.arguments", "-fullscreen");
-        capabilitiesOpera.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-
-        DesiredCapabilities capabilitiesChrome = DesiredCapabilities.chrome();
-        ProxyHelper.setCapabilities(capabilitiesChrome);
-
         switch (browser) {
             case "firefox": {
                 try {
+                    DesiredCapabilities capabilitiesFF = createCapabilitiesFF();
                     driver = new FirefoxDriver(capabilitiesFF);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -77,6 +64,9 @@ public class WebDriverController {
             }
             case "ie":
                 try {
+                    DesiredCapabilities capabilitiesIe = DesiredCapabilities.internetExplorer();
+                    ProxyHelper.setCapabilities(capabilitiesIe);
+                    capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                     System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
                     driver = new InternetExplorerDriver(capabilitiesIe);
                 } catch (Exception e) {
@@ -86,6 +76,8 @@ public class WebDriverController {
                 break;
             case "chrome":
                 try {
+                    DesiredCapabilities capabilitiesChrome = DesiredCapabilities.chrome();
+                    ProxyHelper.setCapabilities(capabilitiesChrome);
                     System.setProperty("webdriver.chrome.driver", "lib" + File.separator + (OperationSystem.instance.isLinux() ? "chromedriver" : "chromedriver.exe"));
                     driver = new ChromeDriver(capabilitiesChrome);
                 } catch (Exception e) {
@@ -95,6 +87,9 @@ public class WebDriverController {
                 break;
             case "opera": {
                 try {
+                    DesiredCapabilities capabilitiesOpera = DesiredCapabilities.operaBlink();
+                    capabilitiesOpera.setCapability("opera.arguments", "-fullscreen");
+                    capabilitiesOpera.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                     driver = new org.openqa.selenium.opera.OperaDriver(capabilitiesOpera);
                 } catch (Exception e) {
                     throw new RuntimeException("There was a problem with start opera driver");
@@ -170,9 +165,6 @@ public class WebDriverController {
         return waitDriver;
     }
 
-    public String getPageAddress() {
-        return driver.getCurrentUrl();
-    }
 
     public void goToUrl(String url) {
         driver.get(url);
@@ -239,7 +231,7 @@ public class WebDriverController {
     }
 
 
-    public void shutdown() {
+    void shutdown() {
         try {
             driver.quit();
             driver = null;

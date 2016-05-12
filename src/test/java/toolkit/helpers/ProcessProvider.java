@@ -97,7 +97,7 @@ public class ProcessProvider {
         return processList;
     }
 
-    public static boolean isProcessPresent(String processName) {
+    private static boolean isProcessPresent(String processName) {
         List<String> processList = new ArrayList<>();
         try {
             processList = getProcessList();

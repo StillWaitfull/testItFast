@@ -3,7 +3,7 @@ configName: google.yml
 firebug: true
 firebug-version: 2.0.7
 # Browser for launching tests
-browser: firefox
+browser: phantom
 #Timeout
 Timeout: 30
 

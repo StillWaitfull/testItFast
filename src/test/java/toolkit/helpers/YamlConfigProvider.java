@@ -9,13 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 
 
-/**
- * Created with IntelliJ IDEA.
- * User: Sergey.Kashapov
- * Date: 14.05.14
- * Time: 11:02
- * To change this template use File | Settings | File Templates.
- */
+
 public class YamlConfigProvider extends AbstractTest {
     private static Yaml yaml = new Yaml();
     private static String configFilePath = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "configs" + File.separator;

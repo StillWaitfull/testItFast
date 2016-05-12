@@ -11,7 +11,7 @@ import java.util.*;
 
 
 /**
- * I am gonna pass two images and I am gonna recort only the differences
+ * I am gonna pass two images and I am gonna record only the differences
  * trying to catch if there is a different object or not int the scene
  */
 public class CheckingDifferentImages {

@@ -5,8 +5,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.*;
@@ -16,15 +15,15 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import toolkit.METHODS;
 
+import java.net.URI;
 import java.util.List;
 
 
 public class RequestClient {
     private String responseText = "";
     private String baseUrl = YamlConfigProvider.getStageParameters("baseUrl");
-    static Logger log = Logger.getLogger(RequestClient.class);
-    private String requestLine = "";
-    private RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.BEST_MATCH).build();
+    private static Logger log = Logger.getLogger(RequestClient.class);
+    private RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
     private CookieStore cookieStore = new BasicCookieStore();
     private HttpClientContext context = HttpClientContext.create();
     private CloseableHttpClient httpClient = HttpClients.custom().setRedirectStrategy(new LaxRedirectStrategy()).setDefaultRequestConfig(globalConfig).setDefaultCookieStore(cookieStore).build();
@@ -42,7 +41,7 @@ public class RequestClient {
         HttpRequestBase request;
         try {
             request = method.getMethod(builder.build());
-            requestLine = request.getRequestLine().toString();
+            String requestLine = request.getRequestLine().toString();
             if (headers != null)
                 for (BasicHeader header : headers) request.addHeader(header);
             log.info("Request is " + requestLine);
@@ -71,6 +70,35 @@ public class RequestClient {
             e.printStackTrace();
         }
         return this;
+    }
+
+
+     private enum METHODS {
+
+        GET {
+            @Override
+            public HttpRequestBase getMethod(URI uri) {
+                return new HttpGet(uri);
+            }
+        }, POST {
+            @Override
+            public HttpRequestBase getMethod(URI uri) {
+                return new HttpPost(uri);
+            }
+        }, PUT {
+            @Override
+            public HttpRequestBase getMethod(URI uri) {
+                return new HttpPut(uri);
+            }
+        }, DELETE {
+            @Override
+            public HttpRequestBase getMethod(URI uri) {
+                return new HttpDelete(uri);
+            }
+        };
+
+        public abstract HttpRequestBase getMethod(URI uri);
+
     }
 
 
