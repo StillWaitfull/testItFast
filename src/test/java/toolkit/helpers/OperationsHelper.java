@@ -1,10 +1,12 @@
 package toolkit.helpers;
 
+import com.google.common.collect.Iterables;
 import composite.IPage;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -88,6 +90,20 @@ public abstract class OperationsHelper implements IPage {
     }
 
     @Override
+    public IPage switchTo(String iFrame) {
+        waitForNumberOfWindowsToEqual(2);
+        driver.switchTo(iFrame);
+        return this;
+    }
+
+    @Override
+    public IPage switchToOtherWindow() {
+        waitForNumberOfWindowsToEqual(2);
+        driver.switchToWindow(Iterables.getLast(driver.getWindowHandles()));
+        return this;
+    }
+
+    @Override
     public String getAlertText() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
@@ -106,8 +122,8 @@ public abstract class OperationsHelper implements IPage {
         return this;
     }
 
-    @Override
-    public void waitForElementPresent(By by) {
+
+    private void waitForElementPresent(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
         } catch (TimeoutException e) {
@@ -115,6 +131,9 @@ public abstract class OperationsHelper implements IPage {
         }
     }
 
+    private void waitForNumberOfWindowsToEqual(final int numberOfWindows) {
+        waitDriver.until((ExpectedCondition<Boolean>) driver1 -> driver1.getWindowHandles().size() == numberOfWindows);
+    }
 
     @Override
     public IPage clickOnStalenessElement(final By by) {
@@ -149,7 +168,7 @@ public abstract class OperationsHelper implements IPage {
         return this;
     }
 
-    @Override
+
     public IPage waitForNotAttribute(final By by, final String attribute, final String value) {
         try {
             waitDriver.until((WebDriver d) -> d.findElement(by)
@@ -163,7 +182,7 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
+
     public IPage waitForTextPresent(final String text) {
         try {
             waitDriver.until((WebDriver d) -> d.getPageSource().contains(text));
@@ -181,7 +200,7 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
+
     public void waitForVisible(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> isVisible(by));
@@ -190,7 +209,7 @@ public abstract class OperationsHelper implements IPage {
         }
     }
 
-    @Override
+
     public void waitForNotVisible(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> !isVisible(by));

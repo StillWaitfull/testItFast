@@ -20,27 +20,24 @@ public interface IPage {
 
     IPage clickOkInAlert();
 
-    void waitForElementPresent(By by);
 
     IPage clickOnStalenessElement(By by);
 
     IPage clickCancelInAlert();
 
-    IPage waitForNotAttribute(By by, String attribute, String value);
-
-    IPage waitForTextPresent(String text);
 
     java.util.List<WebElement> findElements(By by);
 
-    void waitForVisible(By by);
-
-    void waitForNotVisible(By by);
 
     String getSrcOfElement(By by);
 
     String getCurrentUrl();
 
     IPage selectValueInDropDown(By by, String optionValue);
+
+    IPage switchTo(String iFrame);
+
+    IPage switchToOtherWindow();
 
     IPage submit(By by);
 
