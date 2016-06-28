@@ -13,7 +13,6 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import toolkit.METHODS;
 
 import java.net.URI;
 import java.util.List;
@@ -26,7 +25,9 @@ public class RequestClient {
     private RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
     private CookieStore cookieStore = new BasicCookieStore();
     private HttpClientContext context = HttpClientContext.create();
-    private CloseableHttpClient httpClient = HttpClients.custom().setRedirectStrategy(new LaxRedirectStrategy()).setDefaultRequestConfig(globalConfig).setDefaultCookieStore(cookieStore).build();
+    private CloseableHttpClient httpClient = HttpClients.custom().setRedirectStrategy(new LaxRedirectStrategy()).setDefaultRequestConfig(globalConfig)
+            .setDefaultCookieStore(cookieStore)
+            .build();
 
     {
         context.setCookieStore(cookieStore);
@@ -73,7 +74,7 @@ public class RequestClient {
     }
 
 
-     private enum METHODS {
+    private enum METHODS {
 
         GET {
             @Override

@@ -19,20 +19,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WebDriverListener implements IInvokedMethodListener {
     private Logger log4j = Logger.getLogger(WebDriverListener.class);
     private ThreadLocal<String> browser = new ThreadLocal<>();
+    private static ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         String methodName = method.getTestMethod().getMethodName();
         if (method.isTestMethod()) {
-            log4j.info(methodName);
             if (!RetryListener.get().getNameMethod().equals(methodName))
                 RetryListener.get().count = new AtomicInteger(RetryListener.maxRetryCount);
             RetryListener.get().setNameMethod(methodName);
         } else {
-            if (methodName.equals("setBrowser") && testResult.getParameters().length != 0) {
-                Object br = testResult.getParameters()[0];
-                if (br != null)
-                    browser.set(br.toString());
+            if (methodName.equals("setBrowser") && testResult.getParameters()[0] != null) {
+                browser.set(testResult.getParameters()[0].toString());
             }
         }
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod()) {
@@ -41,7 +39,6 @@ public class WebDriverListener implements IInvokedMethodListener {
     }
 
 
-    private static ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
@@ -50,10 +47,8 @@ public class WebDriverListener implements IInvokedMethodListener {
                 IsKnownBug clazz = testResult.getMethod().getMethod().getAnnotation(IsKnownBug.class);
                 Assert.fail(clazz.getBugUrl() + " " + clazz.getBugDescription());
             }
-            if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus() != 3) {
-                ITestNGMethod method1 = testResult.getMethod();
-                method1.setRetryAnalyzer(RetryListener.get());
-                method1.getRetryAnalyzer().retry(testResult);
+            if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus() != ITestResult.SKIP) {
+                method.getTestMethod().setRetryAnalyzer(RetryListener.get());
                 makeScreenshot(testResult.getName());
                 log4j.error(
                         "Test FAILED! Method:" + testResult.getName() + ". StackTrace is " + Throwables.getStackTraceAsString(
