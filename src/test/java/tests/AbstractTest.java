@@ -30,7 +30,6 @@ public abstract class AbstractTest {
     @AfterSuite
     public void cleanPool() {
         LocalDriverManager.cleanThreadPool();
-        CheckingDifferentImages.deleteFileInDirectory(CheckingDifferentImages.TEST_SCREENS_PATH);
         if (!CheckingDifferentImages.failedTests.isEmpty())
             Assert.fail("There was errors in frontend tests \n" + CheckingDifferentImages.failedTests.stream().collect(Collectors.joining("\n")));
         ProxyHelper.stopProxy();

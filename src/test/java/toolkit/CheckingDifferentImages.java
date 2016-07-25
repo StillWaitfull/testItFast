@@ -15,20 +15,21 @@ import java.util.*;
  * trying to catch if there is a different object or not int the scene
  */
 public class CheckingDifferentImages {
-    private boolean isTest;
+    private static boolean isTest;
 
     private static Logger log = Logger.getLogger(CheckingDifferentImages.class);
-    public static String ETALON_PATH = "etalon";
-    public static String TEST_PATH = "4test";
+
+    private static String PATH = "screenshots" + File.separator;
+    public static String ETALON_PATH = "etalon" + File.separator;
+    public static String TEST_PATH = "4test" + File.separator;
     public static java.util.List<String> failedTests = new ArrayList<>();
-    public static String TEST_SCREENS_PATH = "screenshots" + File.separator + TEST_PATH + File.separator;
 
     {
         if (System.getenv("isTest") == null)
             isTest = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("isTest"));
     }
 
-    public boolean getIsTest() {
+    public static boolean getIsTest() {
         return isTest;
     }
 
@@ -53,8 +54,8 @@ public class CheckingDifferentImages {
         try {
             //loading the two pictures
             //read and load the image
-            String firstPath = "screenshots" + File.separator + ETALON_PATH + File.separator + name + ".png";
-            String secondPath = TEST_SCREENS_PATH + name + ".png";
+            String firstPath = PATH + ETALON_PATH + name + ".png";
+            String secondPath = PATH + TEST_PATH + name + ".png";
             BufferedImage input = ImageIO.read(new File(firstPath));
             //build an image with the same dimension of the file read
             im1 = new BufferedImage(input.getWidth(), input.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -127,11 +128,11 @@ public class CheckingDifferentImages {
             } //h
             if (accuracy < area) {
                 log.info("Difference is more than " + accuracy + " pixels and it is " + area);
-                File fileScreenshot = new File("target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference);
+                File fileScreenshot = new File("target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference+".png");
                 fileScreenshot.getParentFile().mkdirs();
                 ImageIO.write(resultImage, "PNG", fileScreenshot);
-                log.info("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference);
-                failedTests.add("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference);
+                log.info("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference+".png");
+                failedTests.add("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference+".png");
             } else {
                 log.info("Everything is ok!");
             }
