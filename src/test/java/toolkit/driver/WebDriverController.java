@@ -78,7 +78,7 @@ public class WebDriverController {
                 try {
                     DesiredCapabilities capabilitiesChrome = DesiredCapabilities.chrome();
                     ProxyHelper.setCapabilities(capabilitiesChrome);
-                    System.setProperty("webdriver.chrome.driver", "lib" + File.separator + (OperationSystem.instance.isLinux() ? "chromedriver" : "chromedriver.exe"));
+                    System.setProperty("webdriver.chrome.driver", "lib" + File.separator + "chromedriver" + OperationSystem.instance.getExecutableSuffix());
                     driver = new ChromeDriver(capabilitiesChrome);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -142,7 +142,7 @@ public class WebDriverController {
         DesiredCapabilities capabilitiesPhantom = DesiredCapabilities.phantomjs();
         String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
-        capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator + (OperationSystem.instance.isLinux() ? "phantomjs" : "phantomjs.exe"));
+        capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator +  "phantomjs"+  OperationSystem.instance.getExecutableSuffix());
         capabilitiesPhantom.setCapability("phantomjs.page.settings.userAgent", userAgent);
         return capabilitiesPhantom;
     }
