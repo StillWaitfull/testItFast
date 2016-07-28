@@ -49,7 +49,8 @@ public class WebDriverListener implements IInvokedMethodListener {
             }
             if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus() != ITestResult.SKIP) {
                 method.getTestMethod().setRetryAnalyzer(RetryListener.get());
-                makeScreenshot(testResult.getName());
+                if (!RetryListener.get().isRetryAvailable())
+                    makeScreenshot(testResult.getName());
                 log4j.error(
                         "Test FAILED! Method:" + testResult.getName() + ". StackTrace is " + Throwables.getStackTraceAsString(
                                 testResult.getThrowable()));
@@ -57,6 +58,7 @@ public class WebDriverListener implements IInvokedMethodListener {
             }
         }
     }
+
 
 
     private void makeScreenshot(String methodName) {
