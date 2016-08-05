@@ -38,7 +38,7 @@ public class WebDriverController {
         this.dimension = dimension;
         if (dimension == null) {
             driver.manage().window().maximize();
-            this.dimension = new Dimension(1920, 1080);
+            this.dimension =  driver.manage().window().getSize();
         } else setWindowSize(dimension);
         driver.switchTo();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
