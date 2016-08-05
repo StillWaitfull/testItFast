@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Google_suite" parallel="methods" thread-count="2">
+    <test name="TestsDesktop">
+        <classes>
+            <class name="tests.GoogleTest"/>
+        </classes>
+    </test>
+    <test name="1024x768">
+        <parameter name="dimensionW" value="1024"/>
+        <parameter name="dimensionH" value="768"/>
+        <classes>
+            <class name="tests.GoogleTest"/>
+        </classes>
+    </test>
+</suite>

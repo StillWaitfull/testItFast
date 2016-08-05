@@ -21,8 +21,8 @@ import java.util.Arrays;
 public abstract class OperationsHelper implements IPage {
 
     private static Logger log = Logger.getLogger(OperationsHelper.class);
-    private WebDriverWait waitDriver = WebDriverController.getInstanceWaitDriver();
     private WebDriverController driver = LocalDriverManager.getDriverController();
+    private WebDriverWait waitDriver = driver.getInstanceWaitDriver();
     protected static String baseUrl;
 
 

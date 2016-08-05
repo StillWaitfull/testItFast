@@ -5,20 +5,24 @@ import org.testng.annotations.*;
 import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.ProxyHelper;
-import toolkit.driver.TestListenerAd;
 import toolkit.driver.WebDriverListener;
 
 import java.util.stream.Collectors;
 
 
 
-@Listeners({WebDriverListener.class, TestListenerAd.class})
+@Listeners({WebDriverListener.class})
 public abstract class AbstractTest {
 
 
-    @BeforeMethod
+    @BeforeTest
     @Parameters({"browser"})
     public void setBrowser(@Optional String browser) {
+    }
+
+    @BeforeTest
+    @Parameters({"dimensionH", "dimensionW"})
+    public void setDimension(@Optional String dimensionH, @Optional String dimensionW) {
     }
 
     @AfterMethod
@@ -27,9 +31,13 @@ public abstract class AbstractTest {
             LocalDriverManager.getDriverController().deleteAllCookies();
     }
 
-    @AfterSuite
+    @AfterTest
     public void cleanPool() {
         LocalDriverManager.cleanThreadPool();
+    }
+
+    @AfterSuite
+    public void stopServices(){
         if (!CheckingDifferentImages.failedTests.isEmpty())
             Assert.fail("There was errors in frontend tests \n" + CheckingDifferentImages.failedTests.stream().collect(Collectors.joining("\n")));
         ProxyHelper.stopProxy();

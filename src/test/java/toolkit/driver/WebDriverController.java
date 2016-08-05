@@ -1,7 +1,6 @@
 package toolkit.driver;
 
 import common.OperationSystem;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -26,21 +25,33 @@ import java.util.concurrent.TimeUnit;
 public class WebDriverController {
 
     private WebDriver driver;
-    private static WebDriverWait waitDriver;
     public static final int TIMEOUT = Integer.parseInt(YamlConfigProvider.getAppParameters("Timeout"));
     private String browser = "";
+    private Dimension dimension;
 
-    WebDriverController(String browser) {
+    WebDriverController(String browser, Dimension dimension) {
         this.browser = browser;
         ProxyHelper.initProxy();
         setBrowser(browser);
         driver.manage().timeouts().setScriptTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
+        this.dimension = dimension;
+        if (dimension == null) {
+            driver.manage().window().maximize();
+            this.dimension = new Dimension(1920, 1080);
+        } else setWindowSize(dimension);
         driver.switchTo();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
+
+    public void setWindowSize(Dimension dimension) {
+        driver.manage().window().setSize(dimension);
+    }
+
+    public void maximizeWindow() {
+        driver.manage().window().maximize();
+    }
 
     String getBrowser() {
         return browser;
@@ -49,6 +60,7 @@ public class WebDriverController {
     private void setBrowser(String browser) {
         if (browser == null) {
             browser = YamlConfigProvider.getAppParameters("browser");
+            this.browser = browser;
         }
 
         switch (browser) {
@@ -112,6 +124,7 @@ public class WebDriverController {
         DesiredCapabilities capabilitiesFF = new DesiredCapabilities();
         ProxyHelper.setCapabilities(capabilitiesFF);
         FirefoxProfile firefoxProfile = new FirefoxProfile();
+        System.setProperty("webdriver.gecko.driver", "lib" + File.separator + "geckodriver" + OperationSystem.instance.getExecutableSuffix());
         String versionFirebug = YamlConfigProvider.getAppParameters("firebug-version");
         if (YamlConfigProvider.getAppParameters("firebug").equals("true")) {
             try {
@@ -133,6 +146,7 @@ public class WebDriverController {
         capabilitiesFF.setBrowserName("firefox");
         capabilitiesFF.setPlatform(Platform.ANY);
         capabilitiesFF.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
+        capabilitiesFF.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
         return capabilitiesFF;
     }
 
@@ -142,7 +156,7 @@ public class WebDriverController {
         DesiredCapabilities capabilitiesPhantom = DesiredCapabilities.phantomjs();
         String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
-        capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator +  "phantomjs"+  OperationSystem.instance.getExecutableSuffix());
+        capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator + "phantomjs" + OperationSystem.instance.getExecutableSuffix());
         capabilitiesPhantom.setCapability("phantomjs.page.settings.userAgent", userAgent);
         return capabilitiesPhantom;
     }
@@ -158,11 +172,8 @@ public class WebDriverController {
     }
 
 
-    public static WebDriverWait getInstanceWaitDriver() {
-        if (waitDriver == null) {
-            waitDriver = new WebDriverWait(LocalDriverManager.getDriverController().getDriver(), TIMEOUT);
-        }
-        return waitDriver;
+    public WebDriverWait getInstanceWaitDriver() {
+        return new WebDriverWait(LocalDriverManager.getDriverController().getDriver(), TIMEOUT);
     }
 
 
@@ -303,5 +314,13 @@ public class WebDriverController {
         driver.switchTo().defaultContent();
     }
 
+    Dimension getDimension() {
+        return dimension;
+    }
 
+    String getStringDimension() {
+        if (dimension != null)
+            return dimension.getWidth() + "X" + dimension.getHeight();
+        else return "";
+    }
 }

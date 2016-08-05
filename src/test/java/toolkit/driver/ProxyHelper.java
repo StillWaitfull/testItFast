@@ -23,13 +23,13 @@ public class ProxyHelper {
     private static Logger log = Logger.getLogger(ProxyHelper.class);
     private static final Integer proxyPort = Integer.valueOf(YamlConfigProvider.getAppParameters("proxyPort"));
     // private static ProxyServer server = new ProxyServer(proxyPort);
-    private static BrowserMobProxy server = new BrowserMobProxyServer(proxyPort);
+    private static BrowserMobProxy server = new BrowserMobProxyServer();
     private static boolean needProxy = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("enableProxy"));
     private static Proxy proxy = new Proxy();
 
     static {
         if (needProxy) {
-            server.start();
+            server.start(proxyPort);
             server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
             server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
 
