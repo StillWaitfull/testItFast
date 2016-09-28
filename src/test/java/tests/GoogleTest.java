@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 public class GoogleTest extends AbstractTest {
 
+
     @Test
     public void googleTest() {
         IPage googlePage = new GooglePage();

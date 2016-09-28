@@ -1,13 +1,13 @@
 package toolkit;
 
 import org.apache.log4j.Logger;
-import toolkit.helpers.YamlConfigProvider;
+import tests.AbstractTest;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
 
 
 /**
@@ -26,7 +26,7 @@ public class CheckingDifferentImages {
 
     {
         if (System.getenv("isTest") == null)
-            isTest = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("isTest"));
+            isTest = Boolean.parseBoolean(AbstractTest.applicationConfig.getIsTest());
     }
 
     public static boolean getIsTest() {
@@ -128,11 +128,11 @@ public class CheckingDifferentImages {
             } //h
             if (accuracy < area) {
                 log.info("Difference is more than " + accuracy + " pixels and it is " + area);
-                File fileScreenshot = new File("target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference+".png");
+                File fileScreenshot = new File("target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference + ".png");
                 fileScreenshot.getParentFile().mkdirs();
                 ImageIO.write(resultImage, "PNG", fileScreenshot);
-                log.info("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference+".png");
-                failedTests.add("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference+".png");
+                log.info("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference + ".png");
+                failedTests.add("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference + ".png");
             } else {
                 log.info("Everything is ok!");
             }

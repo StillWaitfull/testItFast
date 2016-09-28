@@ -17,10 +17,12 @@ import org.apache.log4j.Logger;
 import java.net.URI;
 import java.util.List;
 
+import static tests.AbstractTest.stageConfig;
+
 
 public class RequestClient {
     private String responseText = "";
-    private String baseUrl = YamlConfigProvider.getStageParameters("baseUrl");
+    private String baseUrl = stageConfig.getBaseUrl();
     private static Logger log = Logger.getLogger(RequestClient.class);
     private RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
     private CookieStore cookieStore = new BasicCookieStore();

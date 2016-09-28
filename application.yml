@@ -1,4 +1,4 @@
-configName: google.yml
+configName: live
 # To switch on the Firebug plugin
 firebug: true
 firebug-version: 2.0.7
@@ -9,8 +9,8 @@ Timeout: 30
 
 
 #Dimension
-dimensionH: ""
-dimensionW: ""
+dimensionH:
+dimensionW:
 
 #For proxy
 enableProxy: true

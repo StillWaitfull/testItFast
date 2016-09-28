@@ -12,10 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RetryListener implements IRetryAnalyzer {
 
     static int maxRetryCount = 2;
-     AtomicInteger count = new AtomicInteger(maxRetryCount);
+    AtomicInteger count = new AtomicInteger(maxRetryCount);
     private Logger logger = Logger.getLogger(RetryListener.class);
     private static ThreadLocal<RetryListener> retryListenerThreadLocal = new ThreadLocal<>();
-    private String nameMethod="";
+    private String nameMethod = "";
 
 
     @Override

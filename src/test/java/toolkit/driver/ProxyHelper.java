@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import toolkit.helpers.YamlConfigProvider;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,14 +16,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import static tests.AbstractTest.applicationConfig;
+
 
 public class ProxyHelper {
 
     private static Logger log = Logger.getLogger(ProxyHelper.class);
-    private static final Integer proxyPort = Integer.valueOf(YamlConfigProvider.getAppParameters("proxyPort"));
+    private static final Integer proxyPort = Integer.valueOf(applicationConfig.getProxyPort());
     // private static ProxyServer server = new ProxyServer(proxyPort);
     private static BrowserMobProxy server = new BrowserMobProxyServer();
-    private static boolean needProxy = Boolean.parseBoolean(YamlConfigProvider.getAppParameters("enableProxy"));
+    private static boolean needProxy = Boolean.parseBoolean(applicationConfig.getEnableProxy());
     private static Proxy proxy = new Proxy();
 
     static {
@@ -36,7 +37,7 @@ public class ProxyHelper {
         }
     }
 
-    static void initProxy() {
+    public static void initProxy() {
         try {
             if (!needProxy)
                 proxy.setAutodetect(true);
@@ -59,7 +60,7 @@ public class ProxyHelper {
     }
 
 
-    static void setCapabilities(DesiredCapabilities capabilities) {
+    public static void setCapabilities(DesiredCapabilities capabilities) {
         capabilities.setCapability(CapabilityType.PROXY, proxy);
     }
 

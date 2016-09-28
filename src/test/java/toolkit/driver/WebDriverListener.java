@@ -9,13 +9,14 @@ import org.openqa.selenium.TakesScreenshot;
 import org.testng.*;
 import toolkit.IsKnownBug;
 import toolkit.helpers.OperationsHelper;
-import toolkit.helpers.YamlConfigProvider;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static tests.AbstractTest.applicationConfig;
 
 
 public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener {
@@ -46,8 +47,8 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
 
 
     private Dimension setDimensionFromAppConfig() {
-        String dimensionW = YamlConfigProvider.getAppParameters("dimensionW");
-        String dimensionH = YamlConfigProvider.getAppParameters("dimensionH");
+        String dimensionW = applicationConfig.getDimensionW();
+        String dimensionH = applicationConfig.getDimensionH();
         if (dimensionH.isEmpty() && dimensionW.isEmpty())
             return null;
         else return new Dimension(Integer.parseInt(dimensionW), Integer.parseInt(dimensionH));

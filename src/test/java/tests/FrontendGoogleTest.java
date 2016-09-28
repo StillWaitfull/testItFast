@@ -15,14 +15,14 @@ public class FrontendGoogleTest extends AbstractTest {
     public void googleTest() {
         String name = "googleTest";
         IPage googlePage = new GooglePage();
-        CheckingDifferentImages checkingDifferentImages=new CheckingDifferentImages();
+        CheckingDifferentImages checkingDifferentImages = new CheckingDifferentImages();
         googlePage.openPage()
                 .type(GooglePage.query, "1")
-                .makeScreenshotForDiff(name,CheckingDifferentImages.getIsTest());
+                .makeScreenshotForDiff(name, CheckingDifferentImages.getIsTest());
         checkingDifferentImages.turnOnInTest();
         googlePage.openPage()
                 .type(GooglePage.query, "3")
-                .makeScreenshotForDiff(name,CheckingDifferentImages.getIsTest());
+                .makeScreenshotForDiff(name, CheckingDifferentImages.getIsTest());
         checkingDifferentImages.checkDifference(name, name + "_diff", 1);
     }
 }

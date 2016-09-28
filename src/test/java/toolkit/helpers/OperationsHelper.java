@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static tests.AbstractTest.stageConfig;
+
 public abstract class OperationsHelper implements IPage {
 
     private static Logger log = Logger.getLogger(OperationsHelper.class);
@@ -29,7 +31,7 @@ public abstract class OperationsHelper implements IPage {
     static {
         String envBaseUrl = System.getenv("baseUrl");
         if (envBaseUrl == null)
-            baseUrl = YamlConfigProvider.getStageParameters("baseUrl");
+            baseUrl = stageConfig.getBaseUrl();
     }
 
     /**
@@ -182,7 +184,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-
     public IPage waitForTextPresent(final String text) {
         try {
             waitDriver.until((WebDriver d) -> d.getPageSource().contains(text));
@@ -198,7 +199,6 @@ public abstract class OperationsHelper implements IPage {
         waitForElementPresent(by);
         return driver.findElements(by);
     }
-
 
 
     public void waitForVisible(By by) {
