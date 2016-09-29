@@ -3,11 +3,13 @@ package tests;
 import composite.IPage;
 import composite.pages.GooglePage;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
 import toolkit.CheckingDifferentImages;
 
 /**
  * Created by Restore on 11/6/14.
  */
+@Features(value = "Google Tests")
 public class FrontendGoogleTest extends AbstractTest {
 
 

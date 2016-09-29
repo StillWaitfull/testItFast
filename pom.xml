@@ -11,7 +11,8 @@
     <properties>
         <suiteFile>${env.suite_file}</suiteFile>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aspectj.version>1.7.4</aspectj.version>
+        <aspectj.version>1.8.8</aspectj.version>
+        <allure.issues.tracker.pattern>https://jira/%s</allure.issues.tracker.pattern>
         <allure.version>1.4.23.HOTFIX1</allure.version>
     </properties>
     <reporting>
@@ -20,7 +21,12 @@
             <plugin>
                 <groupId>ru.yandex.qatools.allure</groupId>
                 <artifactId>allure-maven-plugin</artifactId>
-                <version>2.2</version>
+                <version>2.5</version>
+                <configuration>
+                    <properties>
+                        <allure.issues.tracker.pattern>${allure.issues.tracker.pattern}</allure.issues.tracker.pattern>
+                    </properties>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>

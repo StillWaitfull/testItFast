@@ -7,10 +7,13 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.testng.*;
+import ru.yandex.qatools.allure.annotations.Attachment;
 import toolkit.IsKnownBug;
 import toolkit.helpers.OperationsHelper;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -74,21 +77,27 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
     }
 
 
-    private void makeScreenshot(String methodName) {
+    @Attachment(value = "{0}", type = "image/png")
+    private byte[] makeScreenshot(String methodName) {
         Calendar calendar = Calendar.getInstance();
+        String path = "";
         SimpleDateFormat formater = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
         new File("target" + File.separator + "failure_screenshots" + File.separator).mkdirs();
         try {
             if (LocalDriverManager.getDriverController() != null) {
                 File scrFile = ((TakesScreenshot) LocalDriverManager.getDriverController()
                         .getDriver()).getScreenshotAs(OutputType.FILE);
-                FileUtils.copyFile(scrFile, new File("target" + File.separator + "failure_screenshots" +
-                        File.separator + methodName + "_" + formater.format(calendar.getTime()) + "_" + LocalDriverManager.getDriverController().getBrowser() + "_"
-                        + LocalDriverManager.getDriverController().getDimension() + "_webdriver.png"));
+                path = "target" + File.separator + "failure_screenshots" +
+                        File.separator + methodName + "_" + formater.format(calendar.getTime())
+                        + "_" + LocalDriverManager.getDriverController().getBrowser()
+                        + "_" + LocalDriverManager.getDriverController().getDimension() + "_webdriver.png";
+                FileUtils.copyFile(scrFile, new File(path));
+                return Files.readAllBytes(Paths.get(path));
             }
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+        throw new RuntimeException("There is a problem with screenshot");
 
     }
 

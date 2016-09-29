@@ -4,8 +4,9 @@ import composite.IPage;
 import composite.pages.GooglePage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Features;
 
-
+@Features(value = "Google Tests")
 public class GoogleTest extends AbstractTest {
 
 
