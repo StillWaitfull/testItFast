@@ -38,7 +38,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
             RetryListener.get().setNameMethod(methodName);
         }
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod() && !methodName.contains("NotDriver")) {
-            Map<String, String> params = testResult.getTestClass().getXmlClass().getAllParameters();
+            Map<String, String> params = testResult.getTestClass().getXmlTest().getAllParameters();
             String browser = params.get("browser");
             String dimensionH = params.get("dimensionH");
             String dimensionW = params.get("dimensionW");
