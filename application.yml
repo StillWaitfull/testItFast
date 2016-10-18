@@ -1,6 +1,6 @@
 configName: live
 # To switch on the Firebug plugin
-firebug: true
+firebug: false
 firebug-version: 2.0.7
 # Browser for launching tests
 browser: chrome
@@ -9,8 +9,9 @@ Timeout: 10
 
 
 #Dimension
-dimensionH:
+
 dimensionW:
+dimensionH:
 
 #For proxy
 enableProxy: true

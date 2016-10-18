@@ -12,75 +12,34 @@ import org.springframework.context.annotation.PropertySource;
 public class ApplicationConfig {
 
     @Value("${configName}")
-    private String configName;
+    public String CONFIG_NAME;
 
     @Value("${browser}")
-    private String browser;
+    public String BROWSER;
+
+    @Value("${firebug}")
+    public boolean IS_FIREBUG;
 
     @Value("${firebug-version}")
-    private String isFirebug;
-
-    @Value("${firebug-version}")
-    private String firebugVersion;
+    public String FIREBUG_VERSION;
 
     @Value("${Timeout}")
-    private String timeout;
+    public int TIMEOUT;
 
     @Value("${dimensionH}")
-    private String dimensionH;
+    public String DIMENSION_H;
 
     @Value("${dimensionW}")
-    private String dimensionW;
+    public String DIMENSION_W;
 
     @Value("${enableProxy}")
-    private String enableProxy;
+    public boolean ENABLE_PROXY;
 
     @Value("${proxyPort}")
-    private String proxyPort;
+    public int PROXY_PORT;
 
     @Value("${isTest}")
-    private String isTest;
-
-
-    public String getConfigName() {
-        return configName;
-    }
-
-    public String getBrowser() {
-        return browser;
-    }
-
-    public String getIsFirebug() {
-        return isFirebug;
-    }
-
-    public String getFirebugVersion() {
-        return firebugVersion;
-    }
-
-    public String getTimeout() {
-        return timeout;
-    }
-
-    public String getDimensionH() {
-        return dimensionH;
-    }
-
-    public String getDimensionW() {
-        return dimensionW;
-    }
-
-    public String getEnableProxy() {
-        return enableProxy;
-    }
-
-    public String getProxyPort() {
-        return proxyPort;
-    }
-
-    public String getIsTest() {
-        return isTest;
-    }
+    public boolean IS_TEST;
 
 
 }

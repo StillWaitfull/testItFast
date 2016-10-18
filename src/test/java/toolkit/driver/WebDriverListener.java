@@ -2,10 +2,11 @@ package toolkit.driver;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.*;
 import ru.yandex.qatools.allure.annotations.Attachment;
 import toolkit.IsKnownBug;
@@ -16,16 +17,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static tests.AbstractTest.applicationConfig;
+import static toolkit.helpers.Context.applicationConfig;
 
 
 public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener {
-    private Logger log4j = Logger.getLogger(WebDriverListener.class);
-    private static ThreadLocal<String> browser = new ThreadLocal<>();
-    private Dimension dimension = null;
+    private Logger log4j = LoggerFactory.getLogger(WebDriverListener.class);
+
     private static ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
 
     @Override
@@ -35,23 +36,24 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
             if (!RetryListener.get().getNameMethod().equals(methodName))
                 RetryListener.get().count = new AtomicInteger(RetryListener.maxRetryCount);
             RetryListener.get().setNameMethod(methodName);
-        } else {
-            if (methodName.equals("setBrowser") && testResult.getParameters()[0] != null) {
-                browser.set(testResult.getParameters()[0].toString());
-            }
-            if (methodName.equals("setDimension") && testResult.getParameters()[0] != null && testResult.getParameters()[1] != null)
-                dimension = new Dimension(Integer.valueOf((String) testResult.getParameters()[0]), Integer.valueOf((String) testResult.getParameters()[1]));
-            else dimension = setDimensionFromAppConfig();
         }
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod() && !methodName.contains("NotDriver")) {
-            LocalDriverManager.setWebDriverController(new WebDriverController(browser.get(), dimension));
+            Map<String, String> params = testResult.getTestClass().getXmlClass().getAllParameters();
+            String browser = params.get("browser");
+            String dimensionH = params.get("dimensionH");
+            String dimensionW = params.get("dimensionW");
+            Dimension dimension;
+            if (dimensionH != null && dimensionW != null)
+                dimension = new Dimension(Integer.valueOf(dimensionW), Integer.valueOf(dimensionH));
+            else dimension = setDimensionFromAppConfig();
+            LocalDriverManager.setWebDriverController(new WebDriverController(browser, dimension));
         }
     }
 
 
     private Dimension setDimensionFromAppConfig() {
-        String dimensionW = applicationConfig.getDimensionW();
-        String dimensionH = applicationConfig.getDimensionH();
+        String dimensionW = applicationConfig.DIMENSION_W;
+        String dimensionH = applicationConfig.DIMENSION_H;
         if (dimensionH.isEmpty() && dimensionW.isEmpty())
             return null;
         else return new Dimension(Integer.parseInt(dimensionW), Integer.parseInt(dimensionH));
@@ -64,7 +66,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
                 IsKnownBug clazz = testResult.getMethod().getMethod().getAnnotation(IsKnownBug.class);
                 Assert.fail(clazz.getBugUrl() + " " + clazz.getBugDescription());
             }
-            if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus() != ITestResult.SKIP) {
+            if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus() != ITestResult.SKIP && LocalDriverManager.getDriverController() != null) {
                 method.getTestMethod().setRetryAnalyzer(RetryListener.get());
                 if (!RetryListener.get().isRetryAvailable())
                     makeScreenshot(testResult.getName());

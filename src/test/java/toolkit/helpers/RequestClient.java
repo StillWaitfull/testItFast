@@ -12,18 +12,19 @@ import org.apache.http.impl.client.*;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.List;
 
-import static tests.AbstractTest.stageConfig;
+import static toolkit.helpers.Context.stageConfig;
 
 
 public class RequestClient {
     private String responseText = "";
-    private String baseUrl = stageConfig.getBaseUrl();
-    private static Logger log = Logger.getLogger(RequestClient.class);
+    private String baseUrl = stageConfig.BASE_URL;
+    private static Logger log = LoggerFactory.getLogger(RequestClient.class);
     private RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
     private CookieStore cookieStore = new BasicCookieStore();
     private HttpClientContext context = HttpClientContext.create();

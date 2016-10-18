@@ -2,6 +2,7 @@ package composite.pages;
 
 import composite.IPage;
 import org.openqa.selenium.By;
+import org.testng.Assert;
 import toolkit.helpers.OperationsHelper;
 
 /**
@@ -31,5 +32,12 @@ public class GooglePage extends OperationsHelper implements IPage {
         return this;
     }
 
+
+    public static Runnable[] getGooglePageAssertions(IPage page) {
+        return new Runnable[]{
+                () -> Assert.assertTrue(page.isVisible(GooglePage.button), "Google button is not visible"),
+                () -> Assert.assertTrue(page.isVisible(GooglePage.query), "Google query is not visible")
+        };
+    }
 
 }

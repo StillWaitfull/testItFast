@@ -1,6 +1,7 @@
 package toolkit.driver;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
@@ -11,9 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RetryListener implements IRetryAnalyzer {
 
-    static int maxRetryCount = 2;
+    static int maxRetryCount = 1;
     AtomicInteger count = new AtomicInteger(maxRetryCount);
-    private Logger logger = Logger.getLogger(RetryListener.class);
+    private Logger logger = LoggerFactory.getLogger(RetryListener.class);
     private static ThreadLocal<RetryListener> retryListenerThreadLocal = new ThreadLocal<>();
     private String nameMethod = "";
 

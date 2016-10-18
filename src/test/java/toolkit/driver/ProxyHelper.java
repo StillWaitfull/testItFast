@@ -4,10 +4,11 @@ import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,16 +17,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-import static tests.AbstractTest.applicationConfig;
+import static toolkit.helpers.Context.applicationConfig;
 
 
 public class ProxyHelper {
 
-    private static Logger log = Logger.getLogger(ProxyHelper.class);
-    private static final Integer proxyPort = Integer.valueOf(applicationConfig.getProxyPort());
+    private static Logger log = LoggerFactory.getLogger(ProxyHelper.class);
+    private static final int proxyPort = applicationConfig.PROXY_PORT;
     // private static ProxyServer server = new ProxyServer(proxyPort);
     private static BrowserMobProxy server = new BrowserMobProxyServer();
-    private static boolean needProxy = Boolean.parseBoolean(applicationConfig.getEnableProxy());
+    private static boolean needProxy = applicationConfig.ENABLE_PROXY;
     private static Proxy proxy = new Proxy();
 
     static {

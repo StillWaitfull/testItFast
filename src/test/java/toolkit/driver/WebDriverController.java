@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static tests.AbstractTest.applicationConfig;
-import static tests.AbstractTest.applicationContext;
+import static toolkit.helpers.Context.applicationConfig;
+import static toolkit.helpers.Context.applicationContext;
 
 public class WebDriverController {
 
 
     private WebDriver driver;
-    public static final int TIMEOUT = Integer.parseInt(applicationConfig.getTimeout());
+    public static final int TIMEOUT = applicationConfig.TIMEOUT;
     private String browser;
     private Dimension dimension;
 
@@ -25,8 +25,8 @@ public class WebDriverController {
         this.browser = browser;
         String browserEnv = System.getenv("browser");
         if (browser == null && browserEnv == null)
-            this.browser = applicationConfig.getBrowser();
-        else this.browser = browserEnv;
+            this.browser = applicationConfig.BROWSER;
+        if (browserEnv != null) this.browser = browserEnv;
         driver = applicationContext.getBean(this.browser, WebDriver.class);
         driver.manage().timeouts().setScriptTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);

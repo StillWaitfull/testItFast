@@ -2,7 +2,6 @@ package tests;
 
 import composite.IPage;
 import composite.pages.GooglePage;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 
@@ -17,8 +16,7 @@ public class GoogleTest extends AbstractTest {
                 .type(GooglePage.query, "0")
                 .click(GooglePage.button)
                 .assertThat(
-                        () -> Assert.assertTrue(googlePage.isVisible(GooglePage.button), "Google button is not visible"),
-                        () -> Assert.assertTrue(googlePage.isVisible(GooglePage.query), "Google query is not visible")
+                        GooglePage.getGooglePageAssertions(googlePage)
                 );
 
     }

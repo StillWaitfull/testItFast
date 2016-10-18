@@ -1,14 +1,16 @@
 package toolkit.helpers;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import composite.IPage;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
@@ -18,11 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static tests.AbstractTest.stageConfig;
+import static toolkit.helpers.Context.stageConfig;
+
 
 public abstract class OperationsHelper implements IPage {
 
-    private static Logger log = Logger.getLogger(OperationsHelper.class);
+    private static Logger log = LoggerFactory.getLogger(OperationsHelper.class);
     private WebDriverController driver = LocalDriverManager.getDriverController();
     private WebDriverWait waitDriver = driver.getInstanceWaitDriver();
     protected static String baseUrl;
@@ -31,7 +34,7 @@ public abstract class OperationsHelper implements IPage {
     static {
         String envBaseUrl = System.getenv("baseUrl");
         if (envBaseUrl == null)
-            baseUrl = stageConfig.getBaseUrl();
+            baseUrl = stageConfig.BASE_URL;
     }
 
     /**
@@ -124,13 +127,21 @@ public abstract class OperationsHelper implements IPage {
         return this;
     }
 
+    private void waitSmth(Predicate<WebDriver> predicate) {
+        try {
+            waitDriver.until(predicate);
+        } catch (WebDriverException ignored) {
+        }
+    }
+
 
     private void waitForElementPresent(By by) {
         try {
-            waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
+            waitSmth((WebDriver webDriver) -> isElementPresent(by));
         } catch (TimeoutException e) {
-            Assert.fail("Element is not present after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT);
         }
+
     }
 
     private void waitForNumberOfWindowsToEqual(final int numberOfWindows) {
@@ -173,12 +184,12 @@ public abstract class OperationsHelper implements IPage {
 
     public IPage waitForNotAttribute(final By by, final String attribute, final String value) {
         try {
-            waitDriver.until((WebDriver d) -> d.findElement(by)
+
+            waitSmth((WebDriver d) -> d.findElement(by)
                     .getAttribute(attribute)
                     .equals(value));
-
         } catch (TimeoutException e) {
-            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+            Assert.fail("Element attribute is not visible after " + WebDriverController.TIMEOUT);
         }
         return this;
     }
@@ -186,9 +197,9 @@ public abstract class OperationsHelper implements IPage {
 
     public IPage waitForTextPresent(final String text) {
         try {
-            waitDriver.until((WebDriver d) -> d.getPageSource().contains(text));
+            waitSmth((WebDriver d) -> d.getPageSource().contains(text));
         } catch (TimeoutException e) {
-            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+            Assert.fail("Text " + text + " is not visible after " + WebDriverController.TIMEOUT);
         }
         return this;
     }
@@ -203,20 +214,19 @@ public abstract class OperationsHelper implements IPage {
 
     public void waitForVisible(By by) {
         try {
-            waitDriver.until((WebDriver webDriver) -> isVisible(by));
+            waitSmth((WebDriver webDriver) -> isVisible(by));
         } catch (TimeoutException e) {
-            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
+            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT);
         }
     }
 
 
     public void waitForNotVisible(By by) {
         try {
-            waitDriver.until((WebDriver webDriver) -> !isVisible(by));
+            waitSmth((WebDriver webDriver) -> !isVisible(by));
         } catch (TimeoutException e) {
             Assert.fail("Element is visible after " + WebDriverController.TIMEOUT);
         }
-
     }
 
     @Override
@@ -283,10 +293,11 @@ public abstract class OperationsHelper implements IPage {
     @Override
     public IPage click(By by) {
         log.debug("Click on: " + by.toString());
-        waitForVisible(by);
+        waitForElementPresent(by);
         highlightTheElement(by);
-        new Actions(driver.getDriver()).click(driver.findElement(by)).build().perform();
+        driver.findElement(by).click();
         return this;
+
     }
 
     @Override
@@ -299,11 +310,11 @@ public abstract class OperationsHelper implements IPage {
     }
 
     @Override
-    public IPage simpleClick(By by) {
+    public IPage actionClick(By by) {
         log.debug("Click on: " + by.toString());
-        waitForElementPresent(by);
+        waitForVisible(by);
         highlightTheElement(by);
-        driver.findElement(by).click();
+        new Actions(driver.getDriver()).click(driver.findElement(by)).build().perform();
         return this;
     }
 
@@ -401,7 +412,7 @@ public abstract class OperationsHelper implements IPage {
         try {
             waitForElementPresent(by);
             return true;
-        } catch (TimeoutException e) {
+        } catch (AssertionError e) {
             return false;
         }
     }
@@ -410,9 +421,9 @@ public abstract class OperationsHelper implements IPage {
     @Override
     public boolean validateElementIsNotVisible(By by) {
         try {
-            waitDriver.until((WebDriver webDriver) -> !isVisible(by));
+            waitForNotVisible(by);
             return true;
-        } catch (TimeoutException e) {
+        } catch (AssertionError e) {
             return false;
         }
     }
@@ -421,9 +432,9 @@ public abstract class OperationsHelper implements IPage {
     @Override
     public boolean validateElementVisible(By by) {
         try {
-            waitDriver.until((WebDriver webDriver) -> isVisible(by));
+            waitForVisible(by);
             return true;
-        } catch (TimeoutException e) {
+        } catch (AssertionError e) {
             return false;
         }
 
@@ -441,18 +452,11 @@ public abstract class OperationsHelper implements IPage {
 
 
     @Override
-    public boolean validateElementEnable(By by) {
-        try {
-            waitDriver.until((WebDriver webDriver) -> isEnable(by));
-            return true;
-        } catch (TimeoutException e) {
-            return false;
-        }
-    }
-
-    @Override
     public boolean validateTextEquals(By by, String text) {
-        waitForVisible(by);
+        try {
+            waitForVisible(by);
+        } catch (AssertionError ignored) {
+        }
         return getText(by).equals(text);
 
     }

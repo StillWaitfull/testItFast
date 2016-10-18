@@ -12,10 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource(value = "classpath:configs/${configName}.yml")
 public class StageConfig {
     @Value("${baseUrl}")
-    String baseUrl;
+    public String BASE_URL;
 
-    public String getBaseUrl() {
-        return baseUrl;
-    }
 
 }

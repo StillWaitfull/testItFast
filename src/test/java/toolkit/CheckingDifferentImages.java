@@ -1,13 +1,16 @@
 package toolkit;
 
-import org.apache.log4j.Logger;
-import tests.AbstractTest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+
+import static toolkit.helpers.Context.applicationConfig;
 
 
 /**
@@ -17,7 +20,7 @@ import java.util.ArrayList;
 public class CheckingDifferentImages {
     private static boolean isTest;
 
-    private static Logger log = Logger.getLogger(CheckingDifferentImages.class);
+    private static Logger log = LoggerFactory.getLogger(CheckingDifferentImages.class);
 
     private static String PATH = "screenshots" + File.separator;
     public static String ETALON_PATH = "etalon" + File.separator;
@@ -26,7 +29,7 @@ public class CheckingDifferentImages {
 
     {
         if (System.getenv("isTest") == null)
-            isTest = Boolean.parseBoolean(AbstractTest.applicationConfig.getIsTest());
+            isTest = applicationConfig.IS_TEST;
     }
 
     public static boolean getIsTest() {

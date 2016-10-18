@@ -51,7 +51,7 @@ public interface IPage {
 
     IPage clickWithJs(By by);
 
-    IPage simpleClick(By by);
+    IPage actionClick(By by);
 
     void assertThat(Runnable... assertions);
 
@@ -78,8 +78,6 @@ public interface IPage {
     boolean validateElementVisible(By by);
 
     boolean validateUrlContains(String s);
-
-    boolean validateElementEnable(By by);
 
     boolean validateTextEquals(By by, String text);
 
