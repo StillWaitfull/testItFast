@@ -127,17 +127,12 @@ public abstract class OperationsHelper implements IPage {
         return this;
     }
 
-    private void waitSmth(Predicate<WebDriver> predicate) {
-        try {
-            waitDriver.until(predicate);
-        } catch (WebDriverException ignored) {
-        }
-    }
+
 
 
     private void waitForElementPresent(By by) {
         try {
-            waitSmth((WebDriver webDriver) -> isElementPresent(by));
+            waitDriver.until((WebDriver webDriver) -> isElementPresent(by));
         } catch (TimeoutException e) {
             Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT);
         }
@@ -185,7 +180,7 @@ public abstract class OperationsHelper implements IPage {
     public IPage waitForNotAttribute(final By by, final String attribute, final String value) {
         try {
 
-            waitSmth((WebDriver d) -> d.findElement(by)
+            waitDriver.until((WebDriver d) -> d.findElement(by)
                     .getAttribute(attribute)
                     .equals(value));
         } catch (TimeoutException e) {
@@ -197,7 +192,7 @@ public abstract class OperationsHelper implements IPage {
 
     public IPage waitForTextPresent(final String text) {
         try {
-            waitSmth((WebDriver d) -> d.getPageSource().contains(text));
+            waitDriver.until((WebDriver d) -> d.getPageSource().contains(text));
         } catch (TimeoutException e) {
             Assert.fail("Text " + text + " is not visible after " + WebDriverController.TIMEOUT);
         }
@@ -214,7 +209,7 @@ public abstract class OperationsHelper implements IPage {
 
     public void waitForVisible(By by) {
         try {
-            waitSmth((WebDriver webDriver) -> isVisible(by));
+            waitDriver.until((WebDriver webDriver) -> isVisible(by));
         } catch (TimeoutException e) {
             Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT);
         }
@@ -223,7 +218,7 @@ public abstract class OperationsHelper implements IPage {
 
     public void waitForNotVisible(By by) {
         try {
-            waitSmth((WebDriver webDriver) -> !isVisible(by));
+            waitDriver.until((WebDriver webDriver) -> !isVisible(by));
         } catch (TimeoutException e) {
             Assert.fail("Element is visible after " + WebDriverController.TIMEOUT);
         }
