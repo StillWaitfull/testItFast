@@ -3,6 +3,8 @@ package toolkit.driver;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.testng.Assert;
 
 import java.util.List;
@@ -12,8 +14,9 @@ import java.util.concurrent.TimeUnit;
 import static toolkit.helpers.Context.applicationConfig;
 import static toolkit.helpers.Context.applicationContext;
 
+@Component
+@Scope("prototype")
 public class WebDriverController {
-
 
     private WebDriver driver;
     public static final int TIMEOUT = applicationConfig.TIMEOUT;
@@ -21,20 +24,17 @@ public class WebDriverController {
     private Dimension dimension;
 
 
-    WebDriverController(String browser, Dimension dimension) {
-        this.browser = browser;
-        String browserEnv = System.getenv("browser");
-        if (browser == null && browserEnv == null)
-            this.browser = applicationConfig.BROWSER;
-        if (browserEnv != null) this.browser = browserEnv;
-        driver = applicationContext.getBean(this.browser, WebDriver.class);
+    WebDriverController(toolkit.config.Platform platform) {
+        this.browser = platform.getBrowser();
+        this.dimension = platform.getDimension();
+        if (platform.isMobile()) {
+            driver = (WebDriver) applicationContext.getBean(platform.getPlatform(), platform);
+        } else {
+            driver = applicationContext.getBean(this.browser, WebDriver.class);
+            driver.manage().window().setSize(dimension);
+        }
         driver.manage().timeouts().setScriptTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);
-        this.dimension = dimension;
-        if (dimension == null) {
-            driver.manage().window().maximize();
-            this.dimension = driver.manage().window().getSize();
-        } else setWindowSize(dimension);
         driver.switchTo();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }

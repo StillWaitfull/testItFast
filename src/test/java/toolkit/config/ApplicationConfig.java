@@ -42,4 +42,30 @@ public class ApplicationConfig {
     public boolean IS_TEST;
 
 
+    //MOBILE PROPERTIES
+
+    @Value("${isMobile}")
+    public boolean IS_MOBILE;
+
+
+    @Value("${mobilePlatform}")
+    public String MOBILE_PLATFORM;
+
+
+    @Value("${mobilePlatformVersion}")
+    public String MOBILE_PLATFORM_VERSION;
+
+    @Value("${mobileBrowser}")
+    public String MOBILE_BROWSER;
+
+    @Value("${mobileDeviceName}")
+    public String MOBILE_DEVICE_NAME;
+
+    @Value("${udid}")
+    public String UDID;
+
+    @Value("${address}")
+    public String ADDRESS;
+
+
 }

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.*;
 import ru.yandex.qatools.allure.annotations.Attachment;
 import toolkit.IsKnownBug;
+import toolkit.config.Platform;
 import toolkit.helpers.OperationsHelper;
 
 import java.io.File;
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static toolkit.helpers.Context.applicationConfig;
+import static toolkit.helpers.Context.applicationContext;
 
 
 public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener {
@@ -38,26 +40,71 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
             RetryListener.get().setNameMethod(methodName);
         }
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod() && !methodName.contains("NotDriver")) {
-            Map<String, String> params = testResult.getTestClass().getXmlTest().getAllParameters();
-            String browser = params.get("browser");
-            String dimensionH = params.get("dimensionH");
-            String dimensionW = params.get("dimensionW");
-            Dimension dimension;
-            if (dimensionH != null && dimensionW != null)
-                dimension = new Dimension(Integer.valueOf(dimensionW), Integer.valueOf(dimensionH));
-            else dimension = setDimensionFromAppConfig();
-            LocalDriverManager.setWebDriverController(new WebDriverController(browser, dimension));
+            LocalDriverManager.setWebDriverController(applicationContext.getBean(WebDriverController.class, determinePlatform(testResult)));
         }
     }
 
 
-    private Dimension setDimensionFromAppConfig() {
-        String dimensionW = applicationConfig.DIMENSION_W;
-        String dimensionH = applicationConfig.DIMENSION_H;
-        if (dimensionH.isEmpty() && dimensionW.isEmpty())
-            return null;
-        else return new Dimension(Integer.parseInt(dimensionW), Integer.parseInt(dimensionH));
+    private Platform determinePlatform(ITestResult testResult) {
+        Map<String, String> params = testResult.getTestClass().getXmlTest().getAllParameters();
+        Platform platform4Test = new Platform();
+        String browser = params.get("browser");
+        String dimensionH = params.get("dimensionH");
+        String dimensionW = params.get("dimensionW");
+        String platform = params.get("platform");
+        String platformVersion = params.get("platformVersion");
+        String deviceName = params.get("deviceName");
+        String mobileBrowser = params.get("mobileBrowser");
+        String udid = params.get("udid");
+        String address = params.get("address");
+        Dimension dimension = determineDimension(dimensionH, dimensionW);
+        if ((platform != null && deviceName != null && mobileBrowser != null) || applicationConfig.IS_MOBILE) {
+            if (platform != null && udid != null)
+                platform4Test.setMobile(platform, deviceName, mobileBrowser, platformVersion, udid, address, dimension);
+            else
+                setPlatformAppConfig(platform4Test);
+        } else {
+            platform4Test.setDesktop(dimension, determineBrowser(browser));
+        }
+        return platform4Test;
     }
+
+
+    private String determineBrowser(String browser) {
+        String browserEnv = System.getenv("browser");
+        if (browser == null && browserEnv == null)
+            browser = applicationConfig.BROWSER;
+        if (browserEnv != null)
+            browser = browserEnv;
+        return browser;
+    }
+
+
+    private Platform setPlatformAppConfig(Platform platform) {
+        platform.setMobile(applicationConfig.MOBILE_PLATFORM,
+                applicationConfig.MOBILE_DEVICE_NAME,
+                applicationConfig.MOBILE_BROWSER,
+                applicationConfig.MOBILE_PLATFORM_VERSION,
+                applicationConfig.UDID,
+                applicationConfig.ADDRESS,
+                new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H)));
+        return platform;
+    }
+
+
+    private Dimension determineDimension(String dimensionH, String dimensionW) {
+        Dimension dimension;
+        if (dimensionH != null && dimensionW != null)
+            dimension = new Dimension(Integer.parseInt(dimensionW), Integer.parseInt(dimensionH));
+        else {
+            if (applicationConfig.DIMENSION_W.isEmpty() && applicationConfig.DIMENSION_H.isEmpty())
+                throw new RuntimeException("You should set dimension for test in config");
+            else
+                dimension = new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H));
+        }
+        return dimension;
+    }
+
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {

@@ -1,6 +1,7 @@
 package toolkit.config;
 
 import common.OperationSystem;
+import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
@@ -12,17 +13,20 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.context.annotation.*;
 import toolkit.driver.ProxyHelper;
+import toolkit.driver.WebDriverController;
 
 import java.io.File;
+import java.net.URL;
 
 import static toolkit.helpers.Context.applicationConfig;
 
 /**
  * Created by skashapov on 27.09.16.
  */
-@Import({ApplicationConfig.class, StageConfig.class})
+@Import({ApplicationConfig.class, StageConfig.class, WebDriverController.class})
 @Configuration
 public class BrowserConfig {
 
@@ -102,6 +106,25 @@ public class BrowserConfig {
         return driver;
     }
 
+
+    @Lazy
+    @Scope("prototype")
+    @Bean(name = "android")
+    public WebDriver get(toolkit.config.Platform platform) {
+        try {
+            DesiredCapabilities capabilities = DesiredCapabilities.android();
+            capabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());
+            capabilities.setCapability(MobileCapabilityType.UDID, platform.getUdid());
+            capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platform.getPlatform());
+            capabilities.setCapability(MobileCapabilityType.VERSION, platform.getPlatformVersion());
+            capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getMobileBrowser());
+            capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
+            return new RemoteWebDriver(new URL(platform.getAddress()), capabilities);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("There was a problem with android driver");
+        }
+    }
 
     private static DesiredCapabilities createCapabilitiesFF() {
         DesiredCapabilities capabilitiesFF = new DesiredCapabilities();

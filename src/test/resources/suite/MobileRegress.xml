@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Youla_suite" parallel="tests" thread-count="2">
+    <test name="Phone">
+        <parameter name="platform" value="android"/>
+        <parameter name="platformVersion" value="7.0"/>
+        <parameter name="mobileBrowser" value="chrome"/>
+        <parameter name="udid" value="emulator-5556"/>
+        <parameter name="address" value="http://127.0.0.1:4722/wd/hub"/>
+        <parameter name="deviceName" value="phone"/>
+        <parameter name="dimensionW" value="480"/>
+        <parameter name="dimensionH" value="800"/>
+        <classes>
+            <class name="tests.GoogleTest">
+                <methods>
+                    <include name="googleTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Phone1">
+        <parameter name="platform" value="android"/>
+        <parameter name="platformVersion" value="5.0.1"/>
+        <parameter name="mobileBrowser" value="browser"/>
+        <parameter name="udid" value="emulator-5554"/>
+        <parameter name="address" value="http://127.0.0.1:4723/wd/hub"/>
+        <parameter name="deviceName" value="phone1"/>
+        <parameter name="dimensionW" value="480"/>
+        <parameter name="dimensionH" value="800"/>
+        <classes>
+            <class name="tests.GoogleTest">
+                <methods>
+                    <include name="googleTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
