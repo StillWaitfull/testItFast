@@ -12,7 +12,6 @@ Timeout: 10
 isMobile: false
 mobileBrowser: browser
 mobilePlatform: android
-mobilePlatformVersion: 5.0.1
 mobileDeviceName: phone
 udid: emulator-5554
 address: http://127.0.0.1:4723/wd/hub

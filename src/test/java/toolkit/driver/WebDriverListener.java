@@ -27,7 +27,7 @@ import static toolkit.helpers.Context.applicationContext;
 
 
 public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener {
-    private Logger log4j = LoggerFactory.getLogger(WebDriverListener.class);
+    private Logger logger = LoggerFactory.getLogger(WebDriverListener.class);
 
     private static ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
 
@@ -40,7 +40,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
             RetryListener.get().setNameMethod(methodName);
         }
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod() && !methodName.contains("NotDriver")) {
-            LocalDriverManager.setWebDriverController(applicationContext.getBean(WebDriverController.class, determinePlatform(testResult)));
+            applicationContext.getBean(WebDriverController.class, determinePlatform(testResult));
         }
     }
 
@@ -60,7 +60,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
         Dimension dimension = determineDimension(dimensionH, dimensionW);
         if ((platform != null && deviceName != null && mobileBrowser != null) || applicationConfig.IS_MOBILE) {
             if (platform != null && udid != null)
-                platform4Test.setMobile(platform, deviceName, mobileBrowser, platformVersion, udid, address, dimension);
+                platform4Test.setMobile(platform, deviceName, mobileBrowser, udid, address, dimension);
             else
                 setPlatformAppConfig(platform4Test);
         } else {
@@ -84,7 +84,6 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
         platform.setMobile(applicationConfig.MOBILE_PLATFORM,
                 applicationConfig.MOBILE_DEVICE_NAME,
                 applicationConfig.MOBILE_BROWSER,
-                applicationConfig.MOBILE_PLATFORM_VERSION,
                 applicationConfig.UDID,
                 applicationConfig.ADDRESS,
                 new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H)));
@@ -117,7 +116,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
                 method.getTestMethod().setRetryAnalyzer(RetryListener.get());
                 if (!RetryListener.get().isRetryAvailable())
                     makeScreenshot(testResult.getName());
-                log4j.error(
+                logger.error(
                         "Test FAILED! Method:" + testResult.getName() + ". StackTrace is " + Throwables.getStackTraceAsString(
                                 testResult.getThrowable()));
                 OperationsHelper.logoutHook();

@@ -51,10 +51,6 @@ public class ApplicationConfig {
     @Value("${mobilePlatform}")
     public String MOBILE_PLATFORM;
 
-
-    @Value("${mobilePlatformVersion}")
-    public String MOBILE_PLATFORM_VERSION;
-
     @Value("${mobileBrowser}")
     public String MOBILE_BROWSER;
 

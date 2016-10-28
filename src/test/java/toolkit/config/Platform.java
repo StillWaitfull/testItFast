@@ -11,17 +11,30 @@ public class Platform {
 
     private Dimension dimension;
     private boolean isMobile;
-    private String platform;
     private String browser;
-    private String platformVersion;
     private String deviceName;
     private String mobileBrowser;
     private String udid;
     private String address;
+    private PLATFORM platform;
 
-    public void setMobile(String platform, String deviceName, String mobileBrowser, String platformVersion, String udid, String address, Dimension dimension) {
-        this.platform = platform;
-        this.platformVersion = platformVersion;
+    public enum PLATFORM {
+        ANDROID("android"), IOS("ios");
+
+        PLATFORM(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        private String name;
+    }
+
+
+    public void setMobile(String platform, String deviceName, String mobileBrowser, String udid, String address, Dimension dimension) {
+        this.platform = PLATFORM.valueOf(platform.toUpperCase());
         this.deviceName = deviceName;
         this.mobileBrowser = mobileBrowser;
         this.dimension = dimension;
@@ -45,7 +58,7 @@ public class Platform {
         return isMobile;
     }
 
-    public String getPlatform() {
+    public PLATFORM getPlatform() {
         return platform;
     }
 
@@ -55,10 +68,6 @@ public class Platform {
 
     public String getMobileBrowser() {
         return mobileBrowser;
-    }
-
-    public String getPlatformVersion() {
-        return platformVersion;
     }
 
     public String getBrowser() {

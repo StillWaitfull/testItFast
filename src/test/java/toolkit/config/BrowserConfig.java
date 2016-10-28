@@ -116,7 +116,6 @@ public class BrowserConfig {
             capabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());
             capabilities.setCapability(MobileCapabilityType.UDID, platform.getUdid());
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platform.getPlatform());
-            capabilities.setCapability(MobileCapabilityType.VERSION, platform.getPlatformVersion());
             capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getMobileBrowser());
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
             return new RemoteWebDriver(new URL(platform.getAddress()), capabilities);

@@ -28,7 +28,7 @@ public class WebDriverController {
         this.browser = platform.getBrowser();
         this.dimension = platform.getDimension();
         if (platform.isMobile()) {
-            driver = (WebDriver) applicationContext.getBean(platform.getPlatform(), platform);
+            driver = (WebDriver) applicationContext.getBean(platform.getPlatform().getName(), platform);
         } else {
             driver = applicationContext.getBean(this.browser, WebDriver.class);
             driver.manage().window().setSize(dimension);
@@ -37,6 +37,7 @@ public class WebDriverController {
         driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.switchTo();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+        LocalDriverManager.setWebDriverController(this);
     }
 
 
