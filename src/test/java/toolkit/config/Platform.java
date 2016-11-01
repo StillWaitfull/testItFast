@@ -19,7 +19,7 @@ public class Platform {
     private PLATFORM platform;
 
     public enum PLATFORM {
-        ANDROID("android"), IOS("ios");
+        PC("pc"),  ANDROID("android"), IOS("ios");
 
         PLATFORM(String name) {
             this.name = name;
@@ -44,6 +44,7 @@ public class Platform {
     }
 
     public void setDesktop(Dimension dimension, String browser) {
+        this.platform=PLATFORM.PC;
         this.dimension = dimension;
         this.browser = browser;
         isMobile = false;
