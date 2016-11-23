@@ -6,6 +6,7 @@ import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.ProxyHelper;
 import toolkit.driver.WebDriverListener;
+import toolkit.helpers.OperationsHelper;
 
 import java.util.stream.Collectors;
 
@@ -22,8 +23,7 @@ public abstract class AbstractTest {
 
     @AfterMethod
     public void after() {
-        if (LocalDriverManager.getDriverController() != null)
-            LocalDriverManager.getDriverController().deleteAllCookies();
+        OperationsHelper.logoutHook();
     }
 
     @AfterTest

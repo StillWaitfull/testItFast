@@ -119,7 +119,6 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
                 logger.error(
                         "Test FAILED! Method:" + testResult.getName() + ". StackTrace is " + Throwables.getStackTraceAsString(
                                 testResult.getThrowable()));
-                OperationsHelper.logoutHook();
             }
         }
     }
