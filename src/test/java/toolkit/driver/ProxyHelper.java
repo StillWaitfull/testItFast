@@ -29,25 +29,14 @@ public class ProxyHelper {
     private static boolean needProxy = applicationConfig.ENABLE_PROXY;
     private static Proxy proxy = new Proxy();
 
-    static {
+    public static void initProxy(){
         if (needProxy) {
-            server.start(proxyPort);
+           // server.blacklistRequests(".*xxx.*", 200);
             server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
             server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
-
-        }
-    }
-
-    public static void initProxy() {
-        try {
-            if (!needProxy)
-                proxy.setAutodetect(true);
-            else {
-                proxy = ClientUtil.createSeleniumProxy(server);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            server.start(proxyPort);
+            proxy = ClientUtil.createSeleniumProxy(server);
+        } else proxy.setAutodetect(true);
     }
 
 
