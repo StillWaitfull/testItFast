@@ -3,6 +3,7 @@ package toolkit.driver;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.testng.Assert;
@@ -12,7 +13,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static toolkit.helpers.Context.applicationConfig;
-import static toolkit.helpers.Context.applicationContext;
 
 @Component
 @Scope("prototype")
@@ -24,15 +24,12 @@ public class WebDriverController {
     private Dimension dimension;
 
 
-    WebDriverController(toolkit.config.Platform platform) {
+    @Autowired
+    WebDriverController(toolkit.config.Platform platform, WebDriver driver) {
+        this.driver = driver;
         this.browser = platform.getBrowser();
         this.dimension = platform.getDimension();
-        if (platform.isMobile()) {
-            driver = (WebDriver) applicationContext.getBean(platform.getPlatform().getName(), platform);
-        } else {
-            driver = applicationContext.getBean(this.browser, WebDriver.class);
-            driver.manage().window().setSize(dimension);
-        }
+        if (!platform.isMobile()) driver.manage().window().setSize(dimension);
         driver.manage().timeouts().setScriptTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.switchTo();

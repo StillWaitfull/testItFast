@@ -1,6 +1,5 @@
 package toolkit.helpers;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import composite.IPage;
 import org.apache.commons.io.FileUtils;
@@ -126,8 +125,6 @@ public abstract class OperationsHelper implements IPage {
         alert.accept();
         return this;
     }
-
-
 
 
     private void waitForElementPresent(By by) {

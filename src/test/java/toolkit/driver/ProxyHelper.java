@@ -24,18 +24,19 @@ public class ProxyHelper {
 
     private static Logger log = LoggerFactory.getLogger(ProxyHelper.class);
     private static final int proxyPort = applicationConfig.PROXY_PORT;
-    // private static ProxyServer server = new ProxyServer(proxyPort);
     private static BrowserMobProxy server = new BrowserMobProxyServer();
     private static boolean needProxy = applicationConfig.ENABLE_PROXY;
     private static Proxy proxy = new Proxy();
+    private static boolean started = false;
 
-    public static void initProxy(){
-        if (needProxy) {
-           // server.blacklistRequests(".*xxx.*", 200);
+    public static void initProxy() {
+        if (needProxy && !started) {
+            // server.blacklistRequests(".*xxx.*", 200);
             server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
             server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
             server.start(proxyPort);
             proxy = ClientUtil.createSeleniumProxy(server);
+            started = true;
         } else proxy.setAutodetect(true);
     }
 
@@ -43,6 +44,7 @@ public class ProxyHelper {
     public static void stopProxy() {
         try {
             server.stop();
+            started = false;
         } catch (Exception e) {
             log.error("There was a problem with shutdown proxy server");
             e.printStackTrace();

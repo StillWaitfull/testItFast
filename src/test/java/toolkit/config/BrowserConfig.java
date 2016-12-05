@@ -16,7 +16,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.context.annotation.*;
 import toolkit.driver.ProxyHelper;
-import toolkit.driver.WebDriverController;
 
 import java.io.File;
 import java.net.URL;
@@ -26,15 +25,67 @@ import static toolkit.helpers.Context.applicationConfig;
 /**
  * Created by skashapov on 27.09.16.
  */
-@Import({ApplicationConfig.class, StageConfig.class, WebDriverController.class})
+@Import({ApplicationConfig.class, StageConfig.class, PlatformConfig.class})
+@ComponentScan(value = "toolkit.driver")
 @Configuration
 public class BrowserConfig {
 
-
     @Lazy
     @Scope("prototype")
-    @Bean(name = "firefox")
-    public WebDriver getDriverFF() {
+    @Bean(name = "pc")
+    public WebDriver getBrowser(toolkit.config.Platform platform) {
+        if (platform.isMobile()) {
+            switch (platform.getPlatform()) {
+                case ANDROID:
+                    return getAndroid(platform);
+                default:
+                    throw new RuntimeException("There is no such platform for mobile");
+            }
+
+        } else {
+            switch (platform.getBrowser()) {
+                case "firefox": {
+                    return getDriverFF();
+                }
+                case "chrome": {
+                    return getDriverChrome();
+                }
+                case "ie": {
+                    return getDriverIE();
+                }
+                case "opera": {
+                    return getDriverOpera();
+                }
+                case "phantom": {
+                    return getDriverPhantom();
+                }
+
+                default:
+                    throw new RuntimeException("There is no such driver");
+            }
+        }
+
+    }
+
+
+    private WebDriver getAndroid(toolkit.config.Platform platform) {
+        try {
+            DesiredCapabilities capabilities = DesiredCapabilities.android();
+            capabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());
+            capabilities.setCapability(MobileCapabilityType.UDID, platform.getUdid());
+            capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platform.getPlatform());
+            capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platform.getPlatformVersion());
+            capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getMobileBrowser());
+            capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
+            return new RemoteWebDriver(new URL(platform.getAddress()), capabilities);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("There was a problem with android driver");
+        }
+    }
+
+
+    private WebDriver getDriverFF() {
         WebDriver driver;
         try {
             DesiredCapabilities capabilitiesFF = createCapabilitiesFF();
@@ -46,10 +97,7 @@ public class BrowserConfig {
         return driver;
     }
 
-    @Lazy
-    @Scope("prototype")
-    @Bean(name = "ie")
-    public WebDriver getDriverIE() {
+    private WebDriver getDriverIE() {
         WebDriver driver;
         try {
             DesiredCapabilities capabilitiesIe = DesiredCapabilities.internetExplorer();
@@ -64,10 +112,7 @@ public class BrowserConfig {
         return driver;
     }
 
-    @Lazy
-    @Scope("prototype")
-    @Bean(name = "chrome")
-    public WebDriver getDriverChrome() {
+    private WebDriver getDriverChrome() {
         try {
             DesiredCapabilities capabilitiesChrome = DesiredCapabilities.chrome();
             ProxyHelper.setCapabilities(capabilitiesChrome);
@@ -79,10 +124,7 @@ public class BrowserConfig {
         }
     }
 
-    @Lazy
-    @Scope("prototype")
-    @Bean(name = "opera")
-    public WebDriver getDriverOpera() {
+    private WebDriver getDriverOpera() {
         try {
             DesiredCapabilities capabilitiesOpera = DesiredCapabilities.operaBlink();
             capabilitiesOpera.setCapability("opera.arguments", "-fullscreen");
@@ -93,10 +135,7 @@ public class BrowserConfig {
         }
     }
 
-    @Lazy
-    @Scope("prototype")
-    @Bean(name = "phantom")
-    public WebDriver getDriverPhantom() {
+    private WebDriver getDriverPhantom() {
         WebDriver driver;
         try {
             driver = new PhantomJSDriver(createCapabilitiesPhantom());
@@ -106,24 +145,6 @@ public class BrowserConfig {
         return driver;
     }
 
-
-    @Lazy
-    @Scope("prototype")
-    @Bean(name = "android")
-    public WebDriver get(toolkit.config.Platform platform) {
-        try {
-            DesiredCapabilities capabilities = DesiredCapabilities.android();
-            capabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());
-            capabilities.setCapability(MobileCapabilityType.UDID, platform.getUdid());
-            capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platform.getPlatform());
-            capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getMobileBrowser());
-            capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
-            return new RemoteWebDriver(new URL(platform.getAddress()), capabilities);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("There was a problem with android driver");
-        }
-    }
 
     private static DesiredCapabilities createCapabilitiesFF() {
         DesiredCapabilities capabilitiesFF = new DesiredCapabilities();
