@@ -1,6 +1,7 @@
 package toolkit.config;
 
 import common.OperationSystem;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
@@ -77,7 +78,7 @@ public class BrowserConfig {
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platform.getPlatformVersion());
             capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getMobileBrowser());
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
-            return new RemoteWebDriver(new URL(platform.getAddress()), capabilities);
+            return new AndroidDriver<>(new URL(platform.getAddress()), capabilities);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("There was a problem with android driver");
@@ -146,7 +147,7 @@ public class BrowserConfig {
     }
 
 
-    private static DesiredCapabilities createCapabilitiesFF() {
+    private  DesiredCapabilities createCapabilitiesFF() {
         DesiredCapabilities capabilitiesFF = new DesiredCapabilities();
         ProxyHelper.setCapabilities(capabilitiesFF);
         FirefoxProfile firefoxProfile = new FirefoxProfile();
@@ -173,7 +174,7 @@ public class BrowserConfig {
     }
 
 
-    private static DesiredCapabilities createCapabilitiesPhantom() {
+    private  DesiredCapabilities createCapabilitiesPhantom() {
         String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
         DesiredCapabilities capabilitiesPhantom = DesiredCapabilities.phantomjs();
         String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};

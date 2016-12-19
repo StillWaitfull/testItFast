@@ -13,8 +13,7 @@ public class GoogleTest extends AbstractTest {
     public void googleTest() {
         IPage googlePage = new GooglePage();
         googlePage.openPage()
-                .type(GooglePage.query, "0")
-                .click(GooglePage.button)
+                .type(GooglePage.QUERY, "0")
                 .assertThat(
                         GooglePage.getGooglePageAssertions(googlePage)
                 );
@@ -25,8 +24,7 @@ public class GoogleTest extends AbstractTest {
     public void googleTest1() {
         IPage googlePage = new GooglePage();
         googlePage.openPage()
-                .type(GooglePage.query, "1")
-                .click(GooglePage.button);
+                .type(GooglePage.QUERY, "1");
 
 
     }
@@ -35,16 +33,14 @@ public class GoogleTest extends AbstractTest {
     public void googleTest2() {
         IPage googlePage = new GooglePage();
         googlePage.openPage()
-                .type(GooglePage.query, "2")
-                .click(GooglePage.button);
+                .type(GooglePage.QUERY, "2");
     }
 
     @Test
     public void googleTest3() {
         IPage googlePage = new GooglePage();
         googlePage.openPage()
-                .type(GooglePage.query, "3")
-                .click(GooglePage.button);
+                .type(GooglePage.QUERY, "3");
     }
 
 

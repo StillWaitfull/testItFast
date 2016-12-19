@@ -19,11 +19,11 @@ public class FrontendGoogleTest extends AbstractTest {
         IPage googlePage = new GooglePage();
         CheckingDifferentImages checkingDifferentImages = new CheckingDifferentImages();
         googlePage.openPage()
-                .type(GooglePage.query, "1")
+                .type(GooglePage.QUERY, "1")
                 .makeScreenshotForDiff(name, CheckingDifferentImages.getIsTest());
         checkingDifferentImages.turnOnInTest();
         googlePage.openPage()
-                .type(GooglePage.query, "3")
+                .type(GooglePage.QUERY, "3")
                 .makeScreenshotForDiff(name, CheckingDifferentImages.getIsTest());
         checkingDifferentImages.checkDifference(name, name + "_diff", 1);
     }

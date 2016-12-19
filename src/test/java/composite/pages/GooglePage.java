@@ -17,8 +17,7 @@ public class GooglePage extends OperationsHelper implements IPage {
     private static final String pageUrl = baseUrl + "/";
 
 
-    public static final By query = By.id("lst-ib");
-    public static final By button = By.id("sblsbb");
+    public static final By QUERY = By.id("lst-ib");
 
 
     @Override
@@ -35,8 +34,7 @@ public class GooglePage extends OperationsHelper implements IPage {
 
     public static Runnable[] getGooglePageAssertions(IPage page) {
         return new Runnable[]{
-                () -> Assert.assertTrue(page.isVisible(GooglePage.button), "Google button is not visible"),
-                () -> Assert.assertTrue(page.isVisible(GooglePage.query), "Google query is not visible")
+                () -> Assert.assertTrue(page.isVisible(GooglePage.QUERY), "Google QUERY is not visible")
         };
     }
 
