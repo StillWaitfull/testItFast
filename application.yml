@@ -1,10 +1,12 @@
 configName: live
+
 # To switch on the Firebug plugin
 firebug: false
 firebug-version: 2.0.7
 # Browser for launching tests
+remote: false
 browser: chrome
-#Timeout
+hubAddress: http://172.27.5.65:4444/wd/hub
 Timeout: 10
 
 
@@ -15,7 +17,7 @@ mobilePlatform: android
 mobilePlatformVersion: 7.0
 mobileDeviceName: phone
 udid: emulator-5554
-address: http://127.0.0.1:4723/wd/hub
+appiumAddress: http://127.0.0.1:4723/wd/hub
 
 
 #Dimension
@@ -24,6 +26,8 @@ dimensionH: 1080
 
 #For proxy
 enableProxy: true
+#Have to up it on remote host(s)
+remoteProxyHost: 172.27.5.65
 proxyPort: 7000
 
 

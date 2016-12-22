@@ -46,21 +46,20 @@ public class BrowserConfig {
         } else {
             switch (platform.getBrowser()) {
                 case "firefox": {
-                    return getDriverFF();
+                    return getDriverFF(platform.isRemote());
                 }
                 case "chrome": {
-                    return getDriverChrome();
+                    return getDriverChrome(platform.isRemote());
                 }
                 case "ie": {
-                    return getDriverIE();
+                    return getDriverIE(platform.isRemote());
                 }
                 case "opera": {
-                    return getDriverOpera();
+                    return getDriverOpera(platform.isRemote());
                 }
                 case "phantom": {
-                    return getDriverPhantom();
+                    return getDriverPhantom(platform.isRemote());
                 }
-
                 default:
                     throw new RuntimeException("There is no such driver");
             }
@@ -78,7 +77,7 @@ public class BrowserConfig {
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platform.getPlatformVersion());
             capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getMobileBrowser());
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
-            return new AndroidDriver<>(new URL(platform.getAddress()), capabilities);
+            return platform.isRemote() ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilities) : new AndroidDriver(new URL(platform.getAddress()), capabilities);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("There was a problem with android driver");
@@ -86,11 +85,12 @@ public class BrowserConfig {
     }
 
 
-    private WebDriver getDriverFF() {
+    private WebDriver getDriverFF(boolean isRemote) {
         WebDriver driver;
         try {
             DesiredCapabilities capabilitiesFF = createCapabilitiesFF();
-            driver = new FirefoxDriver(capabilitiesFF);
+            ProxyHelper.setCapabilities(capabilitiesFF);
+            driver = isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesFF) : new FirefoxDriver(capabilitiesFF);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("There was a problem with start firefox driver");
@@ -98,14 +98,14 @@ public class BrowserConfig {
         return driver;
     }
 
-    private WebDriver getDriverIE() {
+    private WebDriver getDriverIE(boolean isRemote) {
         WebDriver driver;
         try {
             DesiredCapabilities capabilitiesIe = DesiredCapabilities.internetExplorer();
             ProxyHelper.setCapabilities(capabilitiesIe);
             capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
             System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
-            driver = new InternetExplorerDriver(capabilitiesIe);
+            driver = isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesIe) : new InternetExplorerDriver(capabilitiesIe);
         } catch (Exception e) {
             throw new RuntimeException("There was a problem with start ie driver");
 
@@ -113,33 +113,34 @@ public class BrowserConfig {
         return driver;
     }
 
-    private WebDriver getDriverChrome() {
+    private WebDriver getDriverChrome(boolean isRemote) {
         try {
             DesiredCapabilities capabilitiesChrome = DesiredCapabilities.chrome();
             ProxyHelper.setCapabilities(capabilitiesChrome);
             System.setProperty("webdriver.chrome.driver", "lib" + File.separator + "chromedriver" + OperationSystem.instance.getExecutableSuffix());
-            return new ChromeDriver(capabilitiesChrome);
+            return isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesChrome) : new ChromeDriver(capabilitiesChrome);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("There was a problem with start chrome driver");
         }
     }
 
-    private WebDriver getDriverOpera() {
+    private WebDriver getDriverOpera(boolean isRemote) {
         try {
             DesiredCapabilities capabilitiesOpera = DesiredCapabilities.operaBlink();
-            capabilitiesOpera.setCapability("opera.arguments", "-fullscreen");
-            capabilitiesOpera.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-            return new org.openqa.selenium.opera.OperaDriver(capabilitiesOpera);
+            System.setProperty("webdriver.opera.driver", "lib" + File.separator + "operadriver" + OperationSystem.instance.getExecutableSuffix());
+            return isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesOpera) : new org.openqa.selenium.opera.OperaDriver(capabilitiesOpera);
         } catch (Exception e) {
             throw new RuntimeException("There was a problem with start opera driver");
         }
     }
 
-    private WebDriver getDriverPhantom() {
+    private WebDriver getDriverPhantom(boolean isRemote) {
         WebDriver driver;
         try {
-            driver = new PhantomJSDriver(createCapabilitiesPhantom());
+            DesiredCapabilities capabilitiesPhantom = createCapabilitiesPhantom();
+            ProxyHelper.setCapabilities(capabilitiesPhantom);
+            driver = isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesPhantom) : new PhantomJSDriver(capabilitiesPhantom);
         } catch (Exception e) {
             throw new RuntimeException("There was a problem with start phantom driver");
         }

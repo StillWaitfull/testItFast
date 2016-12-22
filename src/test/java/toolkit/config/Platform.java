@@ -19,6 +19,7 @@ public class Platform {
     private String platformVersion;
     private PLATFORM platform;
 
+    private boolean remote;
 
     public enum PLATFORM {
         PC("pc"), ANDROID("android"), IOS("ios");
@@ -88,6 +89,15 @@ public class Platform {
 
     public String getPlatformVersion() {
         return platformVersion;
+    }
+
+
+    public boolean isRemote() {
+        return remote;
+    }
+
+    public void setRemote(boolean remote) {
+        this.remote = remote;
     }
 
 }

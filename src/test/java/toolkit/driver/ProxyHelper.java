@@ -30,24 +30,32 @@ public class ProxyHelper {
     private static boolean started = false;
 
     public static void initProxy() {
-        if (needProxy && !started) {
-            // server.blacklistRequests(".*xxx.*", 200);
-            server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
-            server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
-            server.start(proxyPort);
-            proxy = ClientUtil.createSeleniumProxy(server);
-            started = true;
+        if (needProxy) {
+            if (applicationConfig.REMOTE) {
+                String proxyStr = applicationConfig.REMOTE_PROXY_HOST + ":" + proxyPort;
+                proxy.setHttpProxy(proxyStr);
+                proxy.setSslProxy(proxyStr);
+            } else if (!started) {
+                // server.blacklistRequests(".*xxx.*", 200);
+                server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
+                server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
+                server.start(proxyPort);
+                proxy = ClientUtil.createSeleniumProxy(server);
+                started = true;
+            }
         } else proxy.setAutodetect(true);
     }
 
 
     public static void stopProxy() {
-        try {
-            server.stop();
-            started = false;
-        } catch (Exception e) {
-            log.error("There was a problem with shutdown proxy server");
-            e.printStackTrace();
+        if (needProxy && !applicationConfig.REMOTE) {
+            try {
+                server.stop();
+                started = false;
+            } catch (Exception e) {
+                log.error("There was a problem with shutdown proxy server");
+                e.printStackTrace();
+            }
         }
     }
 

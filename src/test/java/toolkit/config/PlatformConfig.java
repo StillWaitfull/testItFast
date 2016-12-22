@@ -45,6 +45,8 @@ public class PlatformConfig {
             udid = params.get("udid");
             address = params.get("address");
         }
+        String remoteEnv = System.getenv("remote");
+        platform4Test.setRemote(remoteEnv == null ? applicationConfig.REMOTE : Boolean.parseBoolean(remoteEnv));
         Dimension dimension = determineDimension(dimensionH, dimensionW);
         if ((platform != null && deviceName != null && mobileBrowser != null) || applicationConfig.IS_MOBILE) {
             if (platform != null && udid != null)
@@ -74,7 +76,7 @@ public class PlatformConfig {
                 applicationConfig.MOBILE_DEVICE_NAME,
                 applicationConfig.MOBILE_BROWSER,
                 applicationConfig.UDID,
-                applicationConfig.ADDRESS,
+                applicationConfig.APPIUM_ADDRESS,
                 new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H)));
         return platform;
     }

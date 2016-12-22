@@ -17,7 +17,6 @@ public class GoogleTest extends AbstractTest {
                 .assertThat(
                         GooglePage.getGooglePageAssertions(googlePage)
                 );
-
     }
 
     @Test

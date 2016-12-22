@@ -14,8 +14,17 @@ public class ApplicationConfig {
     @Value("${configName}")
     public String CONFIG_NAME;
 
+
+    @Value("${remote}")
+    public boolean REMOTE;
+
+
     @Value("${browser}")
     public String BROWSER;
+
+
+    @Value("${hubAddress}")
+    public String HUB_ADDRESS;
 
     @Value("${firebug}")
     public boolean IS_FIREBUG;
@@ -35,6 +44,10 @@ public class ApplicationConfig {
     @Value("${enableProxy}")
     public boolean ENABLE_PROXY;
 
+
+    @Value("${remoteProxyHost}")
+    public String REMOTE_PROXY_HOST;
+
     @Value("${proxyPort}")
     public int PROXY_PORT;
 
@@ -46,7 +59,6 @@ public class ApplicationConfig {
 
     @Value("${isMobile}")
     public boolean IS_MOBILE;
-
 
     @Value("${mobilePlatform}")
     public String MOBILE_PLATFORM;
@@ -63,8 +75,8 @@ public class ApplicationConfig {
     @Value("${udid}")
     public String UDID;
 
-    @Value("${address}")
-    public String ADDRESS;
+    @Value("${appiumAddress}")
+    public String APPIUM_ADDRESS;
 
 
 }
