@@ -36,9 +36,7 @@ public abstract class OperationsHelper implements IPage {
             baseUrl = stageConfig.BASE_URL;
     }
 
-    /**
-     * Exits from current user
-     */
+
     public static void logoutHook() {
         if (LocalDriverManager.getDriverController() != null) {
             LocalDriverManager.getDriverController().goToUrl(baseUrl);

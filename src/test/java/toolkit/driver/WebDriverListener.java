@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.*;
 import ru.yandex.qatools.allure.annotations.Attachment;
+import toolkit.CheckingDifferentImages;
 import toolkit.IsKnownBug;
 
 import java.io.File;
@@ -17,11 +18,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static toolkit.helpers.Context.applicationContext;
 
 
-public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener {
+public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener, ITestListener, ISuiteListener {
     private Logger logger = LoggerFactory.getLogger(WebDriverListener.class);
     public static ThreadLocal<ITestResult> testResultThreadLocal = new ThreadLocal<>();
     private static ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
@@ -94,6 +96,23 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
             }
             Reporter.setCurrentTestResult(result);
         }
+    }
+
+    @Override
+    public void onFinish(ITestContext var1) {
+        LocalDriverManager.cleanThreadPool();
+    }
+
+    @Override
+    public void onStart(ISuite iSuite) {
+        ProxyHelper.initProxy();
+    }
+
+    @Override
+    public void onFinish(ISuite iSuite) {
+        if (!CheckingDifferentImages.failedTests.isEmpty())
+            Assert.fail("There was errors in frontend tests \n" + CheckingDifferentImages.failedTests.stream().collect(Collectors.joining("\n")));
+        ProxyHelper.stopProxy();
     }
 
 }

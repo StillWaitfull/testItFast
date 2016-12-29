@@ -148,7 +148,7 @@ public class BrowserConfig {
     }
 
 
-    private  DesiredCapabilities createCapabilitiesFF() {
+    private DesiredCapabilities createCapabilitiesFF() {
         DesiredCapabilities capabilitiesFF = new DesiredCapabilities();
         ProxyHelper.setCapabilities(capabilitiesFF);
         FirefoxProfile firefoxProfile = new FirefoxProfile();
@@ -175,7 +175,7 @@ public class BrowserConfig {
     }
 
 
-    private  DesiredCapabilities createCapabilitiesPhantom() {
+    private DesiredCapabilities createCapabilitiesPhantom() {
         String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
         DesiredCapabilities capabilitiesPhantom = DesiredCapabilities.phantomjs();
         String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
