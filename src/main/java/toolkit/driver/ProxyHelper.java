@@ -23,23 +23,21 @@ import static toolkit.helpers.Context.applicationConfig;
 public class ProxyHelper {
 
     private static Logger log = LoggerFactory.getLogger(ProxyHelper.class);
-    private static final int proxyPort = applicationConfig.PROXY_PORT;
     private static BrowserMobProxy server = new BrowserMobProxyServer();
-    private static boolean needProxy = applicationConfig.ENABLE_PROXY;
     private static Proxy proxy = new Proxy();
     private static boolean started = false;
 
     public static void initProxy() {
-        if (needProxy) {
+        if (applicationConfig.ENABLE_PROXY) {
             if (applicationConfig.REMOTE) {
-                String proxyStr = applicationConfig.REMOTE_PROXY_HOST + ":" + proxyPort;
+                String proxyStr = applicationConfig.REMOTE_PROXY_HOST + ":" + applicationConfig.PROXY_PORT;
                 proxy.setHttpProxy(proxyStr);
                 proxy.setSslProxy(proxyStr);
             } else if (!started) {
                 // server.blacklistRequests(".*xxx.*", 200);
                 server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
                 server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
-                server.start(proxyPort);
+                server.start(applicationConfig.PROXY_PORT);
                 proxy = ClientUtil.createSeleniumProxy(server);
                 started = true;
             }
@@ -48,7 +46,7 @@ public class ProxyHelper {
 
 
     public static void stopProxy() {
-        if (needProxy && !applicationConfig.REMOTE) {
+        if (started && !applicationConfig.REMOTE) {
             try {
                 server.stop();
                 started = false;

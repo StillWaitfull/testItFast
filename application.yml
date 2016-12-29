@@ -1,9 +1,9 @@
 configName: live
 
-# To switch on the Firebug plugin
 firebug: false
 firebug-version: 2.0.7
-# Browser for launching tests
+
+
 remote: false
 browser: chrome
 hubAddress: http://172.27.5.65:4444/wd/hub
@@ -35,3 +35,5 @@ proxyPort: 7000
 isTest: false
 
 #mvn clean test -DsuiteFile=src/test/resources/suite/google.xml
+
+#mvn clean compile assembly:single

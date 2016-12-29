@@ -110,9 +110,10 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
 
     @Override
     public void onFinish(ISuite iSuite) {
+       ProxyHelper.stopProxy();
         if (!CheckingDifferentImages.failedTests.isEmpty())
             Assert.fail("There was errors in frontend tests \n" + CheckingDifferentImages.failedTests.stream().collect(Collectors.joining("\n")));
-        ProxyHelper.stopProxy();
+
     }
 
 }
