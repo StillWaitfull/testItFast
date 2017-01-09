@@ -18,7 +18,7 @@ import static toolkit.helpers.Context.applicationConfig;
  * trying to catch if there is a different object or not int the scene
  */
 public class CheckingDifferentImages {
-    private static boolean isTest;
+    public static boolean isTest;
 
     private static Logger log = LoggerFactory.getLogger(CheckingDifferentImages.class);
 
@@ -32,9 +32,6 @@ public class CheckingDifferentImages {
             isTest = applicationConfig.IS_TEST;
     }
 
-    public static boolean getIsTest() {
-        return isTest;
-    }
 
     public void turnOnInTest() {
         isTest = true;
@@ -48,10 +45,9 @@ public class CheckingDifferentImages {
      * Check difference.
      *
      * @param name           name of the method
-     * @param nameDifference the name difference
      * @param accuracy       the accuracy   1pixels
      */
-    public void checkDifference(String name, String nameDifference, int accuracy) {
+    public void checkDifference(String name, int accuracy) {
         BufferedImage im1 = null;
         BufferedImage im2 = null;
         try {
@@ -77,7 +73,7 @@ public class CheckingDifferentImages {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        showDifference(im1, im2, nameDifference, accuracy);
+        showDifference(im1, im2, name + "_diff", accuracy);
 
     }
 
@@ -143,30 +139,5 @@ public class CheckingDifferentImages {
         }
     }
 
-
-    public static void deleteFileInDirectory(String path_from) {
-        File f = new File(path_from);
-        if (f.isDirectory()) {
-            String[] child = f.list();
-            if (child.length != 0)
-                for (String aChild : child) {
-                    delete(path_from + "/" + aChild);
-                }
-        } else
-            log.info("This isn't a directory");
-    }
-
-    private static void delete(String path_from) {
-        File f = new File(path_from);
-        if (f.isDirectory()) {
-            String[] child = f.list();
-            for (String aChild : child) {
-                delete(path_from + "/" + aChild);
-            }
-            f.delete();
-        } else {
-            f.delete();
-        }
-    }
 
 }
