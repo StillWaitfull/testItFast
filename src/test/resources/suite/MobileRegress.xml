@@ -6,7 +6,7 @@
         <parameter name="platformVersion" value="7.0"/>
         <parameter name="mobileBrowser" value="chrome"/>
         <parameter name="udid" value="emulator-5556"/>
-        <parameter name="address" value="http://127.0.0.1:4722/wd/hub"/>
+        <parameter name="addressAppium" value="http://127.0.0.1:4722/wd/hub"/>
         <parameter name="deviceName" value="phone"/>
         <parameter name="dimensionW" value="480"/>
         <parameter name="dimensionH" value="800"/>
@@ -23,7 +23,7 @@
         <parameter name="platformVersion" value="5.0.1"/>
         <parameter name="mobileBrowser" value="browser"/>
         <parameter name="udid" value="emulator-5554"/>
-        <parameter name="address" value="http://127.0.0.1:4723/wd/hub"/>
+        <parameter name="addressAppium" value="http://127.0.0.1:4723/wd/hub"/>
         <parameter name="deviceName" value="phone1"/>
         <parameter name="dimensionW" value="480"/>
         <parameter name="dimensionH" value="800"/>

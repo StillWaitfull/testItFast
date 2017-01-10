@@ -25,7 +25,7 @@ public class PlatformConfig {
     private String deviceName;
     private String mobileBrowser;
     private String udid;
-    private String address;
+    private String addressAppium;
 
     @Bean
     @Lazy
@@ -43,19 +43,28 @@ public class PlatformConfig {
             deviceName = params.get("deviceName");
             mobileBrowser = params.get("mobileBrowser");
             udid = params.get("udid");
-            address = params.get("address");
+            addressAppium = params.get("addressAppium");
         }
         String remoteEnv = System.getenv("remote");
         platform4Test.setRemote(remoteEnv == null ? applicationConfig.REMOTE : Boolean.parseBoolean(remoteEnv));
         Dimension dimension = determineDimension(dimensionH, dimensionW);
-        if ((platform != null && deviceName != null && mobileBrowser != null) || applicationConfig.IS_MOBILE) {
-            if (platform != null && udid != null)
-                platform4Test.setMobile(platform, platformVersion, deviceName, mobileBrowser, udid, address, dimension);
-            else
-                setPlatformAppConfig(platform4Test);
-        } else {
-            platform4Test.setDesktop(dimension, determineBrowser(browser));
-        }
+        if (udid != null && deviceName != null)
+            platform4Test.setMobile(platform,
+                platformVersion,
+                deviceName,
+                mobileBrowser,
+                udid,
+                addressAppium,
+                dimension);
+        else if (applicationConfig.IS_MOBILE)
+            platform4Test.setMobile(applicationConfig.MOBILE_PLATFORM,
+                applicationConfig.MOBILE_PLATFORM_VERSION,
+                applicationConfig.MOBILE_DEVICE_NAME,
+                applicationConfig.MOBILE_BROWSER,
+                applicationConfig.UDID,
+                applicationConfig.APPIUM_ADDRESS,
+                new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H)));
+        else platform4Test.setDesktop(dimension, determineBrowser(browser));
         return platform4Test;
     }
 
@@ -67,18 +76,6 @@ public class PlatformConfig {
         if (browserEnv != null)
             browser = browserEnv;
         return browser;
-    }
-
-
-    private Platform setPlatformAppConfig(Platform platform) {
-        platform.setMobile(applicationConfig.MOBILE_PLATFORM,
-                applicationConfig.MOBILE_PLATFORM_VERSION,
-                applicationConfig.MOBILE_DEVICE_NAME,
-                applicationConfig.MOBILE_BROWSER,
-                applicationConfig.UDID,
-                applicationConfig.APPIUM_ADDRESS,
-                new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H)));
-        return platform;
     }
 
 
