@@ -6,10 +6,14 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.testng.*;
 import ru.yandex.qatools.allure.annotations.Attachment;
 import toolkit.CheckingDifferentImages;
 import toolkit.IsKnownBug;
+import toolkit.config.BrowserConfig;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -20,13 +24,19 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static toolkit.helpers.Context.applicationContext;
 
-
+@ContextConfiguration(classes = BrowserConfig.class)
 public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener, ITestListener, ISuiteListener {
     private Logger logger = LoggerFactory.getLogger(WebDriverListener.class);
     public static ThreadLocal<ITestResult> testResultThreadLocal = new ThreadLocal<>();
     private static ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
+    private static ApplicationContext applicationContext;
+
+    @Autowired
+    public void initBeans(ApplicationContext applicationContext) {
+        WebDriverListener.applicationContext = applicationContext;
+    }
+
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
@@ -105,12 +115,11 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
 
     @Override
     public void onStart(ISuite iSuite) {
-        ProxyHelper.initProxy();
+
     }
 
     @Override
     public void onFinish(ISuite iSuite) {
-       ProxyHelper.stopProxy();
         if (!CheckingDifferentImages.failedTests.isEmpty())
             Assert.fail("There was errors in frontend tests \n" + CheckingDifferentImages.failedTests.stream().collect(Collectors.joining("\n")));
 

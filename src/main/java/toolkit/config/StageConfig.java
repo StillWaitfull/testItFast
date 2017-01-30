@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 
 @Configuration
-@PropertySource(value = "classpath:configs/${configName}.yml",ignoreResourceNotFound = true)
+@PropertySource(value = "classpath:configs/${configName}.yml", ignoreResourceNotFound = true)
 public class StageConfig {
     @Value("${baseUrl : http://www.google.ru}")
     public String BASE_URL;

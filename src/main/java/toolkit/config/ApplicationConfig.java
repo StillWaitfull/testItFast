@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
  * Created by skashapov on 28.09.16.
  */
 @Configuration
-@PropertySource(value = "file:application.yml",ignoreResourceNotFound = true)
+@PropertySource(value = "file:application.yml", ignoreResourceNotFound = true)
 public class ApplicationConfig {
 
     @Value("${configName:live}")

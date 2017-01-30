@@ -1,21 +1,11 @@
 package toolkit.helpers;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MapPropertySource;
-import toolkit.config.ApplicationConfig;
-import toolkit.config.BrowserConfig;
-import toolkit.config.StageConfig;
-
-import java.util.HashMap;
-
 /**
  * Created by skashapov on 17.10.16.
  */
 public class Context {
 
-    public static ApplicationContext applicationContext;
+  /*  public static ApplicationContext applicationContext;
     public static ApplicationConfig applicationConfig;
     public static StageConfig stageConfig;
 
@@ -31,5 +21,5 @@ public class Context {
             put("configName", finalStage);
         }}));
         stageConfig = applicationContext.getBean(StageConfig.class);
-    }
+    }*/
 }

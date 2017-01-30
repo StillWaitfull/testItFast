@@ -9,7 +9,13 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import toolkit.config.ApplicationConfig;
 
+import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,17 +23,20 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-import static toolkit.helpers.Context.applicationConfig;
 
-
+@Component
+@Scope(scopeName = BeanDefinition.SCOPE_SINGLETON)
 public class ProxyHelper {
 
     private static Logger log = LoggerFactory.getLogger(ProxyHelper.class);
     private static BrowserMobProxy server = new BrowserMobProxyServer();
     private static Proxy proxy = new Proxy();
     private static boolean started = false;
+    private ApplicationConfig applicationConfig;
 
-    public static void initProxy() {
+    @Autowired
+    ProxyHelper(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
         if (applicationConfig.ENABLE_PROXY) {
             if (applicationConfig.REMOTE) {
                 String proxyStr = applicationConfig.REMOTE_PROXY_HOST + ":" + applicationConfig.PROXY_PORT;
@@ -44,8 +53,8 @@ public class ProxyHelper {
         } else proxy.setAutodetect(true);
     }
 
-
-    public static void stopProxy() {
+    @PreDestroy
+    public void stopProxy() {
         if (started && !applicationConfig.REMOTE) {
             try {
                 server.stop();
@@ -58,7 +67,7 @@ public class ProxyHelper {
     }
 
 
-    public static void setCapabilities(DesiredCapabilities capabilities) {
+    public void setCapabilities(DesiredCapabilities capabilities) {
         capabilities.setCapability(CapabilityType.PROXY, proxy);
     }
 

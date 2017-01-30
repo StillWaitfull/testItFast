@@ -19,21 +19,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static toolkit.helpers.Context.stageConfig;
-
 
 public abstract class OperationsHelper implements IPage {
 
     private static Logger log = LoggerFactory.getLogger(OperationsHelper.class);
     private WebDriverController driver = LocalDriverManager.getDriverController();
     private WebDriverWait waitDriver = driver.getInstanceWaitDriver();
-    protected static String baseUrl;
+    protected static String baseUrl = "";
 
 
     static {
         String envBaseUrl = System.getenv("baseUrl");
         if (envBaseUrl == null)
-            baseUrl = stageConfig.BASE_URL;
+            baseUrl = LocalDriverManager.getDriverController().getStageConfig().BASE_URL;
     }
 
 

@@ -3,14 +3,14 @@ package toolkit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import toolkit.config.ApplicationConfig;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-
-import static toolkit.helpers.Context.applicationConfig;
 
 
 /**
@@ -27,7 +27,10 @@ public class CheckingDifferentImages {
     public static String TEST_PATH = "4test" + File.separator;
     public static java.util.List<String> failedTests = new ArrayList<>();
 
-    {
+    @Autowired
+    ApplicationConfig applicationConfig;
+
+    public CheckingDifferentImages() {
         if (System.getenv("isTest") == null)
             isTest = applicationConfig.IS_TEST;
     }
@@ -44,8 +47,8 @@ public class CheckingDifferentImages {
     /**
      * Check difference.
      *
-     * @param name           name of the method
-     * @param accuracy       the accuracy   1pixels
+     * @param name     name of the method
+     * @param accuracy the accuracy   1pixels
      */
     public void checkDifference(String name, int accuracy) {
         BufferedImage im1 = null;

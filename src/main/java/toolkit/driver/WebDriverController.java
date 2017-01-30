@@ -7,25 +7,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.testng.Assert;
+import toolkit.config.ApplicationConfig;
+import toolkit.config.StageConfig;
 
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static toolkit.helpers.Context.applicationConfig;
 
 @Component
 @Scope("prototype")
 public class WebDriverController {
 
     private WebDriver driver;
-    public static final int TIMEOUT = applicationConfig.TIMEOUT;
+    public static int TIMEOUT = 20;
     private String browser;
     private Dimension dimension;
+    @Autowired
+    private StageConfig stageConfig;
 
 
     @Autowired
-    WebDriverController(toolkit.config.Platform platform, WebDriver driver) {
+    WebDriverController(toolkit.config.Platform platform, WebDriver driver, ApplicationConfig applicationConfig) {
+        TIMEOUT = applicationConfig.TIMEOUT;
         this.driver = driver;
         this.browser = platform.getBrowser();
         this.dimension = platform.getDimension();
@@ -214,4 +218,7 @@ public class WebDriverController {
     }
 
 
+    public StageConfig getStageConfig() {
+        return stageConfig;
+    }
 }

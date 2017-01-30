@@ -15,21 +15,28 @@ import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import toolkit.driver.ProxyHelper;
+import toolkit.driver.WebDriverListener;
 
 import java.io.File;
 import java.net.URL;
 
-import static toolkit.helpers.Context.applicationConfig;
 
 /**
  * Created by skashapov on 27.09.16.
  */
-@Import({ApplicationConfig.class, StageConfig.class, PlatformConfig.class})
+@Import({ApplicationConfig.class, StageConfig.class, PlatformConfig.class, ProxyHelper.class, ProxyHelper.class, WebDriverListener.class})
 @ComponentScan(value = "toolkit.driver")
 @Configuration
 public class BrowserConfig {
+
+    @Autowired
+    ProxyHelper proxyHelper;
+
+    @Autowired
+    ApplicationConfig applicationConfig;
 
     @Lazy
     @Scope("prototype")
@@ -89,7 +96,7 @@ public class BrowserConfig {
         WebDriver driver;
         try {
             DesiredCapabilities capabilitiesFF = createCapabilitiesFF();
-            ProxyHelper.setCapabilities(capabilitiesFF);
+            proxyHelper.setCapabilities(capabilitiesFF);
             driver = isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesFF) : new FirefoxDriver(capabilitiesFF);
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,7 +109,7 @@ public class BrowserConfig {
         WebDriver driver;
         try {
             DesiredCapabilities capabilitiesIe = DesiredCapabilities.internetExplorer();
-            ProxyHelper.setCapabilities(capabilitiesIe);
+            proxyHelper.setCapabilities(capabilitiesIe);
             capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
             System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
             driver = isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesIe) : new InternetExplorerDriver(capabilitiesIe);
@@ -116,7 +123,7 @@ public class BrowserConfig {
     private WebDriver getDriverChrome(boolean isRemote) {
         try {
             DesiredCapabilities capabilitiesChrome = DesiredCapabilities.chrome();
-            ProxyHelper.setCapabilities(capabilitiesChrome);
+            proxyHelper.setCapabilities(capabilitiesChrome);
             System.setProperty("webdriver.chrome.driver", "lib" + File.separator + "chromedriver" + OperationSystem.instance.getExecutableSuffix());
             return isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesChrome) : new ChromeDriver(capabilitiesChrome);
         } catch (Exception e) {
@@ -139,7 +146,7 @@ public class BrowserConfig {
         WebDriver driver;
         try {
             DesiredCapabilities capabilitiesPhantom = createCapabilitiesPhantom();
-            ProxyHelper.setCapabilities(capabilitiesPhantom);
+            proxyHelper.setCapabilities(capabilitiesPhantom);
             driver = isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesPhantom) : new PhantomJSDriver(capabilitiesPhantom);
         } catch (Exception e) {
             throw new RuntimeException("There was a problem with start phantom driver");
@@ -150,7 +157,7 @@ public class BrowserConfig {
 
     private DesiredCapabilities createCapabilitiesFF() {
         DesiredCapabilities capabilitiesFF = new DesiredCapabilities();
-        ProxyHelper.setCapabilities(capabilitiesFF);
+        proxyHelper.setCapabilities(capabilitiesFF);
         FirefoxProfile firefoxProfile = new FirefoxProfile();
         System.setProperty("webdriver.gecko.driver", "lib" + File.separator + "geckodriver" + OperationSystem.instance.getExecutableSuffix());
         String versionFirebug = applicationConfig.FIREBUG_VERSION;
