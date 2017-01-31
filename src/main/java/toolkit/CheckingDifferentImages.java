@@ -4,6 +4,10 @@ package toolkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import toolkit.config.ApplicationConfig;
 
 import javax.imageio.ImageIO;
@@ -17,6 +21,9 @@ import java.util.ArrayList;
  * I am gonna pass two images and I am gonna record only the differences
  * trying to catch if there is a different object or not int the scene
  */
+@Lazy
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+@Component
 public class CheckingDifferentImages {
     public static boolean isTest;
 
@@ -27,10 +34,9 @@ public class CheckingDifferentImages {
     public static String TEST_PATH = "4test" + File.separator;
     public static java.util.List<String> failedTests = new ArrayList<>();
 
-    @Autowired
-    ApplicationConfig applicationConfig;
 
-    public CheckingDifferentImages() {
+    @Autowired
+    public CheckingDifferentImages(ApplicationConfig applicationConfig) {
         if (System.getenv("isTest") == null)
             isTest = applicationConfig.IS_TEST;
     }

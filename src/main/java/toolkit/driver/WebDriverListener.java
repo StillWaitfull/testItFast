@@ -8,24 +8,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.testng.*;
 import ru.yandex.qatools.allure.annotations.Attachment;
 import toolkit.CheckingDifferentImages;
 import toolkit.IsKnownBug;
-import toolkit.config.BrowserConfig;
+import toolkit.config.ApplicationConfig;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
-@ContextConfiguration(classes = BrowserConfig.class)
 public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener, ITestListener, ISuiteListener {
     private Logger logger = LoggerFactory.getLogger(WebDriverListener.class);
     public static ThreadLocal<ITestResult> testResultThreadLocal = new ThreadLocal<>();
@@ -33,7 +34,14 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
     private static ApplicationContext applicationContext;
 
     @Autowired
-    public void initBeans(ApplicationContext applicationContext) {
+    public void initBeans(ApplicationContext applicationContext, ApplicationConfig applicationConfig) {
+        String stage = applicationConfig.CONFIG_NAME;
+        if (System.getenv("stage") != null) stage = System.getenv("stage");
+        ConfigurableEnvironment environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
+        String finalStage = stage;
+        environment.getPropertySources().addFirst(new MapPropertySource("configName", new HashMap<String, Object>() {{
+            put("configName", finalStage);
+        }}));
         WebDriverListener.applicationContext = applicationContext;
     }
 

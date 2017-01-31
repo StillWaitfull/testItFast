@@ -1,5 +1,6 @@
 package toolkit.config;
 
+import common.Platform;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

@@ -28,7 +28,7 @@ public class WebDriverController {
 
 
     @Autowired
-    WebDriverController(toolkit.config.Platform platform, WebDriver driver, ApplicationConfig applicationConfig) {
+    WebDriverController(common.Platform platform, WebDriver driver, ApplicationConfig applicationConfig) {
         TIMEOUT = applicationConfig.TIMEOUT;
         this.driver = driver;
         this.browser = platform.getBrowser();

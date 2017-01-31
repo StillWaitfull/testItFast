@@ -16,9 +16,12 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import toolkit.driver.ProxyHelper;
-import toolkit.driver.WebDriverListener;
 
 import java.io.File;
 import java.net.URL;
@@ -27,8 +30,6 @@ import java.net.URL;
 /**
  * Created by skashapov on 27.09.16.
  */
-@Import({ApplicationConfig.class, StageConfig.class, PlatformConfig.class, ProxyHelper.class, ProxyHelper.class, WebDriverListener.class})
-@ComponentScan(value = "toolkit.driver")
 @Configuration
 public class BrowserConfig {
 
@@ -39,9 +40,9 @@ public class BrowserConfig {
     ApplicationConfig applicationConfig;
 
     @Lazy
-    @Scope("prototype")
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Bean(name = "pc")
-    public WebDriver getBrowser(toolkit.config.Platform platform) {
+    public WebDriver getBrowser(common.Platform platform) {
         if (platform.isMobile()) {
             switch (platform.getPlatform()) {
                 case ANDROID:
@@ -75,7 +76,7 @@ public class BrowserConfig {
     }
 
 
-    private WebDriver getAndroid(toolkit.config.Platform platform) {
+    private WebDriver getAndroid(common.Platform platform) {
         try {
             DesiredCapabilities capabilities = DesiredCapabilities.android();
             capabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());

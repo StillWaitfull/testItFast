@@ -21,6 +21,9 @@ import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
 import java.net.URI;
@@ -30,7 +33,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Service
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class RequestClient {
     private static Logger log = LoggerFactory.getLogger(RequestClient.class);
     private static final String ENCODING = "UTF-8";

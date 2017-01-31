@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import toolkit.config.ApplicationConfig;
 
 import javax.annotation.PreDestroy;
@@ -24,8 +24,8 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 
-@Component
-@Scope(scopeName = BeanDefinition.SCOPE_SINGLETON)
+@Service
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class ProxyHelper {
 
     private static Logger log = LoggerFactory.getLogger(ProxyHelper.class);

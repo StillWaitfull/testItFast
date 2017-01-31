@@ -2,6 +2,7 @@ package tests;
 
 import composite.IPage;
 import composite.pages.GooglePage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import toolkit.CheckingDifferentImages;
@@ -13,11 +14,13 @@ import toolkit.CheckingDifferentImages;
 public class FrontendGoogleTest extends AbstractTest {
 
 
+    @Autowired
+    CheckingDifferentImages checkingDifferentImages;
+
     @Test
     public void googleTest() {
         String name = "googleTest";
         IPage googlePage = new GooglePage();
-        CheckingDifferentImages checkingDifferentImages = new CheckingDifferentImages();
         googlePage.openPage()
                 .type(GooglePage.QUERY, "1")
                 .makeScreenshotForDiff(name, CheckingDifferentImages.isTest);

@@ -1,4 +1,4 @@
-package toolkit.config;
+package common;
 
 import org.openqa.selenium.Dimension;
 
