@@ -3,6 +3,7 @@ package toolkit.config;
 import common.Platform;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -33,7 +34,7 @@ public class PlatformConfig {
 
     @Bean
     @Lazy
-    @Scope("prototype")
+    @Scope(value = BeanDefinition.SCOPE_PROTOTYPE)
     public Platform determinePlatform() {
         ITestResult iTestResult = testResultThreadLocal.get();
         Platform platform4Test = new Platform();

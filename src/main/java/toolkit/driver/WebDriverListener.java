@@ -26,24 +26,14 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static toolkit.config.GeneralConfig.applicationContext;
+
 
 public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener, ITestListener, ISuiteListener {
     private Logger logger = LoggerFactory.getLogger(WebDriverListener.class);
     public static ThreadLocal<ITestResult> testResultThreadLocal = new ThreadLocal<>();
     private static ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
-    private static ApplicationContext applicationContext;
 
-    @Autowired
-    public void initBeans(ApplicationContext applicationContext, ApplicationConfig applicationConfig) {
-        String stage = applicationConfig.CONFIG_NAME;
-        if (System.getenv("stage") != null) stage = System.getenv("stage");
-        ConfigurableEnvironment environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
-        String finalStage = stage;
-        environment.getPropertySources().addFirst(new MapPropertySource("configName", new HashMap<String, Object>() {{
-            put("configName", finalStage);
-        }}));
-        WebDriverListener.applicationContext = applicationContext;
-    }
 
 
     @Override

@@ -32,11 +32,9 @@ public class ProxyHelper {
     private static BrowserMobProxy server = new BrowserMobProxyServer();
     private static Proxy proxy = new Proxy();
     private static boolean started = false;
-    private ApplicationConfig applicationConfig;
 
     @Autowired
     ProxyHelper(ApplicationConfig applicationConfig) {
-        this.applicationConfig = applicationConfig;
         if (applicationConfig.ENABLE_PROXY) {
             if (applicationConfig.REMOTE) {
                 String proxyStr = applicationConfig.REMOTE_PROXY_HOST + ":" + applicationConfig.PROXY_PORT;
@@ -55,7 +53,7 @@ public class ProxyHelper {
 
     @PreDestroy
     public void stopProxy() {
-        if (started && !applicationConfig.REMOTE) {
+        if (started) {
             try {
                 server.stop();
                 started = false;
