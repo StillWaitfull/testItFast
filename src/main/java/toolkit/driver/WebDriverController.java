@@ -1,5 +1,7 @@
 package toolkit.driver;
 
+import configs.ApplicationConfig;
+import configs.StageConfig;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -8,8 +10,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.testng.Assert;
-import toolkit.config.ApplicationConfig;
-import toolkit.config.StageConfig;
 
 import java.util.List;
 import java.util.Set;

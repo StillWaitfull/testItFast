@@ -1,4 +1,4 @@
-package common;
+package toolkit;
 
 import com.jayway.jsonpath.JsonPath;
 import org.apache.http.HttpResponse;
@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
 import java.net.URI;

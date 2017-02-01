@@ -1,7 +1,8 @@
 package tests;
 
+import common.AbstractTest;
 import composite.IPage;
-import composite.pages.GooglePage;
+import pages.GooglePage;
 import org.testng.annotations.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 

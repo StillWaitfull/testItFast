@@ -1,4 +1,4 @@
-package toolkit.config;
+package configs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;

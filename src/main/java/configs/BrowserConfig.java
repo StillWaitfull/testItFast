@@ -1,4 +1,4 @@
-package toolkit.config;
+package configs;
 
 import common.OperationSystem;
 import io.appium.java_client.android.AndroidDriver;

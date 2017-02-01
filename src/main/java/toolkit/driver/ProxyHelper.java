@@ -1,5 +1,6 @@
 package toolkit.driver;
 
+import configs.ApplicationConfig;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import toolkit.config.ApplicationConfig;
 
 import javax.annotation.PreDestroy;
 import java.io.File;

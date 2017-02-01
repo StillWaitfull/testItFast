@@ -1,4 +1,4 @@
-package toolkit.config;
+package configs;
 
 import common.Platform;
 import org.openqa.selenium.Dimension;
@@ -90,7 +90,7 @@ public class PlatformConfig {
             dimension = new Dimension(Integer.parseInt(dimensionW), Integer.parseInt(dimensionH));
         else {
             if (applicationConfig.DIMENSION_W.isEmpty() && applicationConfig.DIMENSION_H.isEmpty())
-                throw new RuntimeException("You should set dimension for test in config");
+                throw new RuntimeException("You should set dimension for test in configs");
             else
                 dimension = new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H));
         }

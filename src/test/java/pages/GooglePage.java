@@ -1,4 +1,4 @@
-package composite.pages;
+package pages;
 
 import composite.IPage;
 import org.openqa.selenium.By;
@@ -12,7 +12,7 @@ import toolkit.helpers.OperationsHelper;
  * Time: 11:13
  * To change this template use File | Settings | File Templates.
  */
-public class GooglePage extends OperationsHelper implements IPage {
+public class GooglePage extends OperationsHelper {
 
     private static final String pageUrl = baseUrl + "/";
 

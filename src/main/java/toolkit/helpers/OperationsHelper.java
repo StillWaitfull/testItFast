@@ -29,6 +29,8 @@ public abstract class OperationsHelper implements IPage {
 
 
     static {
+        if (LocalDriverManager.getDriverController() == null)
+            throw new RuntimeException("WebDriver is not initialized,set WebDriverListener to your testNG");
         String envBaseUrl = System.getenv("baseUrl");
         if (envBaseUrl == null)
             baseUrl = LocalDriverManager.getDriverController().getStageConfig().BASE_URL;
