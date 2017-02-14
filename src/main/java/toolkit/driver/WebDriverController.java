@@ -131,7 +131,10 @@ public class WebDriverController {
         if (url.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        driver.get(url);
+        try {
+            driver.get(url);
+        } catch (Exception ignored) {
+        }
         waitForPageLoaded();
     }
 

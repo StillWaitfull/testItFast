@@ -1,7 +1,7 @@
 package configs;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -15,9 +15,12 @@ import java.util.HashMap;
 @ComponentScan(basePackages = {"configs", "toolkit"})
 public class GeneralConfig {
     public static ApplicationContext applicationContext;
+    public static ApplicationConfig applicationConfig;
+    public static StageConfig stageConfig;
 
-    @Autowired
-    public void initContext(ApplicationContext applicationContext, ApplicationConfig applicationConfig) {
+    static {
+        applicationContext = new AnnotationConfigApplicationContext(GeneralConfig.class);
+        applicationConfig = applicationContext.getBean(ApplicationConfig.class);
         String stage = applicationConfig.CONFIG_NAME;
         if (System.getenv("stage") != null) stage = System.getenv("stage");
         ConfigurableEnvironment environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
@@ -25,7 +28,7 @@ public class GeneralConfig {
         environment.getPropertySources().addFirst(new MapPropertySource("configName", new HashMap<String, Object>() {{
             put("configName", finalStage);
         }}));
-        GeneralConfig.applicationContext = applicationContext;
+        stageConfig = applicationContext.getBean(StageConfig.class);
     }
 
 }

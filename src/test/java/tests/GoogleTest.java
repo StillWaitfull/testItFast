@@ -1,9 +1,8 @@
 package tests;
 
-import common.AbstractTest;
 import composite.IPage;
-import pages.GooglePage;
 import org.testng.annotations.Test;
+import pages.GooglePage;
 import ru.yandex.qatools.allure.annotations.Features;
 
 @Features(value = "Google Tests")
