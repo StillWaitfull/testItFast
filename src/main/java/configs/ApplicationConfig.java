@@ -1,10 +1,16 @@
 package configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.io.support.ResourcePropertySource;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 
 /**
  * Created by skashapov on 28.09.16.
@@ -81,5 +87,19 @@ public class ApplicationConfig {
     @Value("${appiumAddress:http://127.0.0.1:4723/wd/hub}")
     public String APPIUM_ADDRESS;
 
+
+    @Autowired
+    private ConfigurableEnvironment env;
+
+    @PostConstruct
+    public void init() {
+        try {
+            String stage = System.getenv("stage");
+            if (stage == null) stage = CONFIG_NAME;
+            env.getPropertySources().addFirst(new ResourcePropertySource("configs/" + stage+".yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -2,6 +2,7 @@ package toolkit.helpers;
 
 import com.google.common.collect.Iterables;
 import composite.IPage;
+import configs.GeneralConfig;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -25,16 +26,8 @@ public abstract class OperationsHelper implements IPage {
     private static Logger log = LoggerFactory.getLogger(OperationsHelper.class);
     private WebDriverController driver = LocalDriverManager.getDriverController();
     private WebDriverWait waitDriver = driver.getInstanceWaitDriver();
-    protected static String baseUrl = "";
+    protected static String baseUrl = GeneralConfig.baseUrl;
 
-
-    static {
-        if (LocalDriverManager.getDriverController() == null)
-            throw new RuntimeException("WebDriver is not initialized,set WebDriverListener to your testNG");
-        String envBaseUrl = System.getenv("baseUrl");
-        if (envBaseUrl == null)
-            baseUrl = LocalDriverManager.getDriverController().getStageConfig().BASE_URL;
-    }
 
 
     public static void logoutHook() {
