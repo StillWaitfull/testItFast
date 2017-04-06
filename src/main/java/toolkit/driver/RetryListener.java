@@ -7,9 +7,7 @@ import org.testng.ITestResult;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by restore on 14.12.15.
- */
+
 public class RetryListener implements IRetryAnalyzer {
 
     static int maxRetryCount = 1;

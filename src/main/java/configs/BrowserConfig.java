@@ -27,9 +27,7 @@ import java.io.File;
 import java.net.URL;
 
 
-/**
- * Created by skashapov on 27.09.16.
- */
+
 @Configuration
 public class BrowserConfig {
 

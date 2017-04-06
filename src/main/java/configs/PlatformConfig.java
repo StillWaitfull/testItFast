@@ -14,9 +14,7 @@ import java.util.Map;
 
 import static toolkit.driver.WebDriverListener.testResultThreadLocal;
 
-/**
- * Created by skashapov on 05.12.16.
- */
+
 @Configuration
 public class PlatformConfig {
     private String browser;

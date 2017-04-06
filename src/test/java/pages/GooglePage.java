@@ -5,13 +5,7 @@ import org.openqa.selenium.By;
 import org.testng.Assert;
 import toolkit.helpers.OperationsHelper;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Sergey.Kashapov
- * Date: 14.05.14
- * Time: 11:13
- * To change this template use File | Settings | File Templates.
- */
+
 public class GooglePage extends OperationsHelper {
 
     private static final String pageUrl = baseUrl + "/";

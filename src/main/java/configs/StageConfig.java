@@ -6,9 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 
-/**
- * Created by skashapov on 28.09.16.
- */
 
 @Configuration
 @Scope(value = BeanDefinition.SCOPE_SINGLETON)

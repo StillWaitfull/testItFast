@@ -5,9 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-/**
- * Created by skashapov on 31.01.17.
- */
+
 
 @ComponentScan(basePackages = {"configs", "toolkit"})
 public class GeneralConfig {

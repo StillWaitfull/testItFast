@@ -12,9 +12,7 @@ import org.springframework.core.io.support.ResourcePropertySource;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 
-/**
- * Created by skashapov on 28.09.16.
- */
+
 @Configuration
 @Scope(value = BeanDefinition.SCOPE_SINGLETON)
 @PropertySource(value = "file:application.yml", ignoreResourceNotFound = true)
@@ -96,7 +94,7 @@ public class ApplicationConfig {
         try {
             String stage = System.getenv("stage");
             if (stage == null) stage = CONFIG_NAME;
-            env.getPropertySources().addFirst(new ResourcePropertySource("configs/" + stage+".yml"));
+            env.getPropertySources().addFirst(new ResourcePropertySource("configs/" + stage + ".yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }

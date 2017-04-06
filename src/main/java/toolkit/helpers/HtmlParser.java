@@ -6,31 +6,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static configs.GeneralConfig.applicationConfig;
 
-
-/**
- * Created by Restore on 6/4/14.
- */
-
-@Component
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class HtmlParser {
 
     private Logger log = LoggerFactory.getLogger(HtmlParser.class);
     private Elements elements;
     private Document document;
     private String url;
-    private final int TIMEOUT = applicationConfig.TIMEOUT;
-
+    private final int TIMEOUT = 30;
 
 
     public HtmlParser(String url) {

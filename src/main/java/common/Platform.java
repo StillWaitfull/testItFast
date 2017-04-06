@@ -2,10 +2,6 @@ package common;
 
 import org.openqa.selenium.Dimension;
 
-/**
- * Created by skashapov on 20.10.16.
- */
-
 public class Platform {
 
 

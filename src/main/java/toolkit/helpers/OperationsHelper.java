@@ -29,7 +29,6 @@ public abstract class OperationsHelper implements IPage {
     protected static String baseUrl = GeneralConfig.baseUrl;
 
 
-
     public static void logoutHook() {
         if (LocalDriverManager.getDriverController() != null) {
             LocalDriverManager.getDriverController().goToUrl(baseUrl);
