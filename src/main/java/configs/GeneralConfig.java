@@ -6,7 +6,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ComponentScan;
 
 
-
 @ComponentScan(basePackages = {"configs", "toolkit"})
 public class GeneralConfig {
     public static ApplicationContext applicationContext;

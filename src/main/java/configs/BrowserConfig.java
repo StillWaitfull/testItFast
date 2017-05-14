@@ -27,7 +27,6 @@ import java.io.File;
 import java.net.URL;
 
 
-
 @Configuration
 public class BrowserConfig {
 
@@ -137,7 +136,7 @@ public class BrowserConfig {
 
     private WebDriver getDriverOpera(boolean isRemote) {
         try {
-            DesiredCapabilities capabilitiesOpera = DesiredCapabilities.operaBlink();
+            DesiredCapabilities capabilitiesOpera = DesiredCapabilities.opera();
             System.setProperty("webdriver.opera.driver", "lib" + File.separator + "operadriver" + OperationSystem.instance.getExecutableSuffix());
             return isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesOpera) : new org.openqa.selenium.opera.OperaDriver(capabilitiesOpera);
         } catch (Exception e) {
@@ -160,7 +159,6 @@ public class BrowserConfig {
 
     private DesiredCapabilities createCapabilitiesFF() {
         DesiredCapabilities capabilitiesFF = new DesiredCapabilities();
-        proxyHelper.setCapabilities(capabilitiesFF);
         FirefoxProfile firefoxProfile = new FirefoxProfile();
         System.setProperty("webdriver.gecko.driver", "lib" + File.separator + "geckodriver" + OperationSystem.instance.getExecutableSuffix());
         String versionFirebug = applicationConfig.FIREBUG_VERSION;

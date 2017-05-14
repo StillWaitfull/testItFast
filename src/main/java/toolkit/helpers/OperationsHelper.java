@@ -6,7 +6,6 @@ import configs.GeneralConfig;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -127,7 +126,7 @@ public abstract class OperationsHelper implements IPage {
     }
 
     private void waitForNumberOfWindowsToEqual(final int numberOfWindows) {
-        waitDriver.until((ExpectedCondition<Boolean>) driver1 -> driver1.getWindowHandles().size() == numberOfWindows);
+        waitDriver.until(driver1 -> driver1.getWindowHandles().size() == numberOfWindows);
     }
 
     @Override

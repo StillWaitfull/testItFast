@@ -3,7 +3,6 @@ package toolkit.driver;
 import configs.ApplicationConfig;
 import configs.StageConfig;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -14,6 +13,7 @@ import org.testng.Assert;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 
 @Component
@@ -58,7 +58,7 @@ public class WebDriverController {
 
 
     private void waitForPageLoaded() {
-        ExpectedCondition<Boolean> expectation = driver1 -> executeScript("return document.readyState").toString().equals("complete");
+        Function<WebDriver, Boolean> expectation = driver1 -> executeScript("return document.readyState").toString().equals("complete");
         try {
             getInstanceWaitDriver().until(expectation);
         } catch (Throwable error) {

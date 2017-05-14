@@ -50,12 +50,12 @@ public class RetryListener implements IRetryAnalyzer {
         this.nameMethod = nameMethod;
     }
 
-    public AtomicInteger getCount(){
+    public AtomicInteger getCount() {
         return count;
     }
 
-    public void setCount(AtomicInteger count){
-       this.count=count;
+    public void setCount(AtomicInteger count) {
+        this.count = count;
     }
 }
 
