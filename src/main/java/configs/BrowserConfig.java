@@ -31,11 +31,15 @@ import java.net.URL;
 @Configuration
 public class BrowserConfig {
 
-    @Autowired
-    ProxyHelper proxyHelper;
+    private final ProxyHelper proxyHelper;
+
+    private final ApplicationConfig applicationConfig;
 
     @Autowired
-    ApplicationConfig applicationConfig;
+    public BrowserConfig(ProxyHelper proxyHelper, ApplicationConfig applicationConfig) {
+        this.proxyHelper = proxyHelper;
+        this.applicationConfig = applicationConfig;
+    }
 
     @Lazy
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)

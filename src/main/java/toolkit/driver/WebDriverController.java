@@ -21,25 +21,26 @@ import java.util.concurrent.TimeUnit;
 public class WebDriverController {
 
     private WebDriver driver;
-    public static int TIMEOUT = 20;
+    public static int TIMEOUT;
     private String browser;
     private Dimension dimension;
-    @Autowired
-    private StageConfig stageConfig;
+    private final StageConfig stageConfig;
 
 
     @Autowired
-    WebDriverController(common.Platform platform, WebDriver driver, ApplicationConfig applicationConfig) {
-        TIMEOUT = applicationConfig.TIMEOUT;
+    WebDriverController(common.Platform platform, WebDriver driver, ApplicationConfig applicationConfig, StageConfig stageConfig) {
         this.driver = driver;
         this.browser = platform.getBrowser();
         this.dimension = platform.getDimension();
+        this.stageConfig = stageConfig;
+        TIMEOUT = applicationConfig.TIMEOUT;
         if (!platform.isMobile()) driver.manage().window().setSize(dimension);
         driver.manage().timeouts().setScriptTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.switchTo();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
         LocalDriverManager.setWebDriverController(this);
+
     }
 
 
@@ -214,13 +215,6 @@ public class WebDriverController {
     Dimension getDimension() {
         return dimension;
     }
-
-    String getStringDimension() {
-        if (dimension != null)
-            return dimension.getWidth() + "X" + dimension.getHeight();
-        else return "";
-    }
-
 
     public StageConfig getStageConfig() {
         return stageConfig;

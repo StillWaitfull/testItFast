@@ -11,11 +11,11 @@ public class LocalDriverManager {
         return webDrivers.get(Thread.currentThread());
     }
 
-    public static void setWebDriverController(WebDriverController driver) {
+    static void setWebDriverController(WebDriverController driver) {
         webDrivers.put(Thread.currentThread(), driver);
     }
 
-    public static void cleanThreadPool() {
+    static void cleanThreadPool() {
         webDrivers.values().forEach(WebDriverController::shutdown);
         webDrivers.keySet().forEach(Thread::interrupt);
         webDrivers.clear();

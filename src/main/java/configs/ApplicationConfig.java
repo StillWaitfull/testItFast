@@ -86,8 +86,12 @@ public class ApplicationConfig {
     public String APPIUM_ADDRESS;
 
 
+    private final ConfigurableEnvironment env;
+
     @Autowired
-    private ConfigurableEnvironment env;
+    public ApplicationConfig(ConfigurableEnvironment env) {
+        this.env = env;
+    }
 
     @PostConstruct
     public void init() {

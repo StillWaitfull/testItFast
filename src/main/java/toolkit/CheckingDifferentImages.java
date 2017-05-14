@@ -10,10 +10,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 
-import static configs.GeneralConfig.applicationConfig;
-
 
 /**
+ * 79684452367
  * I am gonna pass two images and I am gonna record only the differences
  * trying to catch if there is a different object or not int the scene
  */
@@ -31,7 +30,7 @@ public class CheckingDifferentImages {
 
     public CheckingDifferentImages() {
         if (System.getenv("isTest") == null)
-            isTest = applicationConfig.IS_TEST;
+            isTest = false;
     }
 
 

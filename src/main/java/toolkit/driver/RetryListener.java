@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RetryListener implements IRetryAnalyzer {
 
     static int maxRetryCount = 1;
-    AtomicInteger count = new AtomicInteger(maxRetryCount);
+    private AtomicInteger count = new AtomicInteger(maxRetryCount);
     private Logger logger = LoggerFactory.getLogger(RetryListener.class);
     private static ThreadLocal<RetryListener> retryListenerThreadLocal = new ThreadLocal<>();
     private String nameMethod = "";
@@ -48,6 +48,14 @@ public class RetryListener implements IRetryAnalyzer {
 
     void setNameMethod(String nameMethod) {
         this.nameMethod = nameMethod;
+    }
+
+    public AtomicInteger getCount(){
+        return count;
+    }
+
+    public void setCount(AtomicInteger count){
+       this.count=count;
     }
 }
 

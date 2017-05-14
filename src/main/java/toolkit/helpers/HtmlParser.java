@@ -1,5 +1,6 @@
 package toolkit.helpers;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,7 +20,7 @@ public class HtmlParser {
     private Document document;
     private String url;
     private final int TIMEOUT = 30;
-
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6";
 
     public HtmlParser(String url) {
         try {
@@ -47,9 +48,7 @@ public class HtmlParser {
         Document document = null;
         try {
             document =
-                    Jsoup.connect(url)
-                            .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-                            .timeout(TIMEOUT * 1000)
+                    getConnection(null)
                             .get();
         } catch (Exception e) {
             log.error("Cant connect to " + url);
@@ -57,16 +56,21 @@ public class HtmlParser {
         return document;
     }
 
+    private Connection getConnection(Map<String, String> cookies) {
+        Connection connection = Jsoup.connect(url)
+                .userAgent(USER_AGENT)
+                .timeout(TIMEOUT * 1000);
+        if (cookies != null)
+            connection.cookies(cookies);
+        return connection;
+    }
+
 
     private Document getDocument(Map<String, String> cookies) {
         Document document = null;
         try {
-            document =
-                    Jsoup.connect(url)
-                            .cookies(cookies)
-                            .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-                            .timeout(TIMEOUT * 1000)
-                            .get();
+            document = getConnection(cookies)
+                    .get();
         } catch (Exception e) {
             log.error("Cant connect to " + url);
         }

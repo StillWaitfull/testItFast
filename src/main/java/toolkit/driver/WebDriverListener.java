@@ -35,7 +35,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
         String methodName = method.getTestMethod().getMethodName();
         if (method.isTestMethod()) {
             if (!RetryListener.get().getNameMethod().equals(methodName))
-                RetryListener.get().count = new AtomicInteger(RetryListener.maxRetryCount);
+                RetryListener.get().setCount(new AtomicInteger(RetryListener.maxRetryCount));
             RetryListener.get().setNameMethod(methodName);
         }
         if (LocalDriverManager.getDriverController() == null && method.isTestMethod() && !methodName.contains("NotDriver")) {

@@ -27,8 +27,12 @@ public class PlatformConfig {
     private String udid;
     private String addressAppium;
 
+    private final ApplicationConfig applicationConfig;
+
     @Autowired
-    ApplicationConfig applicationConfig;
+    public PlatformConfig(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+    }
 
     @Bean
     @Lazy
