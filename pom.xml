@@ -156,11 +156,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>21.0</version>
-        </dependency>
 
         <dependency>
             <groupId>io.appium</groupId>
@@ -187,7 +182,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.9.13.6</version>
+            <version>6.8.7</version>
         </dependency>
         <dependency>
             <groupId>org.uncommons</groupId>
