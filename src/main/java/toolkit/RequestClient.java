@@ -31,17 +31,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RequestClient {
-    private static Logger log = LoggerFactory.getLogger(RequestClient.class);
+    private static final Logger log = LoggerFactory.getLogger(RequestClient.class);
     private static final String ENCODING = "UTF-8";
 
     private String responseText = "";
     private StringEntity body;
-    private List<BasicHeader> headers = new ArrayList<>();
-    private RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
-    private CookieStore cookieStore = new BasicCookieStore();
-    private HttpClientContext context = HttpClientContext.create();
+    private final List<BasicHeader> headers = new ArrayList<>();
+    private final RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
+    private final CookieStore cookieStore = new BasicCookieStore();
+    private final HttpClientContext context = HttpClientContext.create();
     private int statusCode;
-    private CloseableHttpClient httpClient = HttpClients.custom()
+    private final CloseableHttpClient httpClient = HttpClients.custom()
             .disableRedirectHandling()
             .setDefaultRequestConfig(globalConfig)
             .setSSLContext(createSslContext())
@@ -132,7 +132,7 @@ public class RequestClient {
 
 
     public enum METHODS {
-        GET, POST, PUT, HEAD, DELETE;
+        GET, POST, PUT, HEAD, DELETE
     }
 
 

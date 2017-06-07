@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = {"configs", "toolkit"})
 public class GeneralConfig {
-    public static ApplicationContext applicationContext;
+    public static final ApplicationContext applicationContext;
     public static String baseUrl;
 
     static {

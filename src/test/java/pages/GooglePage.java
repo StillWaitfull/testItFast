@@ -11,7 +11,7 @@ public class GooglePage extends OperationsHelper {
     private static final String pageUrl = baseUrl + "/";
 
 
-    public static final By QUERY = By.id("lst-ib");
+    private static final By QUERY = By.id("lst-ib");
 
 
     @Override
@@ -28,8 +28,13 @@ public class GooglePage extends OperationsHelper {
 
     public static Runnable[] getGooglePageAssertions(IPage page) {
         return new Runnable[]{
-                () -> Assert.assertTrue(page.isVisible(GooglePage.QUERY), "Google QUERY is not visible")
+                () -> Assert.assertTrue(page.validateElementVisible(GooglePage.QUERY), "Google QUERY is not visible")
         };
+    }
+
+    public IPage typeTextToQueryField(String text) {
+        type(QUERY, text);
+        return this;
     }
 
 }

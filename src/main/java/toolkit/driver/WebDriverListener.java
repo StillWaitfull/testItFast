@@ -24,9 +24,9 @@ import static configs.GeneralConfig.applicationContext;
 
 
 public class WebDriverListener extends TestListenerAdapter implements IInvokedMethodListener, ITestListener, ISuiteListener {
-    private Logger logger = LoggerFactory.getLogger(WebDriverListener.class);
-    public static ThreadLocal<ITestResult> testResultThreadLocal = new ThreadLocal<>();
-    private static ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
+    private final Logger logger = LoggerFactory.getLogger(WebDriverListener.class);
+    public static final ThreadLocal<ITestResult> testResultThreadLocal = new ThreadLocal<>();
+    private static final ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
 
 
     @Override
@@ -63,7 +63,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
 
 
     @Attachment(value = "{0}", type = "image/png")
-    private byte[] makeScreenshot(String methodName) {
+    private void makeScreenshot(String methodName) {
         Calendar calendar = Calendar.getInstance();
         String path = "";
         SimpleDateFormat formater = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
@@ -77,7 +77,8 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
                         + "_" + LocalDriverManager.getDriverController().getBrowser()
                         + "_" + LocalDriverManager.getDriverController().getDimension() + "_webdriver.png";
                 FileUtils.copyFile(scrFile, new File(path));
-                return Files.readAllBytes(Paths.get(path));
+                Files.readAllBytes(Paths.get(path));
+                return;
             }
         } catch (Exception e1) {
             e1.printStackTrace();

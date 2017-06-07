@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LocalDriverManager {
 
-    private static ConcurrentHashMap<Thread, WebDriverController> webDrivers = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Thread, WebDriverController> webDrivers = new ConcurrentHashMap<>();
 
     public static WebDriverController getDriverController() {
 

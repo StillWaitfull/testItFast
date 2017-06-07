@@ -37,7 +37,7 @@ public enum OperationSystem {
     };
 
     public static final OperationSystem instance = OperationSystem.detectOS();
-    protected String executableSuffix = "";
+    private String executableSuffix = "";
     private boolean is64bit;
     private String osName;
 

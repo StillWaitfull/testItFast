@@ -5,8 +5,9 @@ firebug-version: 2.0.7
 
 
 remote: false
-browser: chrome
 hubAddress: http://172.27.5.65:4444/wd/hub
+
+browser: chrome
 Timeout: 10
 
 

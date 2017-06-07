@@ -28,7 +28,7 @@ public class Platform {
             return name;
         }
 
-        private String name;
+        private final String name;
     }
 
 

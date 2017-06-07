@@ -1,7 +1,6 @@
 package configs;
 
 import common.OperationSystem;
-import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
@@ -42,7 +41,7 @@ public class BrowserConfig {
 
     @Lazy
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    @Bean(name = "pc")
+    @Bean
     public WebDriver getBrowser(common.Platform platform) {
         if (platform.isMobile()) {
             switch (platform.getPlatform()) {
@@ -86,7 +85,7 @@ public class BrowserConfig {
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platform.getPlatformVersion());
             capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getMobileBrowser());
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
-            return platform.isRemote() ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilities) : new AndroidDriver(new URL(platform.getAddress()), capabilities);
+            return /*platform.isRemote() ? */new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilities) /*: new AndroidDriver(new URL(platform.getAddress()), capabilities)*/;
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("There was a problem with android driver");
@@ -136,7 +135,7 @@ public class BrowserConfig {
 
     private WebDriver getDriverOpera(boolean isRemote) {
         try {
-            DesiredCapabilities capabilitiesOpera = DesiredCapabilities.opera();
+            DesiredCapabilities capabilitiesOpera = DesiredCapabilities.operaBlink();
             System.setProperty("webdriver.opera.driver", "lib" + File.separator + "operadriver" + OperationSystem.instance.getExecutableSuffix());
             return isRemote ? new RemoteWebDriver(new URL(applicationConfig.HUB_ADDRESS), capabilitiesOpera) : new org.openqa.selenium.opera.OperaDriver(capabilitiesOpera);
         } catch (Exception e) {

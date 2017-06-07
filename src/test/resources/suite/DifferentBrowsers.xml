@@ -4,13 +4,13 @@
     <test name="TestsChrome" parallel="methods" thread-count="2">
         <parameter name="browser" value="chrome"/>
         <classes>
-            <class name="tests.GoogleTest"/>
+            <class name="tests.simpleTests.GoogleTest"/>
         </classes>
     </test>
     <test name="TestsFirefox" parallel="methods" thread-count="2">
         <parameter name="browser" value="firefox"/>
         <classes>
-            <class name="tests.GoogleTest"/>
+            <class name="tests.simpleTests.GoogleTest"/>
         </classes>
     </test>
 </suite>

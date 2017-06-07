@@ -1,13 +1,18 @@
 package toolkit;
 
 
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import toolkit.driver.LocalDriverManager;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -18,14 +23,14 @@ import java.util.ArrayList;
  */
 
 public class CheckingDifferentImages {
-    public static boolean isTest;
+    private static boolean isTest;
 
-    private static Logger log = LoggerFactory.getLogger(CheckingDifferentImages.class);
+    private static final Logger log = LoggerFactory.getLogger(CheckingDifferentImages.class);
 
-    private static String PATH = "screenshots" + File.separator;
-    public static String ETALON_PATH = "etalon" + File.separator;
-    public static String TEST_PATH = "4test" + File.separator;
-    public static java.util.List<String> failedTests = new ArrayList<>();
+    private static final String PATH = "screenshots" + File.separator;
+    private static final String ETALON_PATH = "etalon" + File.separator;
+    private static final String TEST_PATH = "4test" + File.separator;
+    public static final java.util.List<String> failedTests = new ArrayList<>();
 
 
     public CheckingDifferentImages() {
@@ -138,6 +143,20 @@ public class CheckingDifferentImages {
             }
         } catch (Exception ignored) {
         }
+    }
+
+    public CheckingDifferentImages makeScreenshotForDiff(String name) {
+        String path = isTest ? CheckingDifferentImages.TEST_PATH : CheckingDifferentImages.ETALON_PATH;
+        File scrFile;
+        log.info("Screen path " + path + " name is " + name);
+        try {
+            scrFile = ((TakesScreenshot) LocalDriverManager.getDriverController().getDriver()).getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(scrFile, new File("screenshots" +
+                    File.separator + path + File.separator + name + ".png"));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return this;
     }
 
 

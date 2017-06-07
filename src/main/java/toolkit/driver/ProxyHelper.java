@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class ProxyHelper {
 
-    private static Logger log = LoggerFactory.getLogger(ProxyHelper.class);
-    private static BrowserMobProxy server = new BrowserMobProxyServer();
+    private static final Logger log = LoggerFactory.getLogger(ProxyHelper.class);
+    private static final BrowserMobProxy server = new BrowserMobProxyServer();
     private static Proxy proxy = new Proxy();
     private static boolean started = false;
 

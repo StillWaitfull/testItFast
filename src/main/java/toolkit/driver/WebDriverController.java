@@ -3,9 +3,11 @@ package toolkit.driver;
 import configs.ApplicationConfig;
 import configs.StageConfig;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.testng.Assert;
@@ -13,17 +15,16 @@ import org.testng.Assert;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
-
+@Lazy
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebDriverController {
 
     private WebDriver driver;
     public static int TIMEOUT;
-    private String browser;
-    private Dimension dimension;
+    private final String browser;
+    private final Dimension dimension;
     private final StageConfig stageConfig;
 
 
@@ -40,7 +41,6 @@ public class WebDriverController {
         driver.switchTo();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
         LocalDriverManager.setWebDriverController(this);
-
     }
 
 
@@ -58,7 +58,8 @@ public class WebDriverController {
 
 
     private void waitForPageLoaded() {
-        Function<WebDriver, Boolean> expectation = driver1 -> executeScript("return document.readyState").toString().equals("complete");
+        // Function<WebDriver, Boolean> expectation = driver1 -> executeScript("return document.readyState").toString().equals("complete");
+        ExpectedCondition<Boolean> expectation = driver1 -> executeScript("return document.readyState").toString().equals("complete");
         try {
             getInstanceWaitDriver().until(expectation);
         } catch (Throwable error) {
@@ -212,7 +213,7 @@ public class WebDriverController {
         driver.switchTo().defaultContent();
     }
 
-    Dimension getDimension() {
+    public Dimension getDimension() {
         return dimension;
     }
 

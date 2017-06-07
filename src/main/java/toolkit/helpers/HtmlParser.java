@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 public class HtmlParser {
 
-    private Logger log = LoggerFactory.getLogger(HtmlParser.class);
+    private final Logger log = LoggerFactory.getLogger(HtmlParser.class);
     private Elements elements;
     private Document document;
     private String url;

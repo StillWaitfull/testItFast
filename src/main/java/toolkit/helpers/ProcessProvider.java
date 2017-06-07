@@ -13,7 +13,7 @@ import java.util.List;
 
 
 public class ProcessProvider {
-    private static Logger log = LoggerFactory.getLogger(ProcessProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcessProvider.class);
     private static final String GET_PROCESS_LIST_LINUX = "ps aux";
     private static final String KILL_SOME_TASK_LINUX = "kill -9 %s";
     private static final String PATH_TO_TASKLIST = "\\system32\\tasklist.exe";
@@ -21,7 +21,7 @@ public class ProcessProvider {
     private static final String GET_ARGUMENTS_OF_PROCESS = "wmic.exe PROCESS where \"name like '%PROCESSNAME%'\" get Commandline";
 
 
-    public static int execCmd(String cmdLine) {
+    public static void execCmd(String cmdLine) {
         Process process;
         try {
             process = Runtime.getRuntime().exec(cmdLine);
@@ -36,7 +36,7 @@ public class ProcessProvider {
         } else {
             log.info("Cmd [" + cmdLine + "] execution return code: " + process.exitValue());
         }
-        return process.exitValue();
+        process.exitValue();
     }
 
     public static int execCmd(String cmdLine, boolean ignoreErrors, String argument) {

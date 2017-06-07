@@ -8,12 +8,12 @@ import org.testng.ITestResult;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class RetryListener implements IRetryAnalyzer {
+class RetryListener implements IRetryAnalyzer {
 
-    static int maxRetryCount = 1;
+    static final int maxRetryCount = 1;
     private AtomicInteger count = new AtomicInteger(maxRetryCount);
-    private Logger logger = LoggerFactory.getLogger(RetryListener.class);
-    private static ThreadLocal<RetryListener> retryListenerThreadLocal = new ThreadLocal<>();
+    private final Logger logger = LoggerFactory.getLogger(RetryListener.class);
+    private static final ThreadLocal<RetryListener> retryListenerThreadLocal = new ThreadLocal<>();
     private String nameMethod = "";
 
 

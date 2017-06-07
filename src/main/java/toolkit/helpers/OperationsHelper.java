@@ -3,29 +3,26 @@ package toolkit.helpers;
 import com.google.common.collect.Iterables;
 import composite.IPage;
 import configs.GeneralConfig;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import toolkit.CheckingDifferentImages;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 
 public abstract class OperationsHelper implements IPage {
 
-    private static Logger log = LoggerFactory.getLogger(OperationsHelper.class);
-    private WebDriverController driver = LocalDriverManager.getDriverController();
-    private WebDriverWait waitDriver = driver.getInstanceWaitDriver();
-    protected static String baseUrl = GeneralConfig.baseUrl;
+    private static final Logger log = LoggerFactory.getLogger(OperationsHelper.class);
+    private final WebDriverController driver = LocalDriverManager.getDriverController();
+    private final WebDriverWait waitDriver = driver.getInstanceWaitDriver();
+    protected static final String baseUrl = GeneralConfig.baseUrl;
 
 
     public static void logoutHook() {
@@ -37,7 +34,10 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
+    public boolean checkDimensionIsLess(int width) {
+        return driver.getDimension().getWidth() <= width;
+    }
+
     public IPage pressEnter() {
         Actions action = new Actions(driver.getDriver());
         action.sendKeys(Keys.ENTER).perform();
@@ -53,7 +53,7 @@ public abstract class OperationsHelper implements IPage {
         }
     }
 
-    @Override
+
     public WebElement findElement(By by) {
         waitForVisible(by);
         return driver.findElement(by);
@@ -72,7 +72,7 @@ public abstract class OperationsHelper implements IPage {
         return "login" + longNumber.substring(4, 9);
     }
 
-    @Override
+
     public IPage windowSetSize(Dimension windowSize) {
         WebDriver.Window window = driver.getDriver().manage().window();
         Dimension size = window.getSize();
@@ -82,21 +82,21 @@ public abstract class OperationsHelper implements IPage {
         return this;
     }
 
-    @Override
+
     public IPage switchTo(String iFrame) {
         waitForNumberOfWindowsToEqual(2);
         driver.switchTo(iFrame);
         return this;
     }
 
-    @Override
+
     public IPage switchToOtherWindow() {
         waitForNumberOfWindowsToEqual(2);
         driver.switchToWindow(Iterables.getLast(driver.getWindowHandles()));
         return this;
     }
 
-    @Override
+
     public String getAlertText() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
@@ -104,7 +104,7 @@ public abstract class OperationsHelper implements IPage {
         return alert.getText();
     }
 
-    @Override
+
     public IPage clickOkInAlert() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
@@ -126,32 +126,12 @@ public abstract class OperationsHelper implements IPage {
     }
 
     private void waitForNumberOfWindowsToEqual(final int numberOfWindows) {
-        waitDriver.until(driver1 -> driver1.getWindowHandles().size() == numberOfWindows);
+        ExpectedCondition<Boolean> expectation = driver1 -> driver1.getWindowHandles().size() == numberOfWindows;
+        // Function<WebDriver, Boolean> expectation = driver1 -> driver1.getWindowHandles().size() == numberOfWindows;
+        waitDriver.until(expectation);
     }
 
-    @Override
-    public IPage clickOnStalenessElement(final By by) {
-        try {
-            waitDriver.until((WebDriver webDriver) -> {
-                try {
-                    final WebElement element = webDriver.findElement(by);
-                    if (element != null && element.isDisplayed() && element.isEnabled()) {
-                        element.click();
-                        return element;
-                    }
-                } catch (StaleElementReferenceException e) {
-                    log.error("Stale exception");
-                }
-                return null;
-            });
 
-        } catch (TimeoutException e) {
-            Assert.fail("Element is not visible after " + WebDriverController.TIMEOUT + " on page " + getCurrentUrl());
-        }
-        return this;
-    }
-
-    @Override
     public IPage clickCancelInAlert() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
@@ -186,14 +166,13 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public java.util.List<WebElement> findElements(final By by) {
         waitForElementPresent(by);
         return driver.findElements(by);
     }
 
 
-    public void waitForVisible(By by) {
+    private void waitForVisible(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> isVisible(by));
         } catch (TimeoutException e) {
@@ -202,7 +181,7 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    public void waitForNotVisible(By by) {
+    private void waitForNotVisible(By by) {
         try {
             waitDriver.until((WebDriver webDriver) -> !isVisible(by));
         } catch (TimeoutException e) {
@@ -210,7 +189,7 @@ public abstract class OperationsHelper implements IPage {
         }
     }
 
-    @Override
+
     public String getSrcOfElement(By by) {
         waitForElementPresent(by);
         return driver.findElement(by).getAttribute("src");
@@ -222,12 +201,12 @@ public abstract class OperationsHelper implements IPage {
      *
      * @return the absolute URL of the current page
      */
-    @Override
+
     public String getCurrentUrl() {
         return driver.getDriver().getCurrentUrl();
     }
 
-    @Override
+
     public IPage selectValueInDropDown(By by, String optionValue) {
         Select select = new Select(driver.findElement(by));
         select.selectByValue(optionValue);
@@ -235,7 +214,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public IPage submit(By by) {
         log.debug("Submit:");
         waitForElementPresent(by);
@@ -248,14 +226,13 @@ public abstract class OperationsHelper implements IPage {
     /**
      * Sends to API browser command back
      */
-    @Override
+
     public IPage navigateBack() {
         driver.navigationBack();
         return this;
     }
 
 
-    @Override
     public IPage moveToElement(By by) {
         Actions actions = new Actions(driver.getDriver());
         waitForElementPresent(by);
@@ -264,14 +241,12 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
-    public void highlightTheElement(By by) {
+    private void highlightTheElement(By by) {
         WebElement element = driver.findElement(by);
         driver.executeScript("arguments[0].style.border='2px solid yellow'", element);
     }
 
 
-    @Override
     public IPage click(By by) {
         log.debug("Click on: " + by.toString());
         waitForElementPresent(by);
@@ -281,7 +256,7 @@ public abstract class OperationsHelper implements IPage {
 
     }
 
-    @Override
+
     public IPage clickWithJs(By by) {
         log.debug("Click on: " + by.toString());
         waitForVisible(by);
@@ -290,7 +265,7 @@ public abstract class OperationsHelper implements IPage {
         return this;
     }
 
-    @Override
+
     public IPage actionClick(By by) {
         log.debug("Click on: " + by.toString());
         waitForVisible(by);
@@ -300,14 +275,12 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public final void assertThat(Runnable... assertions) {
         Arrays.asList(assertions).forEach(Runnable::run);
 
     }
 
 
-    @Override
     public String getText(By by) {
         log.debug("Text from: " + by.toString());
         waitForVisible(by);
@@ -315,7 +288,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public String getAttribute(By by, String nameAttribute) {
         log.debug("Text from: " + by.toString());
         waitForVisible(by);
@@ -323,13 +295,11 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public String getPageSource() {
         return driver.getDriver().getPageSource();
     }
 
 
-    @Override
     public boolean isElementPresent(By by) {
         try {
             driver.findElement(by);
@@ -340,8 +310,7 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
-    public boolean isVisible(By by) {
+    private boolean isVisible(By by) {
         try {
             return driver.findElement(by).isDisplayed();
         } catch (NoSuchElementException | StaleElementReferenceException e) {
@@ -350,21 +319,19 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
-    public IPage type(By by, String someText) {
+    protected void type(By by, String someText) {
         log.debug("Type:" + someText + " to:" + by.toString());
         waitForVisible(by);
         highlightTheElement(by);
         driver.findElement(by).clear();
         driver.findElement(by).sendKeys(someText);
-        return this;
     }
 
 
     /**
      * Open page
      */
-    @Override
+
     public IPage openUrl(String url) {
         log.info("Open page: " + url);
         driver.get(url);
@@ -372,7 +339,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public IPage openTab(String url) {
         String script = "var d=document,a=d.createElement('a');a.target='_blank';a.href='%s';a.innerHTML='.';d.body.appendChild(a);return a";
         Object element = driver.executeScript(String.format(script, url));
@@ -388,7 +354,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public boolean validateElementPresent(By by) {
         try {
             waitForElementPresent(by);
@@ -399,7 +364,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public boolean validateElementIsNotVisible(By by) {
         try {
             waitForNotVisible(by);
@@ -410,7 +374,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public boolean validateElementVisible(By by) {
         try {
             waitForVisible(by);
@@ -421,7 +384,7 @@ public abstract class OperationsHelper implements IPage {
 
     }
 
-    @Override
+
     public boolean validateUrlContains(String s) {
         for (int i = 0; i < WebDriverController.TIMEOUT; i++) {
             if (driver.getDriver().getCurrentUrl().contains(s))
@@ -432,7 +395,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public boolean validateTextEquals(By by, String text) {
         try {
             waitForVisible(by);
@@ -443,10 +405,69 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
+    public boolean validateElementAttributeContains(By by, String nameAttribute, String containsValue) {
+        try {
+            waitDriver.until((WebDriver webDriver) -> {
+                boolean result = false;
+                try {
+                    result = getAttribute(by, nameAttribute).contains(containsValue);
+                } catch (StaleElementReferenceException ignored) {
+                }
+                return result;
+            });
+            return true;
+        } catch (TimeoutException | AssertionError e) {
+            return false;
+        }
+
+    }
+
+
+    public boolean validateElementAttributeNotEmpty(By by, String nameAttribute) {
+        try {
+            waitDriver.until((WebDriver webDriver) -> {
+                boolean result = false;
+                try {
+                    result = !getAttribute(by, nameAttribute).isEmpty();
+                } catch (StaleElementReferenceException ignored) {
+                }
+                return result;
+            });
+            return true;
+        } catch (AssertionError e) {
+            return false;
+        }
+
+    }
+
+    public boolean validateElementHasText(By by) {
+        try {
+            waitDriver.until((WebDriver webDriver) -> !getText(by).equals(""));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
+
+    }
+
+
+    public boolean validateElementHasText(By by, String text) {
+        try {
+            waitDriver.until((WebDriver webDriver) -> getText(by).contains(text));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        } catch (StaleElementReferenceException e) {
+            return validateElementHasText(by, text);
+        }
+
+    }
+
+
     /**
      * Reloads page
      */
-    @Override
+
     public IPage refreshPage() {
         driver.refresh();
         return this;
@@ -454,14 +475,13 @@ public abstract class OperationsHelper implements IPage {
 
 
     // Set a cookie
-    @Override
+
     public IPage addCookie(String key, String value) {
         driver.addCookie(key, value);
         return this;
     }
 
 
-    @Override
     public IPage hoverOn(By by) {
         new Actions(driver.getDriver()).moveToElement(findElement(by)).build().perform();
         log.info("Action - hover on to locator: " + by.toString());
@@ -469,7 +489,6 @@ public abstract class OperationsHelper implements IPage {
     }
 
 
-    @Override
     public IPage scrollOnTop() {
         driver.executeScript("window.scrollTo(0,0)");
         return this;
@@ -486,25 +505,10 @@ public abstract class OperationsHelper implements IPage {
     /**
      * Returns count of elements on a page with this locator
      */
-    @Override
+
     public int getCountElements(By by) {
         waitForElementPresent(by);
         return driver.findElements(by).size();
-    }
-
-
-    @Override
-    public void makeScreenshotForDiff(String name, boolean isTest) {
-        String path = isTest ? CheckingDifferentImages.TEST_PATH : CheckingDifferentImages.ETALON_PATH;
-        File scrFile;
-        log.info("Screen path " + path + " name is " + name);
-        try {
-            scrFile = ((TakesScreenshot) driver.getDriver()).getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(scrFile, new File("screenshots" +
-                    File.separator + path + File.separator + name + ".png"));
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
     }
 
 

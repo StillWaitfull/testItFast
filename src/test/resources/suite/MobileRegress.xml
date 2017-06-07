@@ -11,7 +11,7 @@
         <parameter name="dimensionW" value="480"/>
         <parameter name="dimensionH" value="800"/>
         <classes>
-            <class name="tests.GoogleTest">
+            <class name="tests.simpleTests.GoogleTest">
                 <methods>
                     <include name="googleTest"/>
                 </methods>
@@ -28,7 +28,7 @@
         <parameter name="dimensionW" value="480"/>
         <parameter name="dimensionH" value="800"/>
         <classes>
-            <class name="tests.GoogleTest">
+            <class name="tests.simpleTests.GoogleTest">
                 <methods>
                     <include name="googleTest"/>
                 </methods>
