@@ -16,8 +16,15 @@ import toolkit.driver.WebDriverController;
 
 import java.util.Arrays;
 
+import static configs.GeneralConfig.applicationContext;
+
 
 public abstract class OperationsHelper implements IPage {
+
+    {
+        if (LocalDriverManager.getDriverController() == null)
+            applicationContext.getBean(WebDriverController.class);
+    }
 
     private static final Logger log = LoggerFactory.getLogger(OperationsHelper.class);
     private final WebDriverController driver = LocalDriverManager.getDriverController();
