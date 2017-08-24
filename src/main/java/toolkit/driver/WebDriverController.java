@@ -69,7 +69,7 @@ public class WebDriverController {
 
 
     public WebDriverWait getInstanceWaitDriver() {
-        return new WebDriverWait(LocalDriverManager.getDriverController().getDriver(), TIMEOUT);
+        return new WebDriverWait(driver, TIMEOUT);
     }
 
 

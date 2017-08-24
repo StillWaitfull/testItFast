@@ -21,13 +21,9 @@ import static configs.GeneralConfig.applicationContext;
 
 public abstract class OperationsHelper implements IPage {
 
-    {
-        if (LocalDriverManager.getDriverController() == null)
-            applicationContext.getBean(WebDriverController.class);
-    }
 
     private static final Logger log = LoggerFactory.getLogger(OperationsHelper.class);
-    private final WebDriverController driver = LocalDriverManager.getDriverController();
+    private final WebDriverController driver = applicationContext.getBean(WebDriverController.class);
     private final WebDriverWait waitDriver = driver.getInstanceWaitDriver();
     protected static final String baseUrl = GeneralConfig.baseUrl;
 
