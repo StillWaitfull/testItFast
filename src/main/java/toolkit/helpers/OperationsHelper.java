@@ -23,7 +23,9 @@ public abstract class OperationsHelper implements IPage {
 
 
     private static final Logger log = LoggerFactory.getLogger(OperationsHelper.class);
-    private final WebDriverController driver = applicationContext.getBean(WebDriverController.class);
+    private final WebDriverController driver = LocalDriverManager.getDriverController() == null
+            ? applicationContext.getBean(WebDriverController.class)
+            : LocalDriverManager.getDriverController();
     private final WebDriverWait waitDriver = driver.getInstanceWaitDriver();
     protected static final String baseUrl = GeneralConfig.baseUrl;
 
