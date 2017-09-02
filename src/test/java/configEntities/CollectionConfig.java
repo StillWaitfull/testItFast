@@ -1,4 +1,4 @@
-package configs;
+package configEntities;
 
 import common.YamlPropertySourceFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,7 +15,7 @@ import java.util.List;
 @ConfigurationProperties
 public class CollectionConfig {
 
-    private List<String> fileNames=new ArrayList<>();
+    private List<String> fileNames = new ArrayList<>();
 
     public List<String> getFileNames() {
         return fileNames;

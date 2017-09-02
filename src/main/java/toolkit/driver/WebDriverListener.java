@@ -28,6 +28,9 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
     public static final ThreadLocal<ITestResult> testResultThreadLocal = new ThreadLocal<>();
     private static final ConcurrentSkipListSet<Integer> invocateds = new ConcurrentSkipListSet<>();
 
+    static {
+        applicationContext.refresh();
+    }
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {

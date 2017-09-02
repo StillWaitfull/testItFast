@@ -44,8 +44,6 @@ public class WebDriverController {
     }
 
 
-
-
     public void setWindowSize(Dimension dimension) {
         driver.manage().window().setSize(dimension);
     }

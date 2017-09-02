@@ -2,7 +2,8 @@ package toolkit.helpers;
 
 import com.google.common.collect.Iterables;
 import composite.IPage;
-import configs.GeneralConfig;
+import configs.StageConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -27,8 +28,13 @@ public abstract class OperationsHelper implements IPage {
             ? applicationContext.getBean(WebDriverController.class)
             : LocalDriverManager.getDriverController();
     private final WebDriverWait waitDriver = driver.getInstanceWaitDriver();
-    protected static final String baseUrl = GeneralConfig.baseUrl;
+    protected static String baseUrl;
 
+    static {
+        String envBaseUrl = System.getenv("baseUrl");
+        baseUrl = (envBaseUrl == null) ? applicationContext.getBean(StageConfig.class).BASE_URL : envBaseUrl;
+        baseUrl = StringUtils.removeEnd(baseUrl, "/");
+    }
 
     public static void logoutHook() {
         if (LocalDriverManager.getDriverController() != null) {
