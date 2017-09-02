@@ -3,13 +3,17 @@
 /.settings
 /target
 *.prefs
+*.iml
 *.zip
 /eclipse
 /.metadata
 /test-output
 .idea
+.gradle
+/gradle
 webdriver.iml
 /bin
+/build
 /logs
 /helpStuff/task.txt
 /velocity.log
