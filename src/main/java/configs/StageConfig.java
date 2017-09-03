@@ -1,19 +1,23 @@
 package configs;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 
 
 @Configuration
 @Scope(value = BeanDefinition.SCOPE_SINGLETON)
-@PropertySource(value = "classpath:configs/${configName}.yml", ignoreResourceNotFound = true)
 public class StageConfig {
 
     @Value("${baseUrl}")
-    public String BASE_URL;
+    private String baseUrl;
 
 
+    public String getBaseUrl() {
+        String envBaseUrl = System.getenv("baseUrl");
+        baseUrl = (envBaseUrl == null) ? baseUrl : envBaseUrl;
+        return StringUtils.removeEnd(baseUrl, "/");
+    }
 }

@@ -1,4 +1,4 @@
-package configEntities;
+package testConfigs;
 
 import common.YamlPropertySourceFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
