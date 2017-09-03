@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.testng.Assert;
 
+import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -140,12 +141,13 @@ public class WebDriverController {
         waitForPageLoaded();
     }
 
-
+    @PreDestroy
     void shutdown() {
         try {
             driver.quit();
             driver = null;
         } catch (Exception ignored) {
+            LocalDriverManager.removeWebDriverController();
         }
     }
 
