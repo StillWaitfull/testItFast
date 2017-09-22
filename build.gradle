@@ -1,13 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'io.qameta.allure'
 
-group = 'tests'
-version = '1.0-SNAPSHOT'
-
-description = """testItFast"""
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -19,6 +13,19 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url "http://repo.maven.apache.org/maven2" }
 }
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "io.qameta.allure:allure-gradle:2.4"
+    }
+}
+
+
 dependencies {
     compile group: 'org.json', name: 'json', version: '20160810'
     compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.2.0'
@@ -59,8 +66,8 @@ test {
         }
     }
 }
-task testSuite(type: Test) {
 
+task testSuite(type: Test) {
     useTestNG() {
         suites System.getProperty("testSuite")+""
 
@@ -70,4 +77,9 @@ task testSuite(type: Test) {
             events "started", "passed", "skipped", "failed", "standardOut", "standardError"
         }
     }
+}
+
+allure {
+    version = '2.3.5'
+    autoconfigure = true
 }
