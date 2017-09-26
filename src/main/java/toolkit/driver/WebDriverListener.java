@@ -17,7 +17,6 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static configs.GeneralConfig.applicationContext;
@@ -35,11 +34,8 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         testResultThreadLocal.set(testResult);
-        String methodName = method.getTestMethod().getMethodName();
-        if (method.isTestMethod()) {
-            if (!RetryListener.get().getNameMethod().equals(methodName))
-                RetryListener.get().setCount(new AtomicInteger(RetryListener.maxRetryCount));
-            RetryListener.get().setNameMethod(methodName);
+        if (method.isTestMethod() && RetryListener.get() == null) {
+            method.getTestMethod().setRetryAnalyzer(RetryListener.createListener());
         }
     }
 
@@ -51,9 +47,10 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
                 Assert.fail(clazz.getBugUrl() + " " + clazz.getBugDescription());
             }
             if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus() != ITestResult.SKIP && LocalDriverManager.getDriverController() != null) {
-                method.getTestMethod().setRetryAnalyzer(RetryListener.get());
-                if (!RetryListener.get().isRetryAvailable())
+                RetryListener retryListener = RetryListener.get();
+                if (retryListener != null && !retryListener.isRetryAvailable()) {
                     makeScreenshot(testResult.getName());
+                }
                 logger.error(
                         "Test FAILED! Method:" + testResult.getName() + ". StackTrace is " + Throwables.getStackTraceAsString(
                                 testResult.getThrowable()));

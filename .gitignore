@@ -18,3 +18,7 @@ webdriver.iml
 /logs
 /helpStuff/task.txt
 /velocity.log
+/out
+/.allure
+/allure-results
+
