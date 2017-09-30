@@ -13,16 +13,7 @@ class RetryListener implements IRetryAnalyzer {
     private static final int maxRetryCount = 1;
     private AtomicInteger count = new AtomicInteger(maxRetryCount);
     private final Logger logger = LoggerFactory.getLogger(RetryListener.class);
-    private static final ThreadLocal<RetryListener> retryListenerThreadLocal = new ThreadLocal<>();
 
-    private RetryListener() {
-    }
-
-    static RetryListener createListener() {
-        RetryListener retryListener = new RetryListener();
-        retryListenerThreadLocal.set(retryListener);
-        return retryListener;
-    }
 
     @Override
     public boolean retry(ITestResult result) {
@@ -38,11 +29,6 @@ class RetryListener implements IRetryAnalyzer {
 
     boolean isRetryAvailable() {
         return (count.intValue() > 0);
-    }
-
-
-    static RetryListener get() {
-        return retryListenerThreadLocal.get();
     }
 }
 

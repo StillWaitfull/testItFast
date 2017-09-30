@@ -8,7 +8,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.*;
-
 import toolkit.CheckingDifferentImages;
 import toolkit.IsKnownBug;
 
@@ -35,8 +34,8 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         testResultThreadLocal.set(testResult);
-        if (method.isTestMethod() && RetryListener.get() == null) {
-            method.getTestMethod().setRetryAnalyzer(RetryListener.createListener());
+        if (method.isTestMethod() && method.getTestMethod().getRetryAnalyzer() == null) {
+            method.getTestMethod().setRetryAnalyzer(new RetryListener());
         }
     }
 
@@ -48,7 +47,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
                 Assert.fail(clazz.getBugUrl() + " " + clazz.getBugDescription());
             }
             if (!testResult.isSuccess() && method.isTestMethod() && testResult.getStatus() != ITestResult.SKIP && LocalDriverManager.getDriverController() != null) {
-                RetryListener retryListener = RetryListener.get();
+                RetryListener retryListener = (RetryListener) method.getTestMethod().getRetryAnalyzer();
                 if (retryListener != null && !retryListener.isRetryAvailable()) {
                     makeScreenshot(testResult.getName());
                 }
