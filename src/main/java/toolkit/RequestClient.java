@@ -15,6 +15,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
@@ -42,6 +43,7 @@ public class RequestClient {
     private final HttpClientContext context = HttpClientContext.create();
     private int statusCode;
     private final CloseableHttpClient httpClient = HttpClients.custom()
+            .setConnectionManager(new PoolingHttpClientConnectionManager())
             .disableRedirectHandling()
             .setDefaultRequestConfig(globalConfig)
             .setSSLContext(createSslContext())
