@@ -29,7 +29,7 @@ buildscript {
 dependencies {
     compile group: 'org.json', name: 'json', version: '20160810'
     compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.2.0'
-    compile group: 'ru.yandex.qatools.allure', name: 'allure-testng-adaptor', version: '1.4.23.HOTFIX1'
+    compile group: 'io.qameta.allure', name: 'allure-testng', version: '2.0-BETA18'
     compile group: 'org.springframework', name: 'spring-context', version: '4.3.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot', version: '1.5.6.RELEASE'
     compile group: 'net.lightbody.bmp', name: 'browsermob-core', version: '2.1.2'

@@ -1,13 +1,14 @@
 package toolkit.driver;
 
 import com.google.common.base.Throwables;
+import io.qameta.allure.Attachment;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.*;
-import ru.yandex.qatools.allure.annotations.Attachment;
+
 import toolkit.CheckingDifferentImages;
 import toolkit.IsKnownBug;
 
@@ -59,7 +60,7 @@ public class WebDriverListener extends TestListenerAdapter implements IInvokedMe
     }
 
 
-    @Attachment(value = "{0}", type = "image/png")
+    @Attachment(type = "image/png")
     private void makeScreenshot(String methodName) {
         Calendar calendar = Calendar.getInstance();
         String path = "";

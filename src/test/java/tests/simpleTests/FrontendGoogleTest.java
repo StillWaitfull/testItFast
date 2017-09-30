@@ -1,12 +1,13 @@
 package tests.simpleTests;
 
+import io.qameta.allure.Feature;
 import org.testng.annotations.Test;
 import pages.GooglePage;
-import ru.yandex.qatools.allure.annotations.Features;
+
 import toolkit.CheckingDifferentImages;
 
 
-@Features(value = "Google Tests")
+@Feature(value = "Google Tests")
 public class FrontendGoogleTest extends AbstractTest {
 
 
