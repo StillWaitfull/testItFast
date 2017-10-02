@@ -8,12 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import org.testng.ITestResult;
-
-import java.util.Map;
-
-import static toolkit.driver.WebDriverListener.testResultThreadLocal;
-
+import org.springframework.stereotype.Component;
 
 @Configuration
 public class PlatformConfig {
@@ -26,31 +21,57 @@ public class PlatformConfig {
     private String mobileBrowser;
     private String udid;
     private String addressAppium;
+    private ApplicationConfig applicationConfig;
+    private static PlatformConfig staticConfig;
 
-    private final ApplicationConfig applicationConfig;
+    public static void setPlatformConfig(PlatformConfig staticConfig) {
+        if (staticConfig!=null && PlatformConfig.staticConfig != null && PlatformConfig.staticConfig != staticConfig)
+            throw new RuntimeException("Конфигурация платформы уже задана");
+        PlatformConfig.staticConfig = staticConfig;
+    }
 
     @Autowired
     public PlatformConfig(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
     }
 
+    public PlatformConfig(String browser,
+                          String dimensionH,
+                          String dimensionW,
+                          String platform,
+                          String platformVersion,
+                          String deviceName,
+                          String mobileBrowser,
+                          String udid,
+                          String addressAppium) {
+        this.browser = browser;
+        this.dimensionH = dimensionH;
+        this.dimensionW = dimensionW;
+        this.platform = platform;
+        this.platformVersion = platformVersion;
+        this.deviceName = deviceName;
+        this.mobileBrowser = mobileBrowser;
+        this.udid = udid;
+        this.addressAppium = addressAppium;
+    }
+
+
     @Bean
     @Lazy
     @Scope(value = BeanDefinition.SCOPE_PROTOTYPE)
     public Platform determinePlatform() {
-        ITestResult iTestResult = testResultThreadLocal.get();
         Platform platform4Test = new Platform();
-        if (iTestResult != null) {
-            Map<String, String> params = iTestResult.getTestClass().getXmlTest().getAllParameters();
-            browser = params.get("browser");
-            dimensionH = params.get("dimensionH");
-            dimensionW = params.get("dimensionW");
-            platform = params.get("platform");
-            platformVersion = params.get("platformVersion");
-            deviceName = params.get("deviceName");
-            mobileBrowser = params.get("mobileBrowser");
-            udid = params.get("udid");
-            addressAppium = params.get("addressAppium");
+        if (staticConfig != null) {
+            PlatformConfig platformConfig = staticConfig;
+            browser = platformConfig.browser;
+            dimensionH = platformConfig.dimensionH;
+            dimensionW = platformConfig.dimensionW;
+            platform = platformConfig.platform;
+            platformVersion = platformConfig.platformVersion;
+            deviceName = platformConfig.deviceName;
+            mobileBrowser = platformConfig.mobileBrowser;
+            udid = platformConfig.udid;
+            addressAppium = platformConfig.addressAppium;
         }
         String remoteEnv = System.getenv("remote");
         platform4Test.setRemote(remoteEnv == null ? applicationConfig.REMOTE : Boolean.parseBoolean(remoteEnv));

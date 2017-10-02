@@ -3,6 +3,7 @@ package toolkit.helpers;
 import com.google.common.collect.Iterables;
 import composite.IPage;
 import configs.StageConfig;
+import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -10,7 +11,6 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
 

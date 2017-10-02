@@ -2,7 +2,7 @@ package tests.simpleTests;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.testng.annotations.Test;
+import org.junit.Test;
 import toolkit.helpers.HtmlParser;
 
 

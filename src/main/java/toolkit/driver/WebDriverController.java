@@ -2,6 +2,7 @@ package toolkit.driver;
 
 import configs.ApplicationConfig;
 import configs.StageConfig;
+import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.testng.Assert;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
@@ -53,7 +53,7 @@ public class WebDriverController {
         driver.manage().window().maximize();
     }
 
-    String getBrowser() {
+    public String getBrowser() {
         return browser;
     }
 

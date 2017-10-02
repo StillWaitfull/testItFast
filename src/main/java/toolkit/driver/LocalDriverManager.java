@@ -10,6 +10,7 @@ public class LocalDriverManager {
 
         return webDrivers.get(Thread.currentThread());
     }
+
     public static void removeWebDriverController() {
         webDrivers.remove(Thread.currentThread());
     }
@@ -18,7 +19,7 @@ public class LocalDriverManager {
         webDrivers.put(Thread.currentThread(), driver);
     }
 
-    static void cleanThreadPool() {
+    public static void cleanThreadPool() {
         webDrivers.values().forEach(WebDriverController::shutdown);
         webDrivers.keySet().forEach(Thread::interrupt);
         webDrivers.clear();

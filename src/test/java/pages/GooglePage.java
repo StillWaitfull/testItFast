@@ -1,8 +1,8 @@
 package pages;
 
 import composite.IPage;
+import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.testng.Assert;
 import toolkit.helpers.OperationsHelper;
 
 
@@ -28,7 +28,7 @@ public class GooglePage extends OperationsHelper {
 
     public static Runnable[] getGooglePageAssertions(IPage page) {
         return new Runnable[]{
-                () -> Assert.assertTrue(page.validateElementVisible(GooglePage.QUERY), "Google QUERY is not visible")
+                () -> Assert.assertTrue("Google QUERY is not visible", page.validateElementVisible(GooglePage.QUERY))
         };
     }
 

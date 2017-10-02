@@ -13,7 +13,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 /**
@@ -30,7 +29,7 @@ public class CheckingDifferentImages {
     private static final String PATH = "screenshots" + File.separator;
     private static final String ETALON_PATH = "etalon" + File.separator;
     private static final String TEST_PATH = "4test" + File.separator;
-    public static final java.util.List<String> failedTests = new ArrayList<>();
+    private boolean result;
 
 
     public CheckingDifferentImages() {
@@ -91,7 +90,7 @@ public class CheckingDifferentImages {
      * @param nameDifference the name difference
      * @param accuracy       the accuracy
      */
-    private static void showDifference(BufferedImage im1, BufferedImage im2, String nameDifference, int accuracy) {
+    private void showDifference(BufferedImage im1, BufferedImage im2, String nameDifference, int accuracy) {
         try {
             BufferedImage resultImage = new BufferedImage(im1.getWidth(), im2.getHeight(), BufferedImage.TYPE_INT_ARGB);
             double THR = 50;
@@ -137,8 +136,9 @@ public class CheckingDifferentImages {
                 fileScreenshot.getParentFile().mkdirs();
                 ImageIO.write(resultImage, "PNG", fileScreenshot);
                 log.info("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference + ".png");
-                failedTests.add("Diff screen was saved in " + "target" + File.separator + "failure_diff_screenshots" + File.separator + nameDifference + ".png");
+                result = false;
             } else {
+                result = true;
                 log.info("Everything is ok!");
             }
         } catch (Exception ignored) {
@@ -160,4 +160,7 @@ public class CheckingDifferentImages {
     }
 
 
+    public boolean getResult() {
+        return result;
+    }
 }

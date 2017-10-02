@@ -1,9 +1,9 @@
 package tests.simpleTests;
 
 import io.qameta.allure.Feature;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
 import pages.GooglePage;
-
 import toolkit.CheckingDifferentImages;
 
 
@@ -29,5 +29,8 @@ public class FrontendGoogleTest extends AbstractTest {
         );
         checkingDifferentImages.makeScreenshotForDiff(name)
                 .checkDifference(name, 1);
+        Assert.assertTrue("There was errors in frontend tests ",
+                checkingDifferentImages.getResult());
+
     }
 }

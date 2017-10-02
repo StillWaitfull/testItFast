@@ -1,11 +1,10 @@
 package tests.simpleTests;
 
-import org.testng.annotations.Listeners;
-import toolkit.driver.WebDriverListener;
 
+import org.junit.runner.RunWith;
+import toolkit.runner.TestItRunner;
 
-@Listeners({WebDriverListener.class})
+@RunWith(TestItRunner.class)
 abstract class AbstractTest {
-
 
 }
