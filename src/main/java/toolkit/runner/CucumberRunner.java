@@ -20,10 +20,6 @@ import org.junit.runners.model.InitializationError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static toolkit.runner.JUnitExecutionListener.J_UNIT_EXECUTION_LISTENER;
 
 
 public class CucumberRunner extends ParentRunner<FeatureRunner> {
@@ -84,14 +80,11 @@ public class CucumberRunner extends ParentRunner<FeatureRunner> {
     @Override
     protected void runChild(FeatureRunner child, RunNotifier notifier) {
         child.run(notifier);
-
     }
-
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     @Override
     public void run(RunNotifier notifier) {
-        notifier.addListener(J_UNIT_EXECUTION_LISTENER);
+        notifier.addListener(new JUnitExecutionListener());
         super.run(notifier);
         jUnitReporter.done();
         jUnitReporter.close();

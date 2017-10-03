@@ -22,7 +22,6 @@ import static configs.GeneralConfig.applicationContext;
 public class JUnitExecutionListener extends RunListener {
 
     private final Logger logger = LoggerFactory.getLogger(JUnitExecutionListener.class);
-    static final JUnitExecutionListener J_UNIT_EXECUTION_LISTENER = new JUnitExecutionListener();
 
     static {
         applicationContext.refresh();
@@ -36,8 +35,7 @@ public class JUnitExecutionListener extends RunListener {
 
     public void testFailure(Failure failure) throws Exception {
         makeScreenshot(failure.getDescription().getMethodName());
-        logger.error(
-                "Test FAILED! Method:" + failure.getDescription().getMethodName() + ". StackTrace is " + failure.getTrace());
+        logger.error("Test FAILED! Method:" + failure.getDescription().getMethodName() + ". StackTrace is " + failure.getTrace());
     }
 
 
@@ -57,12 +55,10 @@ public class JUnitExecutionListener extends RunListener {
                         + "_" + LocalDriverManager.getDriverController().getDimension() + "_webdriver.png";
                 FileUtils.copyFile(scrFile, new File(path));
                 Files.readAllBytes(Paths.get(path));
-                return;
             }
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-        throw new RuntimeException("There is a problem with screenshot");
 
     }
 }

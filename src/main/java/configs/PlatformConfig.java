@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 @Configuration
 public class PlatformConfig {
@@ -22,10 +21,10 @@ public class PlatformConfig {
     private String udid;
     private String addressAppium;
     private ApplicationConfig applicationConfig;
-    private static PlatformConfig staticConfig;
+    private static volatile PlatformConfig staticConfig;
 
     public static void setPlatformConfig(PlatformConfig staticConfig) {
-        if (staticConfig!=null && PlatformConfig.staticConfig != null && PlatformConfig.staticConfig != staticConfig)
+        if (staticConfig != null && PlatformConfig.staticConfig != null && PlatformConfig.staticConfig != staticConfig)
             throw new RuntimeException("Конфигурация платформы уже задана");
         PlatformConfig.staticConfig = staticConfig;
     }

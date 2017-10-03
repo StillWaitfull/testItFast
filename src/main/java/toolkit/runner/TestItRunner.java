@@ -10,8 +10,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-
-import static toolkit.runner.JUnitExecutionListener.J_UNIT_EXECUTION_LISTENER;
+import toolkit.driver.LocalDriverManager;
 
 public class TestItRunner extends BlockJUnit4ClassRunner {
     private int failedAttempts = 0;
@@ -23,7 +22,7 @@ public class TestItRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        notifier.addListener(J_UNIT_EXECUTION_LISTENER);
+        notifier.addListener(new JUnitExecutionListener());
         EachTestNotifier testNotifier = new EachTestNotifier(notifier,
                 getDescription());
         Statement statement = classBlock(notifier);
@@ -73,6 +72,8 @@ public class TestItRunner extends BlockJUnit4ClassRunner {
                 statement.evaluate();
                 return;
             } catch (Throwable t) {
+                if (LocalDriverManager.getDriverController() != null)
+                    LocalDriverManager.getDriverController().deleteAllCookies();
                 failedAttempts++;
                 caughtThrowable = t;
             }
