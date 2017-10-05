@@ -13,6 +13,7 @@ public class GeneralConfig {
     static {
         applicationContext = new AnnotationConfigApplicationContext();
         applicationContext.register(GeneralConfig.class);
+        applicationContext.refresh();
     }
 
     public static void scanPackage(String packageName) {

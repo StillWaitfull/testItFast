@@ -23,6 +23,7 @@ public class ClassFinder {
         }
         File scannedDir = new File(scannedUrl.getFile());
         List<Class<?>> classes = new ArrayList<>();
+        if (scannedDir.listFiles() == null) throw new RuntimeException("Directory is empty " + scannedUrl.getFile());
         for (File file : scannedDir.listFiles()) {
             classes.addAll(find(file, scannedPackage));
         }
@@ -30,9 +31,11 @@ public class ClassFinder {
     }
 
     private static List<Class<?>> find(File file, String scannedPackage) {
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<>();
         String resource = scannedPackage + PKG_SEPARATOR + file.getName();
         if (file.isDirectory()) {
+            if (file.listFiles() == null)
+                throw new RuntimeException("Directory is empty " + scannedPackage + PKG_SEPARATOR + file.getName());
             for (File child : file.listFiles()) {
                 classes.addAll(find(child, resource));
             }
@@ -46,9 +49,6 @@ public class ClassFinder {
         }
         return classes;
     }
-
-
-
 
 
 }

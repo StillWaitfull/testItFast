@@ -145,8 +145,8 @@ public class WebDriverController {
     void shutdown() {
         try {
             driver.quit();
-            driver = null;
         } catch (Exception ignored) {
+        } finally {
             LocalDriverManager.removeWebDriverController();
         }
     }

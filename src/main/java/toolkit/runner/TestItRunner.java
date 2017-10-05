@@ -14,6 +14,8 @@ import toolkit.driver.LocalDriverManager;
 
 public class TestItRunner extends BlockJUnit4ClassRunner {
     private int failedAttempts = 0;
+    private static boolean added = false;
+    private static final Object LISTENER_SYNC = new Object();
 
 
     public TestItRunner(Class<?> klass) throws InitializationError {
@@ -22,18 +24,23 @@ public class TestItRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        notifier.addListener(new JUnitExecutionListener());
-        EachTestNotifier testNotifier = new EachTestNotifier(notifier,
-                getDescription());
-        Statement statement = classBlock(notifier);
-        try {
-            statement.evaluate();
-        } catch (AssumptionViolatedException e) {
-            testNotifier.fireTestIgnored();
-        } catch (StoppedByUserException e) {
-            throw e;
-        } catch (Throwable e) {
-            retry(testNotifier, statement, e);
+        synchronized (LISTENER_SYNC) {
+            if (!added) {
+                notifier.addFirstListener(new JUnitExecutionListener());
+                added = true;
+            }
+            EachTestNotifier testNotifier = new EachTestNotifier(notifier,
+                    getDescription());
+            Statement statement = classBlock(notifier);
+            try {
+                statement.evaluate();
+            } catch (AssumptionViolatedException e) {
+                testNotifier.fireTestIgnored();
+            } catch (StoppedByUserException e) {
+                throw e;
+            } catch (Throwable e) {
+                retry(testNotifier, statement, e);
+            }
         }
     }
 
@@ -58,6 +65,8 @@ public class TestItRunner extends BlockJUnit4ClassRunner {
         } catch (AssumptionViolatedException e) {
             eachNotifier.addFailedAssumption(e);
         } catch (Throwable e) {
+            if (LocalDriverManager.getDriverController() != null)
+                LocalDriverManager.getDriverController().deleteAllCookies();
             retry(eachNotifier, statement, e);
         } finally {
             eachNotifier.fireTestFinished();
@@ -72,8 +81,6 @@ public class TestItRunner extends BlockJUnit4ClassRunner {
                 statement.evaluate();
                 return;
             } catch (Throwable t) {
-                if (LocalDriverManager.getDriverController() != null)
-                    LocalDriverManager.getDriverController().deleteAllCookies();
                 failedAttempts++;
                 caughtThrowable = t;
             }

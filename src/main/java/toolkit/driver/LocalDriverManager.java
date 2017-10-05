@@ -11,7 +11,7 @@ public class LocalDriverManager {
         return webDrivers.get(Thread.currentThread());
     }
 
-    public static void removeWebDriverController() {
+    static void removeWebDriverController() {
         webDrivers.remove(Thread.currentThread());
     }
 

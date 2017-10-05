@@ -39,13 +39,16 @@ dependencies {
         exclude(module: 'selenium-java')
     }
     compile group: 'io.qameta.allure', name: 'allure-junit4', version: '2.0-BETA18'
-    compile group: 'io.qameta.allure', name: 'allure-cucumber-jvm', version: '2.0-BETA18'
-    compile group: 'info.cukes', name: 'cucumber-junit', version: '1.2.5'
-    compile group: 'info.cukes', name: 'cucumber-java8', version: '1.2.5'
+    compile group: 'io.qameta.allure', name: 'allure-jbehave', version: '2.0-BETA18'
+
+    compile group: 'org.jbehave', name: 'jbehave-core', version: '4.1.1'
+
     compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
     compile group: 'org.apache.commons', name: 'commons-exec', version: '1.3'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+sourceSets.test.resources.srcDir 'src/test/resources/stories/google/'
 
 tasks.withType(Test) {
     maxParallelForks = 8
@@ -56,7 +59,6 @@ tasks.withType(Test) {
     }
     forkEvery = 0
 }
-
 
 task testSuite(type: Test) {
     description = "Uses standard JUnit Test Suite sequential execution style."

@@ -17,15 +17,9 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import static configs.GeneralConfig.applicationContext;
-
 public class JUnitExecutionListener extends RunListener {
 
     private final Logger logger = LoggerFactory.getLogger(JUnitExecutionListener.class);
-
-    static {
-        applicationContext.refresh();
-    }
 
 
     public void testRunFinished(Result result) throws Exception {
@@ -40,7 +34,7 @@ public class JUnitExecutionListener extends RunListener {
 
 
     @Attachment(type = "image/png")
-    private void makeScreenshot(String methodName) {
+    private byte[] makeScreenshot(String methodName) {
         Calendar calendar = Calendar.getInstance();
         String path = "";
         SimpleDateFormat formater = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss");
@@ -59,6 +53,7 @@ public class JUnitExecutionListener extends RunListener {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+        return new byte[0];
 
     }
 }
