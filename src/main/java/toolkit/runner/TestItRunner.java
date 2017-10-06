@@ -1,18 +1,18 @@
 package toolkit.runner;
 
+import com.googlecode.junittoolbox.ParallelRunner;
 import org.junit.AssumptionViolatedException;
 import org.junit.Ignore;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runner.notification.StoppedByUserException;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import toolkit.driver.LocalDriverManager;
 
-public class TestItRunner extends BlockJUnit4ClassRunner {
+public class TestItRunner extends ParallelRunner {
     private int failedAttempts = 0;
     private static boolean added = false;
     private static final Object LISTENER_SYNC = new Object();
@@ -29,19 +29,20 @@ public class TestItRunner extends BlockJUnit4ClassRunner {
                 notifier.addFirstListener(new JUnitExecutionListener());
                 added = true;
             }
-            EachTestNotifier testNotifier = new EachTestNotifier(notifier,
-                    getDescription());
-            Statement statement = classBlock(notifier);
-            try {
-                statement.evaluate();
-            } catch (AssumptionViolatedException e) {
-                testNotifier.fireTestIgnored();
-            } catch (StoppedByUserException e) {
-                throw e;
-            } catch (Throwable e) {
-                retry(testNotifier, statement, e);
-            }
         }
+        EachTestNotifier testNotifier = new EachTestNotifier(notifier,
+                getDescription());
+        Statement statement = classBlock(notifier);
+        try {
+            statement.evaluate();
+        } catch (AssumptionViolatedException e) {
+            testNotifier.fireTestIgnored();
+        } catch (StoppedByUserException e) {
+            throw e;
+        } catch (Throwable e) {
+            retry(testNotifier, statement, e);
+        }
+
     }
 
 
