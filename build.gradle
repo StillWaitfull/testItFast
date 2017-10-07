@@ -63,6 +63,7 @@ tasks.withType(Test) {
 }
 
 task testSuite(type: Test) {
+    systemProperty "maxParallelTestThreads", 35
     description = "Uses standard JUnit Test Suite sequential execution style."
     if (System.getProperty("testSuite") == null)
         include '**/GoogleSuite.class'

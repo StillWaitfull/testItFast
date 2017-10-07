@@ -1,12 +1,12 @@
 package tests.suites;
 
+import com.googlecode.junittoolbox.ParallelSuite;
 import configs.PlatformConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import tests.simpleTests.GoogleTest;
-import toolkit.runner.ParallelSuite;
 
 @RunWith(ParallelSuite.class)
 @Suite.SuiteClasses({GoogleTest.class})
