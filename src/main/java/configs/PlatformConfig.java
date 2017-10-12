@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 @Configuration
 public class PlatformConfig {
     private String browser;
@@ -21,13 +23,8 @@ public class PlatformConfig {
     private String udid;
     private String addressHub;
     private ApplicationConfig applicationConfig;
-    private static volatile PlatformConfig staticConfig;
+    private static final ConcurrentHashMap<Thread, PlatformConfig> PLATFORM_CONFIG_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
 
-    public static void setPlatformConfig(PlatformConfig staticConfig) {
-        if (staticConfig != null && PlatformConfig.staticConfig != null && PlatformConfig.staticConfig != staticConfig)
-            throw new RuntimeException("Конфигурация платформы уже задана");
-        PlatformConfig.staticConfig = staticConfig;
-    }
 
     @Autowired
     public PlatformConfig(ApplicationConfig applicationConfig) {
@@ -35,8 +32,8 @@ public class PlatformConfig {
     }
 
     public PlatformConfig(String browser,
-                          String dimensionH,
                           String dimensionW,
+                          String dimensionH,
                           Platform.PLATFORM platform,
                           String platformVersion,
                           String deviceName,
@@ -55,8 +52,8 @@ public class PlatformConfig {
     }
 
     public PlatformConfig(String browser,
-                          String dimensionH,
                           String dimensionW,
+                          String dimensionH,
                           Platform.PLATFORM platform,
                           String address) {
         this.browser = browser;
@@ -66,22 +63,57 @@ public class PlatformConfig {
         this.addressHub = address;
     }
 
+    private Thread getFirstThreadFromGroup(final ThreadGroup group) {
+        if (group == null)
+            throw new NullPointerException("Null thread group");
+        int nAlloc = group.activeCount();
+        int n;
+        Thread[] threads;
+        do {
+            nAlloc *= 2;
+            threads = new Thread[nAlloc];
+            n = group.enumerate(threads);
+        } while (n == nAlloc);
+        if (threads.length == 0 || threads[0] == null)
+            throw new RuntimeException("Eror in threadGroup");
+        return threads[0];
+    }
+
+
+    private PlatformConfig getPlatformConfig() {
+        Thread currentThread = Thread.currentThread();
+        Thread mainThread = getFirstThreadFromGroup(currentThread.getThreadGroup());
+        if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.keySet().contains(currentThread))
+            return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(currentThread);
+        else if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.keySet().contains(mainThread))
+            return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(mainThread);
+        return null;
+    }
+
+    public static void setConfigToThread(PlatformConfig configToThread) {
+        PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
+    }
+    public static PlatformConfig getConfigToThread(Thread configToThread) {
+        return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
+    }
+
 
     @Bean
     @Lazy
     @Scope(value = BeanDefinition.SCOPE_PROTOTYPE)
     public Platform determinePlatform() {
+        PlatformConfig configFromThread = getPlatformConfig();
         Platform platform4Test = new Platform();
-        if (staticConfig != null) {
-            browser = staticConfig.browser;
-            dimensionH = staticConfig.dimensionH;
-            dimensionW = staticConfig.dimensionW;
-            platform = staticConfig.platform;
-            platformVersion = staticConfig.platformVersion;
-            deviceName = staticConfig.deviceName;
-            mobileBrowser = staticConfig.mobileBrowser;
-            udid = staticConfig.udid;
-            addressHub = staticConfig.addressHub;
+        if (configFromThread != null) {
+            browser = configFromThread.browser;
+            dimensionH = configFromThread.dimensionH;
+            dimensionW = configFromThread.dimensionW;
+            platform = configFromThread.platform;
+            platformVersion = configFromThread.platformVersion;
+            deviceName = configFromThread.deviceName;
+            mobileBrowser = configFromThread.mobileBrowser;
+            udid = configFromThread.udid;
+            addressHub = configFromThread.addressHub;
         }
         //IsRemote
         String remoteEnv = System.getenv("remote");

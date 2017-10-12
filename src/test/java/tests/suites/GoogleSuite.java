@@ -2,7 +2,6 @@ package tests.suites;
 
 import com.googlecode.junittoolbox.ParallelSuite;
 import configs.PlatformConfig;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -23,11 +22,7 @@ public class GoogleSuite {
 
     @BeforeClass
     public static void setUp() {
-        PlatformConfig.setPlatformConfig(CHROME_FULL_SCREEN);
+        PlatformConfig.setConfigToThread(CHROME_FULL_SCREEN);
     }
 
-    @AfterClass
-    public static void tearDown() {
-        PlatformConfig.setPlatformConfig(null);
-    }
 }

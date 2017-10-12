@@ -33,8 +33,6 @@ public class GoogleTest extends AbstractTest {
         googlePage.typeTextToQueryField("1").assertThat(
                 GooglePage.getGooglePageAssertions(googlePage)
         );
-
-
     }
 
     @Test

@@ -26,7 +26,6 @@ public class JUnitExecutionListener extends RunListener {
         LocalDriverManager.cleanThreadPool();
     }
 
-
     public void testFailure(Failure failure) throws Exception {
         makeScreenshot(failure.getDescription().getMethodName());
         logger.error("Test FAILED! Method:" + failure.getDescription().getMethodName() + ". StackTrace is " + failure.getTrace());

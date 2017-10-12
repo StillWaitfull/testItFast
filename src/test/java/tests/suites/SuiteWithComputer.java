@@ -19,11 +19,10 @@ public class SuiteWithComputer {
                 "1920",
                 PC,
                 null);
-        PlatformConfig.setPlatformConfig(fullScreen);
+        PlatformConfig.setConfigToThread(fullScreen);
         boolean result = JUnitCore.runClasses(new ParallelClassAndMethodsComputer(true, true, 5, 3),
                 GoogleTest.class)
                 .wasSuccessful();
-        PlatformConfig.setPlatformConfig(null);
         Assert.assertTrue(result);
     }
 
