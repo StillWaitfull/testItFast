@@ -18,10 +18,6 @@ public class SuiteWithComputer {
                 "800",
                 "1920",
                 PC,
-                null,
-                null,
-                null,
-                null,
                 null);
         PlatformConfig.setPlatformConfig(fullScreen);
         boolean result = JUnitCore.runClasses(new ParallelClassAndMethodsComputer(true, true, 5, 3),

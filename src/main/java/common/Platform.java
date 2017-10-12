@@ -41,10 +41,10 @@ public class Platform {
         isMobile = true;
     }
 
-    public void setDesktop(Dimension dimension, String browser,String address) {
+    public void setDesktop(Dimension dimension, String browser, String address) {
         this.platform = PLATFORM.PC;
         this.dimension = dimension;
-        this.address=address;
+        this.address = address;
         this.browser = browser;
         isMobile = false;
     }

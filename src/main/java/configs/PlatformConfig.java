@@ -42,7 +42,7 @@ public class PlatformConfig {
                           String deviceName,
                           String mobileBrowser,
                           String udid,
-                          String addressAppium) {
+                          String address) {
         this.browser = browser;
         this.dimensionH = dimensionH;
         this.dimensionW = dimensionW;
@@ -51,7 +51,19 @@ public class PlatformConfig {
         this.deviceName = deviceName;
         this.mobileBrowser = mobileBrowser;
         this.udid = udid;
-        this.addressHub = addressAppium;
+        this.addressHub = address;
+    }
+
+    public PlatformConfig(String browser,
+                          String dimensionH,
+                          String dimensionW,
+                          Platform.PLATFORM platform,
+                          String address) {
+        this.browser = browser;
+        this.dimensionH = dimensionH;
+        this.dimensionW = dimensionW;
+        this.platform = platform;
+        this.addressHub = address;
     }
 
 

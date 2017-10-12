@@ -14,6 +14,7 @@ import toolkit.runner.TestItRunner;
 import java.util.List;
 
 import static org.jbehave.core.reporters.Format.*;
+
 @RunWith(TestItRunner.class)
 public class JBehaveJunitStories extends JUnitStories {
 

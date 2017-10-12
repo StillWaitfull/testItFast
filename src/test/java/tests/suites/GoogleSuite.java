@@ -19,10 +19,6 @@ public class GoogleSuite {
             "1920",
             "800",
             PC,
-            null,
-            null,
-            null,
-            null,
             null);
 
     @BeforeClass
