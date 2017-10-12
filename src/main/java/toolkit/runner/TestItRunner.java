@@ -12,24 +12,34 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import toolkit.driver.LocalDriverManager;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class TestItRunner extends ParallelRunner {
     private int failedAttempts = 0;
-    private static boolean added = false;
-    private static final Object LISTENER_SYNC = new Object();
-
+    private static final AtomicBoolean ADDED = new AtomicBoolean(false);
+    private static final CountDownLatch COMPLETE_LATCH = new CountDownLatch(1);
 
     public TestItRunner(Class<?> klass) throws InitializationError {
         super(klass);
     }
 
-    @Override
-    public void run(RunNotifier notifier) {
-        synchronized (LISTENER_SYNC) {
-            if (!added) {
-                notifier.addFirstListener(new JUnitExecutionListener());
-                added = true;
+    private void addListener(RunNotifier notifier) {
+        if (!ADDED.getAndSet(true)) {
+            notifier.addFirstListener(new JUnitExecutionListener());
+            COMPLETE_LATCH.countDown();
+        } else {
+            try {
+                COMPLETE_LATCH.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void run(RunNotifier notifier) {
+        addListener(notifier);
         EachTestNotifier testNotifier = new EachTestNotifier(notifier,
                 getDescription());
         Statement statement = classBlock(notifier);

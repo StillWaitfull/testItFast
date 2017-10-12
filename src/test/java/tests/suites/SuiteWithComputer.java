@@ -1,6 +1,7 @@
 package tests.suites;
 
 import configs.PlatformConfig;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import tests.simpleTests.GoogleTest;
@@ -23,9 +24,11 @@ public class SuiteWithComputer {
                 null,
                 null);
         PlatformConfig.setPlatformConfig(fullScreen);
-        JUnitCore.runClasses(new ParallelClassAndMethodsComputer(true, true, 5, 3),
-                GoogleTest.class);
+        boolean result = JUnitCore.runClasses(new ParallelClassAndMethodsComputer(true, true, 5, 3),
+                GoogleTest.class)
+                .wasSuccessful();
         PlatformConfig.setPlatformConfig(null);
+        Assert.assertTrue(result);
     }
 
 

@@ -16,6 +16,7 @@ public class ParallelClassAndMethodsComputer extends Computer {
     private static int threadSizeForMethods;
     private static int threadSizeForClasses;
     private final boolean methods;
+    private static final int numberOfThreads = 10;
 
     public ParallelClassAndMethodsComputer(boolean classes, boolean methods, int threadSizeForMethods, int threadSizeForClasses) {
         this.classes = classes;
@@ -25,11 +26,11 @@ public class ParallelClassAndMethodsComputer extends Computer {
     }
 
     public static Computer classes() {
-        return new org.junit.experimental.ParallelComputer(true, false);
+        return new ParallelClassAndMethodsComputer(true, false, numberOfThreads, numberOfThreads);
     }
 
     public static Computer methods() {
-        return new org.junit.experimental.ParallelComputer(false, true);
+        return new ParallelClassAndMethodsComputer(false, true, numberOfThreads, numberOfThreads);
     }
 
     private static Runner parallelize(Runner runner, ExecutorService fService) {
