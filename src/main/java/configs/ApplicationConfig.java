@@ -21,6 +21,8 @@ public class ApplicationConfig {
     @Value("${configName:live}")
     public String CONFIG_NAME;
 
+    @Value("${platform:pc}")
+    public String PLATFORM;
 
     @Value("${remote:false}")
     public boolean REMOTE;
@@ -32,12 +34,6 @@ public class ApplicationConfig {
 
     @Value("${hubAddress:http://172.27.5.65:4444/wd/hub}")
     public String HUB_ADDRESS;
-
-    @Value("${firebug:false}")
-    public boolean IS_FIREBUG;
-
-    @Value("${firebug-version:2.0.7}")
-    public String FIREBUG_VERSION;
 
     @Value("${Timeout:10}")
     public int TIMEOUT;
@@ -64,26 +60,14 @@ public class ApplicationConfig {
 
     //MOBILE PROPERTIES
 
-    @Value("${isMobile:false}")
-    public boolean IS_MOBILE;
-
-    @Value("${mobilePlatform:android}")
-    public String MOBILE_PLATFORM;
-
     @Value("${mobilePlatformVersion:7.0}")
     public String MOBILE_PLATFORM_VERSION;
-
-    @Value("${mobileBrowser:chrome}")
-    public String MOBILE_BROWSER;
 
     @Value("${mobileDeviceName:phone}")
     public String MOBILE_DEVICE_NAME;
 
     @Value("${udid:emulator-5554}")
     public String UDID;
-
-    @Value("${appiumAddress:http://127.0.0.1:4723/wd/hub}")
-    public String APPIUM_ADDRESS;
 
 
     private final ConfigurableEnvironment env;

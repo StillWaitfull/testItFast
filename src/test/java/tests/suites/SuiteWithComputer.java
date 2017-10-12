@@ -6,6 +6,8 @@ import org.junit.runner.JUnitCore;
 import tests.simpleTests.GoogleTest;
 import toolkit.runner.ParallelClassAndMethodsComputer;
 
+import static common.Platform.PLATFORM.PC;
+
 public class SuiteWithComputer {
 
 
@@ -14,7 +16,7 @@ public class SuiteWithComputer {
         PlatformConfig fullScreen = new PlatformConfig("chrome",
                 "800",
                 "1920",
-                null,
+                PC,
                 null,
                 null,
                 null,

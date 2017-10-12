@@ -8,6 +8,8 @@ import org.junit.runners.Suite;
 import tests.simpleTests.GoogleTest;
 import toolkit.runner.ParallelSuite;
 
+import static common.Platform.PLATFORM.PC;
+
 @RunWith(ParallelSuite.class)
 @Suite.SuiteClasses({GoogleTest.class})
 public class GoogleSuite {
@@ -16,7 +18,7 @@ public class GoogleSuite {
             "chrome",
             "1920",
             "800",
-            null,
+            PC,
             null,
             null,
             null,

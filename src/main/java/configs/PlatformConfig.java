@@ -14,12 +14,12 @@ public class PlatformConfig {
     private String browser;
     private String dimensionH;
     private String dimensionW;
-    private String platform;
+    private Platform.PLATFORM platform;
     private String platformVersion;
     private String deviceName;
     private String mobileBrowser;
     private String udid;
-    private String addressAppium;
+    private String addressHub;
     private ApplicationConfig applicationConfig;
     private static volatile PlatformConfig staticConfig;
 
@@ -37,7 +37,7 @@ public class PlatformConfig {
     public PlatformConfig(String browser,
                           String dimensionH,
                           String dimensionW,
-                          String platform,
+                          Platform.PLATFORM platform,
                           String platformVersion,
                           String deviceName,
                           String mobileBrowser,
@@ -51,7 +51,7 @@ public class PlatformConfig {
         this.deviceName = deviceName;
         this.mobileBrowser = mobileBrowser;
         this.udid = udid;
-        this.addressAppium = addressAppium;
+        this.addressHub = addressAppium;
     }
 
 
@@ -61,37 +61,47 @@ public class PlatformConfig {
     public Platform determinePlatform() {
         Platform platform4Test = new Platform();
         if (staticConfig != null) {
-            PlatformConfig platformConfig = staticConfig;
-            browser = platformConfig.browser;
-            dimensionH = platformConfig.dimensionH;
-            dimensionW = platformConfig.dimensionW;
-            platform = platformConfig.platform;
-            platformVersion = platformConfig.platformVersion;
-            deviceName = platformConfig.deviceName;
-            mobileBrowser = platformConfig.mobileBrowser;
-            udid = platformConfig.udid;
-            addressAppium = platformConfig.addressAppium;
+            browser = staticConfig.browser;
+            dimensionH = staticConfig.dimensionH;
+            dimensionW = staticConfig.dimensionW;
+            platform = staticConfig.platform;
+            platformVersion = staticConfig.platformVersion;
+            deviceName = staticConfig.deviceName;
+            mobileBrowser = staticConfig.mobileBrowser;
+            udid = staticConfig.udid;
+            addressHub = staticConfig.addressHub;
         }
+        //IsRemote
         String remoteEnv = System.getenv("remote");
         platform4Test.setRemote(remoteEnv == null ? applicationConfig.REMOTE : Boolean.parseBoolean(remoteEnv));
+
+        //Dimension for assertions
         Dimension dimension = determineDimension(dimensionH, dimensionW);
+
+        //Set Platform
+        if (platform == null) platform = Platform.PLATFORM.valueOf(applicationConfig.PLATFORM.toUpperCase());
+
         if (udid != null && deviceName != null)
-            platform4Test.setMobile(platform,
+            platform4Test.setMobile(
+                    platform,
                     platformVersion,
                     deviceName,
                     mobileBrowser,
                     udid,
-                    addressAppium,
+                    addressHub,
                     dimension);
-        else if (applicationConfig.IS_MOBILE)
-            platform4Test.setMobile(applicationConfig.MOBILE_PLATFORM,
+
+        else if (platform.equals(Platform.PLATFORM.ANDROID) || platform.equals(Platform.PLATFORM.IOS))
+            platform4Test.setMobile(
+                    platform,
                     applicationConfig.MOBILE_PLATFORM_VERSION,
                     applicationConfig.MOBILE_DEVICE_NAME,
-                    applicationConfig.MOBILE_BROWSER,
+                    applicationConfig.BROWSER,
                     applicationConfig.UDID,
-                    applicationConfig.APPIUM_ADDRESS,
-                    new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H)));
-        else platform4Test.setDesktop(dimension, determineBrowser(browser));
+                    applicationConfig.HUB_ADDRESS,
+                    dimension);
+
+        else platform4Test.setDesktop(dimension, determineBrowser(browser), applicationConfig.HUB_ADDRESS);
         return platform4Test;
     }
 

@@ -1,24 +1,18 @@
 configName: live
-
-firebug: false
-firebug-version: 2.0.7
+#PC("pc"), ANDROID("android"), IOS("ios")
+platform: pc
 
 
 remote: false
 hubAddress: http://172.27.5.65:4444/wd/hub
-
 browser: chrome
 Timeout: 10
 
 
-#MOBILE SETTING
-isMobile: false
-mobileBrowser: browser
-mobilePlatform: android
+#MOBILE SETTINGS
 mobilePlatformVersion: 7.0
 mobileDeviceName: phone
 udid: emulator-5554
-appiumAddress: http://127.0.0.1:4723/wd/hub
 
 
 #Dimension
@@ -34,7 +28,3 @@ proxyPort: 7000
 
 #FRONTEND TESTS
 isTest: false
-
-#mvn clean test -DsuiteFile=src/test/resources/suite/google.xml
-
-#mvn clean compile assembly:single

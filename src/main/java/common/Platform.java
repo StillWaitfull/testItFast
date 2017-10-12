@@ -9,12 +9,10 @@ public class Platform {
     private boolean isMobile;
     private String browser;
     private String deviceName;
-    private String mobileBrowser;
     private String udid;
     private String address;
     private String platformVersion;
     private PLATFORM platform;
-
     private boolean remote;
 
     public enum PLATFORM {
@@ -32,10 +30,10 @@ public class Platform {
     }
 
 
-    public void setMobile(String platform, String platformVersion, String deviceName, String mobileBrowser, String udid, String address, Dimension dimension) {
-        this.platform = PLATFORM.valueOf(platform.toUpperCase());
+    public void setMobile(PLATFORM platform, String platformVersion, String deviceName, String browser, String udid, String address, Dimension dimension) {
+        this.platform = platform;
         this.deviceName = deviceName;
-        this.mobileBrowser = mobileBrowser;
+        this.browser = browser;
         this.dimension = dimension;
         this.udid = udid;
         this.address = address;
@@ -43,9 +41,10 @@ public class Platform {
         isMobile = true;
     }
 
-    public void setDesktop(Dimension dimension, String browser) {
+    public void setDesktop(Dimension dimension, String browser,String address) {
         this.platform = PLATFORM.PC;
         this.dimension = dimension;
+        this.address=address;
         this.browser = browser;
         isMobile = false;
     }
@@ -65,10 +64,6 @@ public class Platform {
 
     public String getDeviceName() {
         return deviceName;
-    }
-
-    public String getMobileBrowser() {
-        return mobileBrowser;
     }
 
     public String getBrowser() {
