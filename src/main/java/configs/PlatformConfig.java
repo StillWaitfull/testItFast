@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
@@ -23,7 +26,7 @@ public class PlatformConfig {
     private String udid;
     private String addressHub;
     private ApplicationConfig applicationConfig;
-    private static final ConcurrentHashMap<Thread, PlatformConfig> PLATFORM_CONFIG_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
+    private static final WeakHashMap<Thread, PlatformConfig> PLATFORM_CONFIG_CONCURRENT_HASH_MAP = new WeakHashMap<>();
 
 
     @Autowired
@@ -63,7 +66,7 @@ public class PlatformConfig {
         this.addressHub = address;
     }
 
-    private Thread getFirstThreadFromGroup(final ThreadGroup group) {
+    private List<Thread> getFirstThreadFromGroup(final ThreadGroup group) {
         if (group == null)
             throw new NullPointerException("Null thread group");
         int nAlloc = group.activeCount();
@@ -76,24 +79,28 @@ public class PlatformConfig {
         } while (n == nAlloc);
         if (threads.length == 0 || threads[0] == null)
             throw new RuntimeException("Eror in threadGroup");
-        return threads[0];
+        return Arrays.asList(threads);
     }
 
 
     private PlatformConfig getPlatformConfig() {
         Thread currentThread = Thread.currentThread();
-        Thread mainThread = getFirstThreadFromGroup(currentThread.getThreadGroup());
-        if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.keySet().contains(currentThread))
+        List<Thread> mainThreads = getFirstThreadFromGroup(currentThread.getThreadGroup());
+        if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.keySet().contains(currentThread)) {
             return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(currentThread);
-        else if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.keySet().contains(mainThread))
-            return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(mainThread);
+        }
+        for (Thread thread : mainThreads) {
+            if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.containsKey(thread))
+                return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(thread);
+        }
         return null;
     }
+
 
     public static void setConfigToThread(PlatformConfig configToThread) {
         PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
     }
-    public static PlatformConfig getConfigToThread(Thread configToThread) {
+    public static PlatformConfig getConfigOfThread(Thread configToThread) {
         return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
     }
 
