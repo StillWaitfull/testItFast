@@ -6,36 +6,26 @@ import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-@Lazy
-@Component
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+
 public class WebDriverController {
 
     private WebDriver driver;
     public static int TIMEOUT;
     private final String browser;
     private final Dimension dimension;
-    private final StageConfig stageConfig;
 
 
-    @Autowired
-    WebDriverController(common.Platform platform, WebDriver driver, ApplicationConfig applicationConfig, StageConfig stageConfig) {
+    public WebDriverController(common.Platform platform, WebDriver driver, int timeout) {
         this.driver = driver;
         this.browser = platform.getBrowser();
         this.dimension = platform.getDimension();
-        this.stageConfig = stageConfig;
-        TIMEOUT = applicationConfig.TIMEOUT;
+        TIMEOUT = timeout;
         if (!platform.isMobile()) driver.manage().window().setSize(dimension);
         driver.manage().timeouts().setScriptTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);
@@ -217,9 +207,5 @@ public class WebDriverController {
 
     public Dimension getDimension() {
         return dimension;
-    }
-
-    public StageConfig getStageConfig() {
-        return stageConfig;
     }
 }

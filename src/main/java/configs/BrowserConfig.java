@@ -21,7 +21,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
+import toolkit.driver.LocalDriverManager;
 import toolkit.driver.ProxyHelper;
+import toolkit.driver.WebDriverController;
 
 import java.io.File;
 import java.net.URL;
@@ -32,12 +34,19 @@ public class BrowserConfig {
 
     private final ProxyHelper proxyHelper;
 
-    private final ApplicationConfig applicationConfig;
-
     @Autowired
-    public BrowserConfig(ProxyHelper proxyHelper, ApplicationConfig applicationConfig) {
+    public BrowserConfig(ProxyHelper proxyHelper) {
         this.proxyHelper = proxyHelper;
-        this.applicationConfig = applicationConfig;
+    }
+
+
+    @Lazy
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    WebDriverController getWebDriverController(common.Platform platform, WebDriver driver, ApplicationConfig applicationConfig) {
+        if (LocalDriverManager.getDriverController() == null)
+            return new WebDriverController(platform, driver, applicationConfig.TIMEOUT);
+        else return LocalDriverManager.getDriverController();
     }
 
     @Lazy

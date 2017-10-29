@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class GeneralConfig {
     public static final AnnotationConfigApplicationContext applicationContext;
 
+
     static {
         applicationContext = new AnnotationConfigApplicationContext();
         applicationContext.register(GeneralConfig.class);

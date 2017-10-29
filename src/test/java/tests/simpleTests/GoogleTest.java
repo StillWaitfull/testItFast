@@ -21,7 +21,6 @@ public class GoogleTest extends AbstractTest {
 
     @Test
     public void googleTest() {
-
         googlePage.typeTextToQueryField("0").assertThat(
                 GooglePage.getGooglePageAssertions(googlePage)
         );

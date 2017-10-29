@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Scope;
 import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 public class PlatformConfig {
@@ -100,6 +99,7 @@ public class PlatformConfig {
     public static void setConfigToThread(PlatformConfig configToThread) {
         PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
     }
+
     public static PlatformConfig getConfigOfThread(Thread configToThread) {
         return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
     }
