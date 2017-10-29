@@ -28,7 +28,7 @@ public abstract class OperationsHelper implements IPage {
     protected static String baseUrl = applicationContext.getBean(StageConfig.class).getBaseUrl();
 
 
-    public  void logoutHook() {
+    public void logoutHook() {
         if (LocalDriverManager.getDriverController() != null) {
             LocalDriverManager.getDriverController().goToUrl(baseUrl);
             LocalDriverManager.getDriverController().deleteAllCookies();

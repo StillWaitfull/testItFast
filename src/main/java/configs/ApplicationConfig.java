@@ -10,6 +10,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.support.ResourcePropertySource;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 
 
@@ -82,7 +83,7 @@ public class ApplicationConfig {
         try {
             String stage = System.getenv("stage");
             if (stage == null) stage = CONFIG_NAME;
-            env.getPropertySources().addFirst(new ResourcePropertySource("configs/" + stage + ".yml"));
+            env.getPropertySources().addFirst(new ResourcePropertySource("configs" + File.separator + stage + ".yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }

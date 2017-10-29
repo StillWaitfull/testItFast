@@ -1,7 +1,5 @@
 package toolkit.driver;
 
-import configs.ApplicationConfig;
-import configs.StageConfig;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
