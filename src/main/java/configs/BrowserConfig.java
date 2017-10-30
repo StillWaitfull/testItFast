@@ -43,11 +43,12 @@ public class BrowserConfig {
     @Lazy
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    WebDriverController getWebDriverController(common.Platform platform, WebDriver driver, ApplicationConfig applicationConfig) {
+    WebDriverController getWebDriverController(Platform platform, ApplicationConfig applicationConfig) {
         if (LocalDriverManager.getDriverController() == null)
-            return new WebDriverController(platform, driver, applicationConfig.TIMEOUT);
+            return new WebDriverController(platform, getBrowser(platform), applicationConfig.TIMEOUT);
         else return LocalDriverManager.getDriverController();
     }
+
 
     @Lazy
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)

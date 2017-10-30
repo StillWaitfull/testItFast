@@ -38,11 +38,11 @@ public class RequestClient {
     private String responseText = "";
     private StringEntity body;
     private final List<BasicHeader> headers = new ArrayList<>();
-    private final RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
-    private final CookieStore cookieStore = new BasicCookieStore();
-    private final HttpClientContext context = HttpClientContext.create();
+    private static final RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
+    private static final CookieStore cookieStore = new BasicCookieStore();
+    private static final HttpClientContext context = HttpClientContext.create();
     private int statusCode;
-    private final CloseableHttpClient httpClient = HttpClients.custom()
+    private static final CloseableHttpClient httpClient = HttpClients.custom()
             .setConnectionManager(new PoolingHttpClientConnectionManager())
             .disableRedirectHandling()
             .setDefaultRequestConfig(globalConfig)
@@ -50,7 +50,7 @@ public class RequestClient {
             .setDefaultCookieStore(cookieStore)
             .build();
 
-    {
+    static {
         context.setCookieStore(cookieStore);
     }
 
@@ -69,7 +69,7 @@ public class RequestClient {
         return responseText;
     }
 
-    private SSLContext createSslContext() {
+    private static SSLContext createSslContext() {
         try {
             return SSLContexts.custom()
                     .loadTrustMaterial(null, (TrustStrategy) (chain, authType) -> true)
