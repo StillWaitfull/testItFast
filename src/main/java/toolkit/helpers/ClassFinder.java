@@ -4,8 +4,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class ClassFinder {
+class ClassFinder {
 
 
     private static final char PKG_SEPARATOR = '.';
@@ -24,7 +25,7 @@ public class ClassFinder {
         File scannedDir = new File(scannedUrl.getFile());
         List<Class<?>> classes = new ArrayList<>();
         if (scannedDir.listFiles() == null) throw new RuntimeException("Directory is empty " + scannedUrl.getFile());
-        for (File file : scannedDir.listFiles()) {
+        for (File file : Objects.requireNonNull(scannedDir.listFiles())) {
             classes.addAll(find(file, scannedPackage));
         }
         return classes;
@@ -36,7 +37,7 @@ public class ClassFinder {
         if (file.isDirectory()) {
             if (file.listFiles() == null)
                 throw new RuntimeException("Directory is empty " + scannedPackage + PKG_SEPARATOR + file.getName());
-            for (File child : file.listFiles()) {
+            for (File child : Objects.requireNonNull(file.listFiles())) {
                 classes.addAll(find(child, resource));
             }
         } else if (resource.endsWith(CLASS_FILE_SUFFIX)) {

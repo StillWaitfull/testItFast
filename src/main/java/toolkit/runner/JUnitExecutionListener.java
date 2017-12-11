@@ -17,16 +17,16 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class JUnitExecutionListener extends RunListener {
+class JUnitExecutionListener extends RunListener {
 
     private final Logger logger = LoggerFactory.getLogger(JUnitExecutionListener.class);
 
 
-    public void testRunFinished(Result result) throws Exception {
+    public void testRunFinished(Result result) {
         LocalDriverManager.cleanThreadPool();
     }
 
-    public void testFailure(Failure failure) throws Exception {
+    public void testFailure(Failure failure) {
         makeScreenshot(failure.getDescription().getMethodName());
         logger.error("Test FAILED! Method:" + failure.getDescription().getMethodName() + ". StackTrace is " + failure.getTrace());
     }

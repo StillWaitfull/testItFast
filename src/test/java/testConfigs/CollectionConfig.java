@@ -15,7 +15,7 @@ import java.util.List;
 @ConfigurationProperties
 public class CollectionConfig {
 
-    private List<String> fileNames = new ArrayList<>();
+    private final List<String> fileNames = new ArrayList<>();
 
     public List<String> getFileNames() {
         return fileNames;

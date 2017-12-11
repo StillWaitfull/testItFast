@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class ParallelClassAndMethodsSuite extends Suite {
+class ParallelClassAndMethodsSuite extends Suite {
 
     private static final int numberOfThreads = (System.getenv("numberOfThreads") == null ? 10 : Integer.parseInt(System.getenv("numberOfThreads")));
     private static final ExecutorService fService = Executors.newFixedThreadPool(numberOfThreads);

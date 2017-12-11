@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ProcessProvider {
+class ProcessProvider {
     private static final Logger log = LoggerFactory.getLogger(ProcessProvider.class);
     private static final String GET_PROCESS_LIST_LINUX = "ps aux";
     private static final String KILL_SOME_TASK_LINUX = "kill -9 %s";
@@ -21,7 +21,7 @@ public class ProcessProvider {
     private static final String GET_ARGUMENTS_OF_PROCESS = "wmic.exe PROCESS where \"name like '%PROCESSNAME%'\" get Commandline";
 
 
-    public static void execCmd(String cmdLine) {
+    private static void execCmd(String cmdLine) {
         Process process;
         try {
             process = Runtime.getRuntime().exec(cmdLine);

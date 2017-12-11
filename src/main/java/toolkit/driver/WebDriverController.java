@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class WebDriverController {
 
-    private WebDriver driver;
+    private final WebDriver driver;
     public static int TIMEOUT;
     private final String browser;
     private final Dimension dimension;

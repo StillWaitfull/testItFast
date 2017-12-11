@@ -33,7 +33,7 @@ public class HtmlParser {
     }
 
 
-    public HtmlParser(String url, Map<String, String> cookies) {
+    private HtmlParser(String url, Map<String, String> cookies) {
         try {
             this.url = url;
             document = getDocument(cookies);

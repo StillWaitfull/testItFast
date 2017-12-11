@@ -28,9 +28,9 @@ dependencies {
     compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.2.0'
     compile group: 'org.springframework', name: 'spring-context', version: '4.3.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot', version: '1.5.6.RELEASE'
-    compile group: 'net.lightbody.bmp', name: 'browsermob-core', version: '2.1.2'
+    compile group: 'net.lightbody.bmp', name: 'browsermob-core', version: '2.1.5'
     compile group: 'com.opera', name: 'operadriver', version: '1.5'
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.0.0'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.8.1'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
     compile(group: 'com.codeborne', name: 'phantomjsdriver', version: '1.2.1') {
         exclude(module: 'selenium-remote-driver')

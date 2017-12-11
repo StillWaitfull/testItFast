@@ -1,21 +1,24 @@
 package configs;
 
 import common.OperationSystem;
+import common.Platform;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.GeckoDriverService;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerOptions;
+import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,13 +35,6 @@ import java.net.URL;
 @Configuration
 public class BrowserConfig {
 
-    private final ProxyHelper proxyHelper;
-
-    @Autowired
-    public BrowserConfig(ProxyHelper proxyHelper) {
-        this.proxyHelper = proxyHelper;
-    }
-
 
     @Lazy
     @Bean
@@ -53,7 +49,7 @@ public class BrowserConfig {
     @Lazy
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Bean
-    public WebDriver getBrowser(common.Platform platform) {
+    public WebDriver getBrowser(Platform platform) {
         if (platform.isMobile()) {
             switch (platform.getPlatform()) {
                 case ANDROID:
@@ -79,6 +75,7 @@ public class BrowserConfig {
                 case "phantom": {
                     return getDriverPhantom(platform);
                 }
+
                 default:
                     throw new RuntimeException("There is no such driver");
             }
@@ -87,16 +84,10 @@ public class BrowserConfig {
     }
 
 
-    private WebDriver getAndroid(common.Platform platform) {
+    private WebDriver getAndroid(Platform platform) {
         try {
-            DesiredCapabilities capabilities = DesiredCapabilities.android();
-            capabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());
-            capabilities.setCapability(MobileCapabilityType.UDID, platform.getUdid());
-            capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platform.getPlatform());
-            capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platform.getPlatformVersion());
-            capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getBrowser());
-            capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
-            return platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), capabilities) : new AndroidDriver(new URL(platform.getAddress()), capabilities);
+            DesiredCapabilities desiredCapabilities = createCapabilitiesAndroid(platform);
+            return platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), desiredCapabilities) : new AndroidDriver(new URL(platform.getAddress()), desiredCapabilities);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("There was a problem with android driver");
@@ -104,12 +95,13 @@ public class BrowserConfig {
     }
 
 
-    private WebDriver getDriverFF(common.Platform platform) {
+    private WebDriver getDriverFF(Platform platform) {
         WebDriver driver;
         try {
-            DesiredCapabilities capabilitiesFF = createCapabilitiesFF();
-            proxyHelper.setCapabilities(capabilitiesFF);
-            driver = platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesFF) : new FirefoxDriver(capabilitiesFF);
+            FirefoxOptions capabilitiesFF = createCapabilitiesFF();
+            driver = platform.isRemote()
+                    ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesFF)
+                    : new FirefoxDriver(GeckoDriverService.createDefaultService(), capabilitiesFF);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("There was a problem with start firefox driver");
@@ -117,14 +109,13 @@ public class BrowserConfig {
         return driver;
     }
 
-    private WebDriver getDriverIE(common.Platform platform) {
+    private WebDriver getDriverIE(Platform platform) {
         WebDriver driver;
         try {
-            DesiredCapabilities capabilitiesIe = DesiredCapabilities.internetExplorer();
-            proxyHelper.setCapabilities(capabilitiesIe);
-            capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-            System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
-            driver = platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesIe) : new InternetExplorerDriver(capabilitiesIe);
+            InternetExplorerOptions capabilitiesIe = createCapabilitiesIe();
+            driver = platform.isRemote()
+                    ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesIe)
+                    : new InternetExplorerDriver(capabilitiesIe);
         } catch (Exception e) {
             throw new RuntimeException("There was a problem with start ie driver");
 
@@ -132,33 +123,33 @@ public class BrowserConfig {
         return driver;
     }
 
-    private WebDriver getDriverChrome(common.Platform platform) {
+    private WebDriver getDriverChrome(Platform platform) {
         try {
-            DesiredCapabilities capabilitiesChrome = DesiredCapabilities.chrome();
-            proxyHelper.setCapabilities(capabilitiesChrome);
-            System.setProperty("webdriver.chrome.driver", "lib" + File.separator + "chromedriver" + OperationSystem.instance.getExecutableSuffix());
-            return platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesChrome) : new ChromeDriver(capabilitiesChrome);
+            ChromeOptions capabilitiesChrome = createCapabilitiesChrome();
+            return platform.isRemote()
+                    ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesChrome)
+                    : new ChromeDriver(capabilitiesChrome);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("There was a problem with start chrome driver");
         }
     }
 
-    private WebDriver getDriverOpera(common.Platform platform) {
+    private WebDriver getDriverOpera(Platform platform) {
         try {
-            DesiredCapabilities capabilitiesOpera = DesiredCapabilities.operaBlink();
-            System.setProperty("webdriver.opera.driver", "lib" + File.separator + "operadriver" + OperationSystem.instance.getExecutableSuffix());
-            return platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesOpera) : new org.openqa.selenium.opera.OperaDriver(capabilitiesOpera);
+            OperaOptions capabilitiesOpera = createCapabilitiesOpera();
+            return platform.isRemote()
+                    ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesOpera)
+                    : new OperaDriver(capabilitiesOpera);
         } catch (Exception e) {
             throw new RuntimeException("There was a problem with start opera driver");
         }
     }
 
-    private WebDriver getDriverPhantom(common.Platform platform) {
+    private WebDriver getDriverPhantom(Platform platform) {
         WebDriver driver;
         try {
             DesiredCapabilities capabilitiesPhantom = createCapabilitiesPhantom();
-            proxyHelper.setCapabilities(capabilitiesPhantom);
             driver = platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesPhantom) : new PhantomJSDriver(capabilitiesPhantom);
         } catch (Exception e) {
             throw new RuntimeException("There was a problem with start phantom driver");
@@ -166,29 +157,55 @@ public class BrowserConfig {
         return driver;
     }
 
-
-    private DesiredCapabilities createCapabilitiesFF() {
-        DesiredCapabilities capabilitiesFF = new DesiredCapabilities();
-        FirefoxProfile firefoxProfile = new FirefoxProfile();
+    private FirefoxOptions createCapabilitiesFF() {
+        FirefoxOptions options = new FirefoxOptions();
+        options.setCapability("enableVNC", true);
+        options.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        options.setCapability("marionette", true);
         System.setProperty("webdriver.gecko.driver", "lib" + File.separator + "geckodriver" + OperationSystem.instance.getExecutableSuffix());
-        firefoxProfile.setAcceptUntrustedCertificates(true);
-        firefoxProfile.setAssumeUntrustedCertificateIssuer(false);
-        firefoxProfile.setPreference("browser.download.folderList", 2);
-        firefoxProfile.setPreference("browser.download.manager.showWhenStarting", false);
-        firefoxProfile.setPreference("intl.accept_languages", "ru");
-        firefoxProfile.setPreference("general.useragent.local", "ru");
-        firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream");
-        capabilitiesFF.setBrowserName("firefox");
-        capabilitiesFF.setPlatform(Platform.ANY);
-        capabilitiesFF.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
-        capabilitiesFF.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
-        return capabilitiesFF;
+        return options;
+    }
+
+    private ChromeOptions createCapabilitiesChrome() {
+        ChromeOptions capabilitiesChrome = new ChromeOptions();
+        capabilitiesChrome.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        capabilitiesChrome.setCapability("enableVNC", true);
+        System.setProperty("webdriver.chrome.driver", "lib" + File.separator + "chromedriver" + OperationSystem.instance.getExecutableSuffix());
+        return capabilitiesChrome;
+    }
+
+
+    private InternetExplorerOptions createCapabilitiesIe() {
+        InternetExplorerOptions capabilitiesIe = new InternetExplorerOptions();
+        capabilitiesIe.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+        System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
+        return capabilitiesIe;
+    }
+
+
+    private OperaOptions createCapabilitiesOpera() {
+        OperaOptions capabilitiesOpera = new OperaOptions();
+        System.setProperty("webdriver.opera.driver", "lib" + File.separator + "operadriver" + OperationSystem.instance.getExecutableSuffix());
+        return capabilitiesOpera;
+    }
+
+    private DesiredCapabilities createCapabilitiesAndroid(Platform platform) {
+        DesiredCapabilities desiredCapabilities = DesiredCapabilities.android();
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());
+        desiredCapabilities.setCapability(MobileCapabilityType.UDID, platform.getUdid());
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platform.getPlatform());
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platform.getPlatformVersion());
+        desiredCapabilities.setCapability(MobileCapabilityType.BROWSER_NAME, platform.getBrowser());
+        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
+        return desiredCapabilities;
     }
 
 
     private DesiredCapabilities createCapabilitiesPhantom() {
         String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
-        DesiredCapabilities capabilitiesPhantom = DesiredCapabilities.phantomjs();
+        DesiredCapabilities capabilitiesPhantom = new DesiredCapabilities();
+        capabilitiesPhantom.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
         String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator + "phantomjs" + OperationSystem.instance.getExecutableSuffix());
