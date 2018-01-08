@@ -10,9 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.support.ResourcePropertySource;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -85,10 +83,8 @@ public class ApplicationConfig {
     public StageConfig stageProperties() throws IOException {
         String stage = System.getenv("stage");
         if (stage == null) stage = CONFIG_NAME;
-        String path="configs" + File.separator + stage+ ".yml";
-       if(!new File(path).isFile())
-           throw new FileNotFoundException("Отсутвует файл с конфигами "+path);
-        env.getPropertySources().addFirst(new ResourcePropertySource( path));
+        String path = File.separator + "configs" + File.separator + stage + ".yml";
+        env.getPropertySources().addFirst(new ResourcePropertySource(path));
         return new StageConfig();
     }
 

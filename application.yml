@@ -1,4 +1,4 @@
-configName: live
+configName: prod
 #PC("pc"), ANDROID("android"), IOS("ios")
 platform: pc
 

@@ -27,7 +27,8 @@ public class FrontendGoogleTest extends AbstractTest {
         googlePage.typeTextToQueryField("3").assertThat(
                 GooglePage.getGooglePageAssertions(googlePage)
         );
-        checkingDifferentImages.makeScreenshotForDiff(name)
+        checkingDifferentImages
+                .makeScreenshotForDiff(name)
                 .checkDifference(name, 1);
         Assert.assertTrue("There was errors in frontend tests ",
                 checkingDifferentImages.getResult());
