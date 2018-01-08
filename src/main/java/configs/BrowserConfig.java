@@ -46,10 +46,8 @@ public class BrowserConfig {
     }
 
 
-    @Lazy
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    @Bean
-    public WebDriver getBrowser(Platform platform) {
+
+    private WebDriver getBrowser(Platform platform) {
         if (platform.isMobile()) {
             switch (platform.getPlatform()) {
                 case ANDROID:
