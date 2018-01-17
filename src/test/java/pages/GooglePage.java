@@ -3,10 +3,10 @@ package pages;
 import composite.IPage;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import toolkit.helpers.OperationsHelper;
+import toolkit.helpers.ActionsHelper;
 
 
-public class GooglePage extends OperationsHelper {
+public class GooglePage extends ActionsHelper {
 
     private static final String pageUrl = baseUrl + "/";
 

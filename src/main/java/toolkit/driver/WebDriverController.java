@@ -2,10 +2,11 @@ package toolkit.driver;
 
 import org.junit.Assert;
 import org.openqa.selenium.*;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ public class WebDriverController {
         this.dimension = platform.getDimension();
         this.timeout = timeout;
         if (!platform.isMobile()) driver.manage().window().setSize(dimension);
+        if (platform.isRemote()) ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
         driver.switchTo();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
         LocalDriverManager.setWebDriverController(this);
@@ -126,7 +128,7 @@ public class WebDriverController {
         waitForPageLoaded();
     }
 
-    @PreDestroy
+
     void shutdown() {
         try {
             driver.quit();

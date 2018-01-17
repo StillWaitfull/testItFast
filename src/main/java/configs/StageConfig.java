@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 
-@Configuration
-@Scope(value = BeanDefinition.SCOPE_SINGLETON)
 public class StageConfig {
 
     @Value("${baseUrl}")

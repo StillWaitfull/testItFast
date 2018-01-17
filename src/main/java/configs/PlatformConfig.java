@@ -85,7 +85,7 @@ public class PlatformConfig {
     private PlatformConfig getPlatformConfig() {
         Thread currentThread = Thread.currentThread();
         List<Thread> mainThreads = getFirstThreadFromGroup(currentThread.getThreadGroup());
-        if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.keySet().contains(currentThread)) {
+        if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.containsKey(currentThread)) {
             return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(currentThread);
         }
         for (Thread thread : mainThreads) {

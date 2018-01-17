@@ -3,13 +3,13 @@ package configs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.support.ResourcePropertySource;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 
@@ -78,15 +78,15 @@ public class ApplicationConfig {
         this.env = env;
     }
 
-    @PostConstruct
-    public void init() {
-        try {
-            String stage = System.getenv("stage");
-            if (stage == null) stage = CONFIG_NAME;
-            env.getPropertySources().addFirst(new ResourcePropertySource("configs" + File.separator + stage + ".yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+    @Bean
+    public StageConfig stageProperties() throws IOException {
+        String stage = System.getenv("stage");
+        if (stage == null) stage = CONFIG_NAME;
+        String path = File.separator + "configs" + File.separator + stage + ".yml";
+        env.getPropertySources().addFirst(new ResourcePropertySource(path));
+        return new StageConfig();
     }
+
 
 }

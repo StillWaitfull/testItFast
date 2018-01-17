@@ -46,10 +46,8 @@ public class BrowserConfig {
     }
 
 
-    @Lazy
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    @Bean
-    public WebDriver getBrowser(Platform platform) {
+
+    private WebDriver getBrowser(Platform platform) {
         if (platform.isMobile()) {
             switch (platform.getPlatform()) {
                 case ANDROID:
@@ -147,14 +145,14 @@ public class BrowserConfig {
     }
 
     private WebDriver getDriverPhantom(Platform platform) {
-        WebDriver driver;
         try {
             DesiredCapabilities capabilitiesPhantom = createCapabilitiesPhantom();
-            driver = platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesPhantom) : new PhantomJSDriver(capabilitiesPhantom);
+            return  platform.isRemote()
+                    ? new RemoteWebDriver(new URL(platform.getAddress()), capabilitiesPhantom)
+                    : new PhantomJSDriver(capabilitiesPhantom);
         } catch (Exception e) {
             throw new RuntimeException("There was a problem with start phantom driver");
         }
-        return driver;
     }
 
     private FirefoxOptions createCapabilitiesFF() {
@@ -174,7 +172,6 @@ public class BrowserConfig {
         return capabilitiesChrome;
     }
 
-
     private InternetExplorerOptions createCapabilitiesIe() {
         InternetExplorerOptions capabilitiesIe = new InternetExplorerOptions();
         capabilitiesIe.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
@@ -182,7 +179,6 @@ public class BrowserConfig {
         System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
         return capabilitiesIe;
     }
-
 
     private OperaOptions createCapabilitiesOpera() {
         OperaOptions capabilitiesOpera = new OperaOptions();
@@ -200,7 +196,6 @@ public class BrowserConfig {
         desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, platform.getDeviceName());
         return desiredCapabilities;
     }
-
 
     private DesiredCapabilities createCapabilitiesPhantom() {
         String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
