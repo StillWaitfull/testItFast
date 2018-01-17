@@ -8,7 +8,6 @@ import net.lightbody.bmp.core.har.Har;
 import org.openqa.selenium.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -27,36 +26,26 @@ import java.util.concurrent.TimeUnit;
 public class ProxyHelper {
 
     private static final Logger log = LoggerFactory.getLogger(ProxyHelper.class);
-    private static final BrowserMobProxy server = new BrowserMobProxyServer();
-    private static Proxy proxy = new Proxy();
+    private static BrowserMobProxy server;
+    private static Proxy proxy;
 
-    @Autowired
+
     ProxyHelper(ApplicationConfig applicationConfig) {
+        proxy = new Proxy();
         if (applicationConfig.ENABLE_PROXY) {
             if (applicationConfig.REMOTE) {
                 String proxyStr = applicationConfig.REMOTE_PROXY_HOST + ":" + applicationConfig.PROXY_PORT;
                 proxy.setHttpProxy(proxyStr);
                 proxy.setSslProxy(proxyStr);
-            } else if (!server.isStarted()) {
+            } else {
+                server = new BrowserMobProxyServer();
                 server.setTrustAllServers(true);
-                server.setRequestTimeout(WebDriverController.TIMEOUT, TimeUnit.SECONDS);
+                server.setRequestTimeout(applicationConfig.TIMEOUT, TimeUnit.SECONDS);
                 server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
                 server.start(applicationConfig.PROXY_PORT);
                 proxy = ClientUtil.createSeleniumProxy(server);
             }
         } else proxy.setAutodetect(true);
-    }
-
-    @PreDestroy
-    public void stopProxy() {
-        if (server.isStarted()) {
-            try {
-                server.stop();
-            } catch (Exception e) {
-                log.error("There was a problem with shutdown proxy server");
-                e.printStackTrace();
-            }
-        }
     }
 
     public static Proxy getProxy() {
@@ -74,6 +63,17 @@ public class ProxyHelper {
         }
     }
 
+    @PreDestroy
+    public void stopProxy() {
+        if (server.isStarted()) {
+            try {
+                server.stop();
+            } catch (Exception e) {
+                log.error("There was a problem with shutdown proxy server");
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 }

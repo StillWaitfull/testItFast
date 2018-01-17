@@ -29,8 +29,6 @@ public interface IPage {
     //VALIDATES
     boolean validateElementVisible(By by);
 
-    boolean validateElementAttributeContains(By by, String nameAttribute, String containsValue);
-
     boolean validateElementAttributeNotEmpty(By by, String nameAttribute);
 
     boolean validateElementPresent(By by);
@@ -45,12 +43,17 @@ public interface IPage {
 
     boolean validateTextEquals(By by, String text);
 
+    //PROPERTIES
+    boolean isVisible(By by);
+
+    boolean isElementPresent(By by);
+
+
     //ASSERTIONS
     void assertThat(Runnable... assertions);
 
     //CHECKS
     boolean checkDimensionIsLess(int width);
 
-    boolean isElementPresent(By by);
 
 }

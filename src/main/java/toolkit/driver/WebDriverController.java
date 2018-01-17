@@ -8,25 +8,22 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 
 public class WebDriverController {
 
     private final WebDriver driver;
-    public static int TIMEOUT;
     private final String browser;
     private final Dimension dimension;
+    private int timeout;
 
 
     public WebDriverController(common.Platform platform, WebDriver driver, int timeout) {
         this.driver = driver;
         this.browser = platform.getBrowser();
         this.dimension = platform.getDimension();
-        TIMEOUT = timeout;
+        this.timeout = timeout;
         if (!platform.isMobile()) driver.manage().window().setSize(dimension);
-        driver.manage().timeouts().setScriptTimeout(TIMEOUT, TimeUnit.SECONDS);
-        driver.manage().timeouts().pageLoadTimeout(TIMEOUT, TimeUnit.SECONDS);
         driver.switchTo();
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
         LocalDriverManager.setWebDriverController(this);
@@ -58,7 +55,7 @@ public class WebDriverController {
 
 
     public WebDriverWait getInstanceWaitDriver() {
-        return new WebDriverWait(driver, TIMEOUT);
+        return new WebDriverWait(driver, timeout);
     }
 
 
@@ -205,5 +202,9 @@ public class WebDriverController {
 
     public Dimension getDimension() {
         return dimension;
+    }
+
+    public int getTimeout() {
+        return timeout;
     }
 }
