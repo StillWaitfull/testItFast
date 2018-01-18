@@ -1,91 +1,74 @@
 package configs;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.io.support.ResourcePropertySource;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import java.io.File;
 import java.io.IOException;
 
-
-@Configuration
-@Scope(value = BeanDefinition.SCOPE_SINGLETON)
-@PropertySource(value = "file:application.yml", ignoreResourceNotFound = true)
 public class ApplicationConfig {
 
-    @Value("${configName:live}")
+    private ApplicationConfig() {
+    }
+
+    @JsonProperty("configName")
     public String CONFIG_NAME;
 
-    @Value("${platform:pc}")
+    @JsonProperty("platform")
     public String PLATFORM;
 
-    @Value("${remote:false}")
+    @JsonProperty("remote")
     public boolean REMOTE;
 
-
-    @Value("${browser:chrome}")
+    @JsonProperty("browser")
     public String BROWSER;
 
-
-    @Value("${hubAddress:http://172.27.5.65:4444/wd/hub}")
+    @JsonProperty("hubAddress")
     public String HUB_ADDRESS;
 
-    @Value("${Timeout:10}")
+    @JsonProperty("Timeout")
     public int TIMEOUT;
 
-    @Value("${dimensionW:1920}")
+    @JsonProperty("dimensionW")
     public String DIMENSION_W;
 
-    @Value("${dimensionH:1080}")
+    @JsonProperty("dimensionH")
     public String DIMENSION_H;
 
-    @Value("${enableProxy:true}")
+    @JsonProperty("enableProxy")
     public boolean ENABLE_PROXY;
 
-
-    @Value("${remoteProxyHost:172.27.5.65}")
+    @JsonProperty("remoteProxyHost")
     public String REMOTE_PROXY_HOST;
 
-    @Value("${proxyPort:7000}")
+    @JsonProperty("proxyPort")
     public int PROXY_PORT;
 
-    @Value("${isTest:false}")
-    public boolean IS_TEST;
-
-
-    //MOBILE PROPERTIES
-
-    @Value("${mobilePlatformVersion:7.0}")
+    @JsonProperty("mobilePlatformVersion")
     public String MOBILE_PLATFORM_VERSION;
 
-    @Value("${mobileDeviceName:phone}")
+    @JsonProperty("mobileDeviceName")
     public String MOBILE_DEVICE_NAME;
 
-    @Value("${udid:emulator-5554}")
+    @JsonProperty("udid")
     public String UDID;
 
 
-    private final ConfigurableEnvironment env;
+    private static ApplicationConfig instance;
 
-    @Autowired
-    public ApplicationConfig(ConfigurableEnvironment env) {
-        this.env = env;
-    }
-
-
-    @Bean
-    public StageConfig stageProperties() throws IOException {
-        String stage = System.getenv("stage");
-        if (stage == null) stage = CONFIG_NAME;
-        String path = File.separator + "configs" + File.separator + stage + ".yml";
-        env.getPropertySources().addFirst(new ResourcePropertySource(path));
-        return new StageConfig();
+    public static synchronized ApplicationConfig getInstance() {
+        if (instance == null) {
+            String path = "application.yml";
+            try {
+                ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+                instance = mapper.readValue(new File(path), ApplicationConfig.class);
+            } catch (IOException e) {
+                throw new RuntimeException("Ошибка при парсинге файла с конфигами " + path);
+            }
+        }
+        return instance;
     }
 
 

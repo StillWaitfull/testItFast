@@ -1,4 +1,4 @@
-configName: prod
+configName: prod.yml
 #PC("pc"), ANDROID("android"), IOS("ios")
 platform: pc
 
@@ -24,7 +24,3 @@ enableProxy: true
 #Have to up it on remote host(s)
 remoteProxyHost: 172.27.5.65
 proxyPort: 7000
-
-
-#FRONTEND TESTS
-isTest: false

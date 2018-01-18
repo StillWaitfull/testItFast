@@ -2,18 +2,11 @@ package configs;
 
 import common.Platform;
 import org.openqa.selenium.Dimension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
 
-@Configuration
 public class PlatformConfig {
     private String browser;
     private String dimensionH;
@@ -24,14 +17,12 @@ public class PlatformConfig {
     private String mobileBrowser;
     private String udid;
     private String addressHub;
-    private ApplicationConfig applicationConfig;
+    private ApplicationConfig applicationConfig = ApplicationConfig.getInstance();
     private static final WeakHashMap<Thread, PlatformConfig> PLATFORM_CONFIG_CONCURRENT_HASH_MAP = new WeakHashMap<>();
 
-
-    @Autowired
-    public PlatformConfig(ApplicationConfig applicationConfig) {
-        this.applicationConfig = applicationConfig;
+    public PlatformConfig() {
     }
+
 
     public PlatformConfig(String browser,
                           String dimensionW,
@@ -105,9 +96,6 @@ public class PlatformConfig {
     }
 
 
-    @Bean
-    @Lazy
-    @Scope(value = BeanDefinition.SCOPE_PROTOTYPE)
     public Platform determinePlatform() {
         PlatformConfig configFromThread = getPlatformConfig();
         Platform platform4Test = new Platform();

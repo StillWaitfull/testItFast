@@ -8,9 +8,6 @@ import net.lightbody.bmp.core.har.Har;
 import org.openqa.selenium.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
@@ -21,8 +18,6 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 
-@Service
-@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class ProxyHelper {
 
     private static final Logger log = LoggerFactory.getLogger(ProxyHelper.class);
