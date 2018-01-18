@@ -23,7 +23,9 @@ public abstract class ActionsHelper implements IPage {
 
     protected static final String baseUrl = StageConfig.getInstance().getBaseUrl();
     private static final Logger log = LoggerFactory.getLogger(ActionsHelper.class);
-    private final WebDriverController driver = new WebDriverController(new PlatformConfig().determinePlatform());
+    private final WebDriverController driver = LocalDriverManager.getDriverController() == null
+            ? new WebDriverController(new PlatformConfig().determinePlatform())
+            : LocalDriverManager.getDriverController();
     private final WaitHelper waitHelper = new WaitHelper();
 
     public void logoutHook() {

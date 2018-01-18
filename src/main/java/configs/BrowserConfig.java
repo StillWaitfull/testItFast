@@ -139,7 +139,7 @@ public class BrowserConfig {
     private static FirefoxOptions createCapabilitiesFF() {
         FirefoxOptions options = new FirefoxOptions();
         options.setCapability("enableVNC", true);
-        options.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        options.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
         options.setCapability("marionette", true);
         System.setProperty("webdriver.gecko.driver", "lib" + File.separator + "geckodriver" + OperationSystem.instance.getExecutableSuffix());
         return options;
@@ -147,7 +147,7 @@ public class BrowserConfig {
 
     private static ChromeOptions createCapabilitiesChrome() {
         ChromeOptions capabilitiesChrome = new ChromeOptions();
-        capabilitiesChrome.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        capabilitiesChrome.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
         capabilitiesChrome.setCapability("enableVNC", true);
         System.setProperty("webdriver.chrome.driver", "lib" + File.separator + "chromedriver" + OperationSystem.instance.getExecutableSuffix());
         return capabilitiesChrome;
@@ -155,7 +155,7 @@ public class BrowserConfig {
 
     private static InternetExplorerOptions createCapabilitiesIe() {
         InternetExplorerOptions capabilitiesIe = new InternetExplorerOptions();
-        capabilitiesIe.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        capabilitiesIe.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
         capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
         return capabilitiesIe;
@@ -181,7 +181,7 @@ public class BrowserConfig {
     private static DesiredCapabilities createCapabilitiesPhantom() {
         String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
         DesiredCapabilities capabilitiesPhantom = new DesiredCapabilities();
-        capabilitiesPhantom.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        capabilitiesPhantom.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
         String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator + "phantomjs" + OperationSystem.instance.getExecutableSuffix());
