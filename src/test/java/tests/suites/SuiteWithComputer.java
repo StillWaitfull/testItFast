@@ -17,8 +17,7 @@ public class SuiteWithComputer {
         PlatformConfig fullScreen = new PlatformConfig("chrome",
                 "800",
                 "1920",
-                PC,
-                null);
+                PC);
         PlatformConfig.setConfigToThread(fullScreen);
         boolean result = JUnitCore.runClasses(new ParallelClassAndMethodsComputer(true, true, 5, 3),
                 GoogleTest.class)

@@ -17,8 +17,7 @@ public class GoogleSuite {
             "chrome",
             "1920",
             "800",
-            PC,
-            null);
+            PC);
 
     @BeforeClass
     public static void setUp() {
