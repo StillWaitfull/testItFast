@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 public class PlatformConfig {
+    private static final WeakHashMap<Thread, PlatformConfig> PLATFORM_CONFIG_CONCURRENT_HASH_MAP = new WeakHashMap<>();
     private String browser;
     private String dimensionH;
     private String dimensionW;
@@ -17,12 +18,11 @@ public class PlatformConfig {
     private String mobileBrowser;
     private String udid;
     private String addressHub;
+    private String proxy;
     private ApplicationConfig applicationConfig = ApplicationConfig.getInstance();
-    private static final WeakHashMap<Thread, PlatformConfig> PLATFORM_CONFIG_CONCURRENT_HASH_MAP = new WeakHashMap<>();
 
     public PlatformConfig() {
     }
-
 
     public PlatformConfig(String browser,
                           String dimensionW,
@@ -31,8 +31,7 @@ public class PlatformConfig {
                           String platformVersion,
                           String deviceName,
                           String mobileBrowser,
-                          String udid,
-                          String address) {
+                          String udid) {
         this.browser = browser;
         this.dimensionH = dimensionH;
         this.dimensionW = dimensionW;
@@ -41,20 +40,26 @@ public class PlatformConfig {
         this.deviceName = deviceName;
         this.mobileBrowser = mobileBrowser;
         this.udid = udid;
-        this.addressHub = address;
     }
 
     public PlatformConfig(String browser,
                           String dimensionW,
                           String dimensionH,
-                          Platform.PLATFORM platform,
-                          String address) {
+                          Platform.PLATFORM platform) {
         this.browser = browser;
         this.dimensionH = dimensionH;
         this.dimensionW = dimensionW;
         this.platform = platform;
-        this.addressHub = address;
     }
+
+    public static void setConfigToThread(PlatformConfig configToThread) {
+        PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
+    }
+
+    public static PlatformConfig getConfigFromThread(Thread configToThread) {
+        return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
+    }
+
 
     private List<Thread> getFirstThreadFromGroup(final ThreadGroup group) {
         if (group == null)
@@ -72,7 +77,6 @@ public class PlatformConfig {
         return Arrays.asList(threads);
     }
 
-
     private PlatformConfig getPlatformConfig() {
         Thread currentThread = Thread.currentThread();
         List<Thread> mainThreads = getFirstThreadFromGroup(currentThread.getThreadGroup());
@@ -87,70 +91,47 @@ public class PlatformConfig {
     }
 
 
-    public static void setConfigToThread(PlatformConfig configToThread) {
-        PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
+    public PlatformConfig createOrGetPlatformConfig(){
+        PlatformConfig configFromThread = getPlatformConfig();
+        if (configFromThread == null) {
+            Dimension dimension = determineDimension(dimensionH, dimensionW);
+            if (platform == null)
+                platform = Platform.PLATFORM.valueOf(applicationConfig.PLATFORM.toUpperCase());
+            if ((udid != null && deviceName != null) || !platform.equals(Platform.PLATFORM.PC)) {
+                configFromThread = new PlatformConfig(
+                        mobileBrowser = (mobileBrowser == null) ? applicationConfig.BROWSER : mobileBrowser,
+                        String.valueOf(dimension.width),
+                        String.valueOf(dimension.height),
+                        platform,
+                        platformVersion = (platformVersion == null) ? applicationConfig.MOBILE_PLATFORM_VERSION : platformVersion,
+                        deviceName = (deviceName == null) ? applicationConfig.MOBILE_DEVICE_NAME : deviceName,
+                        mobileBrowser,
+                        udid = (udid == null) ? applicationConfig.UDID : udid);
+            } else
+                configFromThread = new PlatformConfig(determineBrowser(browser),
+                        String.valueOf(dimension.width),
+                        String.valueOf(dimension.height),
+                        platform);
+        }
+        configFromThread.setAddressHub(applicationConfig.HUB_ADDRESS);
+        setConfigToThread(configFromThread);
+        return configFromThread;
     }
-
-    public static PlatformConfig getConfigOfThread(Thread configToThread) {
-        return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
-    }
-
 
     public Platform determinePlatform() {
-        PlatformConfig configFromThread = getPlatformConfig();
-        Platform platform4Test = new Platform();
-        if (configFromThread != null) {
-            browser = configFromThread.browser;
-            dimensionH = configFromThread.dimensionH;
-            dimensionW = configFromThread.dimensionW;
-            platform = configFromThread.platform;
-            platformVersion = configFromThread.platformVersion;
-            deviceName = configFromThread.deviceName;
-            mobileBrowser = configFromThread.mobileBrowser;
-            udid = configFromThread.udid;
-            addressHub = configFromThread.addressHub;
-        }
-        //IsRemote
+        PlatformConfig platformConfig= createOrGetPlatformConfig();
+        Platform platform = Platform.createPlatformFromConfig(platformConfig);
         String remoteEnv = System.getenv("remote");
-        platform4Test.setRemote(remoteEnv == null ? applicationConfig.REMOTE : Boolean.parseBoolean(remoteEnv));
-
-        //Dimension for assertions
-        Dimension dimension = determineDimension(dimensionH, dimensionW);
-
-        //Set Platform
-        if (platform == null) platform = Platform.PLATFORM.valueOf(applicationConfig.PLATFORM.toUpperCase());
-
-        if (udid != null && deviceName != null)
-            platform4Test.setMobile(
-                    platform,
-                    platformVersion,
-                    deviceName,
-                    mobileBrowser,
-                    udid,
-                    addressHub,
-                    dimension);
-
-        else if (platform.equals(Platform.PLATFORM.ANDROID) || platform.equals(Platform.PLATFORM.IOS))
-            platform4Test.setMobile(
-                    platform,
-                    applicationConfig.MOBILE_PLATFORM_VERSION,
-                    applicationConfig.MOBILE_DEVICE_NAME,
-                    applicationConfig.BROWSER,
-                    applicationConfig.UDID,
-                    applicationConfig.HUB_ADDRESS,
-                    dimension);
-
-        else platform4Test.setDesktop(dimension, determineBrowser(browser), applicationConfig.HUB_ADDRESS);
-        return platform4Test;
+        platform.setRemote(remoteEnv == null ? applicationConfig.REMOTE : Boolean.parseBoolean(remoteEnv));
+        platform.setProxy(platformConfig.proxy == null ? applicationConfig.ENABLE_PROXY : platformConfig.isProxy());
+        return platform;
     }
 
 
     private String determineBrowser(String browser) {
         String browserEnv = System.getenv("browser");
-        if (browser == null && browserEnv == null)
-            browser = applicationConfig.BROWSER;
-        if (browserEnv != null)
-            browser = browserEnv;
+        if (browserEnv == null)
+            browser = (browser == null) ? applicationConfig.BROWSER : browser;
         return browser;
     }
 
@@ -166,5 +147,54 @@ public class PlatformConfig {
                 dimension = new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H));
         }
         return dimension;
+    }
+
+    public Platform.PLATFORM getPlatform() {
+        return platform;
+    }
+
+    public String getBrowser() {
+        return browser;
+    }
+
+    public int getDimensionW() {
+        return Integer.parseInt(dimensionW);
+    }
+
+    public int getDimensionH() {
+        return Integer.parseInt(dimensionH);
+    }
+
+    public String getPlatformVersion() {
+        return platformVersion;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public String getMobileBrowser() {
+        return mobileBrowser;
+    }
+
+    public String getUdid() {
+        return udid;
+    }
+
+    public String getAddressHub() {
+        return addressHub;
+    }
+
+    public void setAddressHub(String addressHub) {
+        this.addressHub = addressHub;
+    }
+
+    private boolean isProxy() {
+        return Boolean.parseBoolean(proxy);
+    }
+
+    public PlatformConfig setProxy(boolean proxy) {
+        this.proxy = String.valueOf(proxy);
+        return this;
     }
 }
