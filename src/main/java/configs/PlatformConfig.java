@@ -52,12 +52,51 @@ public class PlatformConfig {
         this.platform = platform;
     }
 
+    private PlatformConfig(String browser,
+                           int dimensionH,
+                           int dimensionW,
+                           Platform.PLATFORM platform,
+                           String platformVersion,
+                           String deviceName,
+                           String mobileBrowser,
+                           String udid,
+                           String addressHub,
+                           String proxy) {
+        this.browser = browser;
+        this.dimensionH = String.valueOf(dimensionH);
+        this.dimensionW = String.valueOf(dimensionW);
+        this.platform = platform;
+        this.platformVersion = platformVersion;
+        this.deviceName = deviceName;
+        this.mobileBrowser = mobileBrowser;
+        this.udid = udid;
+        this.addressHub = addressHub;
+        this.proxy = proxy;
+    }
+
+    private PlatformConfig cloneConfig(PlatformConfig platformConfig) {
+        return new PlatformConfig(platformConfig.getBrowser(),
+                platformConfig.getDimensionH(),
+                platformConfig.getDimensionW(),
+                platformConfig.getPlatform(),
+                platformConfig.getPlatformVersion(),
+                platformConfig.getDeviceName(),
+                platformConfig.getMobileBrowser(),
+                platformConfig.getUdid(),
+                platformConfig.getAddressHub(),
+                platformConfig.isProxy());
+    }
+
     public static void setConfigToThread(PlatformConfig configToThread) {
         PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
     }
 
     public static PlatformConfig getConfigFromThread(Thread configToThread) {
         return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
+    }
+
+    public static void removeConfig() {
+        PLATFORM_CONFIG_CONCURRENT_HASH_MAP.remove(Thread.currentThread());
     }
 
 
@@ -91,9 +130,9 @@ public class PlatformConfig {
     }
 
 
-    public PlatformConfig createOrGetPlatformConfig(){
-        PlatformConfig configFromThread = getPlatformConfig();
-        if (configFromThread == null) {
+    public PlatformConfig createOrGetPlatformConfig() {
+        PlatformConfig configFromThread;
+        if (getPlatformConfig() == null) {
             Dimension dimension = determineDimension(dimensionH, dimensionW);
             if (platform == null)
                 platform = Platform.PLATFORM.valueOf(applicationConfig.PLATFORM.toUpperCase());
@@ -112,18 +151,18 @@ public class PlatformConfig {
                         String.valueOf(dimension.width),
                         String.valueOf(dimension.height),
                         platform);
-        }
+        } else configFromThread = cloneConfig(getPlatformConfig());
         configFromThread.setAddressHub(applicationConfig.HUB_ADDRESS);
-        setConfigToThread(configFromThread);
+        configFromThread.setProxy(configFromThread.proxy == null ? applicationConfig.ENABLE_PROXY : Boolean.parseBoolean(configFromThread.isProxy()));
         return configFromThread;
     }
 
     public Platform determinePlatform() {
-        PlatformConfig platformConfig= createOrGetPlatformConfig();
+        PlatformConfig platformConfig = createOrGetPlatformConfig();
         Platform platform = Platform.createPlatformFromConfig(platformConfig);
         String remoteEnv = System.getenv("remote");
         platform.setRemote(remoteEnv == null ? applicationConfig.REMOTE : Boolean.parseBoolean(remoteEnv));
-        platform.setProxy(platformConfig.proxy == null ? applicationConfig.ENABLE_PROXY : platformConfig.isProxy());
+        platform.setProxy(Boolean.parseBoolean(platformConfig.isProxy()));
         return platform;
     }
 
@@ -189,8 +228,8 @@ public class PlatformConfig {
         this.addressHub = addressHub;
     }
 
-    private boolean isProxy() {
-        return Boolean.parseBoolean(proxy);
+    private String isProxy() {
+        return proxy;
     }
 
     public PlatformConfig setProxy(boolean proxy) {
