@@ -1,7 +1,9 @@
 package toolkit.runner;
 
+import configs.PlatformConfig;
 import io.qameta.allure.Attachment;
 import org.apache.commons.io.FileUtils;
+import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
@@ -31,6 +33,10 @@ class JUnitExecutionListener extends RunListener {
         logger.error("Test FAILED! Method:" + failure.getDescription().getMethodName() + ". StackTrace is " + failure.getTrace());
     }
 
+    @Override
+    public void testFinished(Description description) {
+        PlatformConfig.removeConfig();
+    }
 
     @Attachment(type = "image/png")
     private byte[] makeScreenshot(String methodName) {
