@@ -1,26 +1,6 @@
-configName: prod.yml
-#PC("pc"), ANDROID("android"), IOS("ios")
-platform: pc
-
-
-remote: false
-hubAddress: http://172.27.5.65:4444/wd/hub
+baseUrl: http://www.google.ru
 browser: chrome
-Timeout: 10
-
-
-#MOBILE SETTINGS
-mobilePlatformVersion: 7.0
-mobileDeviceName: phone
-udid: emulator-5554
-
-
+timeout: 20
 #Dimension
 dimensionW: 1920
 dimensionH: 1080
-
-#For proxy
-enableProxy: true
-#Have to up it on remote host(s)
-remoteProxyHost: 172.27.5.65
-proxyPort: 7000

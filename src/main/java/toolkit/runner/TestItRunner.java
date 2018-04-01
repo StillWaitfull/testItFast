@@ -10,7 +10,6 @@ import org.junit.runner.notification.StoppedByUserException;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import toolkit.driver.LocalDriverManager;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -76,8 +75,6 @@ public class TestItRunner extends ParallelRunner {
         } catch (AssumptionViolatedException e) {
             eachNotifier.addFailedAssumption(e);
         } catch (Throwable e) {
-            if (LocalDriverManager.getDriverController() != null)
-                LocalDriverManager.getDriverController().deleteAllCookies();
             retry(eachNotifier, statement, e);
         } finally {
             eachNotifier.fireTestFinished();

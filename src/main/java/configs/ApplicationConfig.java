@@ -13,47 +13,21 @@ public class ApplicationConfig {
     private ApplicationConfig() {
     }
 
-    @JsonProperty("configName")
-    public String CONFIG_NAME;
 
-    @JsonProperty("platform")
-    public String PLATFORM;
+    @JsonProperty("timeout")
+    public int TIMEOUT;
 
-    @JsonProperty("remote")
-    public boolean REMOTE;
+    @JsonProperty("baseUrl")
+    public String BASE_URL;
 
     @JsonProperty("browser")
     public String BROWSER;
 
-    @JsonProperty("hubAddress")
-    public String HUB_ADDRESS;
-
-    @JsonProperty("Timeout")
-    public int TIMEOUT;
-
     @JsonProperty("dimensionW")
-    public String DIMENSION_W;
+    public int DIMENSION_W;
 
     @JsonProperty("dimensionH")
-    public String DIMENSION_H;
-
-    @JsonProperty("enableProxy")
-    public boolean ENABLE_PROXY;
-
-    @JsonProperty("remoteProxyHost")
-    public String REMOTE_PROXY_HOST;
-
-    @JsonProperty("proxyPort")
-    public int PROXY_PORT;
-
-    @JsonProperty("mobilePlatformVersion")
-    public String MOBILE_PLATFORM_VERSION;
-
-    @JsonProperty("mobileDeviceName")
-    public String MOBILE_DEVICE_NAME;
-
-    @JsonProperty("udid")
-    public String UDID;
+    public int DIMENSION_H;
 
 
     private static ApplicationConfig instance;
