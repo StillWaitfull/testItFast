@@ -1,5 +1,7 @@
 package toolkit.driver;
 
+import configs.ApplicationConfig;
+import configs.BrowserConfig;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.LocalFileDetector;
@@ -19,11 +21,11 @@ public class WebDriverController {
     private int timeout;
 
 
-    public WebDriverController(common.Platform platform, WebDriver driver, int timeout) {
-        this.driver = driver;
+    public WebDriverController(common.Platform platform) {
+        this.driver = BrowserConfig.getBrowser(platform);
         this.browser = platform.getBrowser();
         this.dimension = platform.getDimension();
-        this.timeout = timeout;
+        this.timeout = ApplicationConfig.getInstance().TIMEOUT;
         if (!platform.isMobile()) driver.manage().window().setSize(dimension);
         if (platform.isRemote()) ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
         driver.switchTo();

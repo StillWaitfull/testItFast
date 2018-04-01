@@ -19,34 +19,16 @@ import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import toolkit.driver.LocalDriverManager;
 import toolkit.driver.ProxyHelper;
-import toolkit.driver.WebDriverController;
 
 import java.io.File;
 import java.net.URL;
 
 
-@Configuration
 public class BrowserConfig {
 
 
-    @Lazy
-    @Bean
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    WebDriverController getWebDriverController(Platform platform, ApplicationConfig applicationConfig) {
-        if (LocalDriverManager.getDriverController() == null)
-            return new WebDriverController(platform, getBrowser(platform), applicationConfig.TIMEOUT);
-        else return LocalDriverManager.getDriverController();
-    }
-
-
-    private WebDriver getBrowser(Platform platform) {
+    public static WebDriver getBrowser(Platform platform) {
         if (platform.isMobile()) {
             switch (platform.getPlatform()) {
                 case ANDROID:
@@ -81,7 +63,7 @@ public class BrowserConfig {
     }
 
 
-    private WebDriver getAndroid(Platform platform) {
+    private static WebDriver getAndroid(Platform platform) {
         try {
             DesiredCapabilities desiredCapabilities = createCapabilitiesAndroid(platform);
             return platform.isRemote() ? new RemoteWebDriver(new URL(platform.getAddress()), desiredCapabilities) : new AndroidDriver(new URL(platform.getAddress()), desiredCapabilities);
@@ -92,7 +74,7 @@ public class BrowserConfig {
     }
 
 
-    private WebDriver getDriverFF(Platform platform) {
+    private static WebDriver getDriverFF(Platform platform) {
         WebDriver driver;
         try {
             FirefoxOptions capabilitiesFF = createCapabilitiesFF(platform);
@@ -106,7 +88,7 @@ public class BrowserConfig {
         return driver;
     }
 
-    private WebDriver getDriverIE(Platform platform) {
+    private static WebDriver getDriverIE(Platform platform) {
         WebDriver driver;
         try {
             InternetExplorerOptions capabilitiesIe = createCapabilitiesIe(platform);
@@ -120,7 +102,7 @@ public class BrowserConfig {
         return driver;
     }
 
-    private WebDriver getDriverChrome(Platform platform) {
+    private static WebDriver getDriverChrome(Platform platform) {
         try {
             ChromeOptions capabilitiesChrome = createCapabilitiesChrome(platform);
             return platform.isRemote()
@@ -132,7 +114,7 @@ public class BrowserConfig {
         }
     }
 
-    private WebDriver getDriverOpera(Platform platform) {
+    private static WebDriver getDriverOpera(Platform platform) {
         try {
             OperaOptions capabilitiesOpera = createCapabilitiesOpera();
             return platform.isRemote()
@@ -143,7 +125,7 @@ public class BrowserConfig {
         }
     }
 
-    private WebDriver getDriverPhantom(Platform platform) {
+    private static WebDriver getDriverPhantom(Platform platform) {
         try {
             DesiredCapabilities capabilitiesPhantom = createCapabilitiesPhantom(platform);
             return platform.isRemote()
@@ -154,38 +136,38 @@ public class BrowserConfig {
         }
     }
 
-    private FirefoxOptions createCapabilitiesFF(Platform platform) {
+    private static FirefoxOptions createCapabilitiesFF(Platform platform) {
         FirefoxOptions options = new FirefoxOptions();
         options.setCapability("enableVNC", true);
-        if (platform.isProxy()) options.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        if (platform.isProxy()) options.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
         options.setCapability("marionette", true);
         System.setProperty("webdriver.gecko.driver", "lib" + File.separator + "geckodriver" + OperationSystem.instance.getExecutableSuffix());
         return options;
     }
 
-    private ChromeOptions createCapabilitiesChrome(Platform platform) {
+    private static ChromeOptions createCapabilitiesChrome(Platform platform) {
         ChromeOptions capabilitiesChrome = new ChromeOptions();
-        if (platform.isProxy()) capabilitiesChrome.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        if (platform.isProxy()) capabilitiesChrome.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
         capabilitiesChrome.setCapability("enableVNC", true);
         System.setProperty("webdriver.chrome.driver", "lib" + File.separator + "chromedriver" + OperationSystem.instance.getExecutableSuffix());
         return capabilitiesChrome;
     }
 
-    private InternetExplorerOptions createCapabilitiesIe(Platform platform) {
+    private static InternetExplorerOptions createCapabilitiesIe(Platform platform) {
         InternetExplorerOptions capabilitiesIe = new InternetExplorerOptions();
-        if (platform.isProxy()) capabilitiesIe.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        if (platform.isProxy()) capabilitiesIe.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
         capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
         return capabilitiesIe;
     }
 
-    private OperaOptions createCapabilitiesOpera() {
+    private static OperaOptions createCapabilitiesOpera() {
         OperaOptions capabilitiesOpera = new OperaOptions();
         System.setProperty("webdriver.opera.driver", "lib" + File.separator + "operadriver" + OperationSystem.instance.getExecutableSuffix());
         return capabilitiesOpera;
     }
 
-    private DesiredCapabilities createCapabilitiesAndroid(Platform platform) {
+    private static DesiredCapabilities createCapabilitiesAndroid(Platform platform) {
         DesiredCapabilities desiredCapabilities = DesiredCapabilities.android();
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());
         desiredCapabilities.setCapability(MobileCapabilityType.UDID, platform.getUdid());
@@ -196,10 +178,10 @@ public class BrowserConfig {
         return desiredCapabilities;
     }
 
-    private DesiredCapabilities createCapabilitiesPhantom(Platform platform) {
+    private static DesiredCapabilities createCapabilitiesPhantom(Platform platform) {
         String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
         DesiredCapabilities capabilitiesPhantom = new DesiredCapabilities();
-        if (platform.isProxy()) capabilitiesPhantom.setCapability(CapabilityType.PROXY, ProxyHelper.getProxy());
+        if (platform.isProxy()) capabilitiesPhantom.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
         String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator + "phantomjs" + OperationSystem.instance.getExecutableSuffix());

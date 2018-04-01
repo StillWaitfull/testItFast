@@ -2,18 +2,11 @@ package configs;
 
 import common.Platform;
 import org.openqa.selenium.Dimension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
 
-@Configuration
 public class PlatformConfig {
     private static final WeakHashMap<Thread, PlatformConfig> PLATFORM_CONFIG_CONCURRENT_HASH_MAP = new WeakHashMap<>();
     private String browser;
@@ -26,13 +19,7 @@ public class PlatformConfig {
     private String udid;
     private String addressHub;
     private String proxy;
-    private ApplicationConfig applicationConfig;
-
-
-    @Autowired
-    public PlatformConfig(ApplicationConfig applicationConfig) {
-        this.applicationConfig = applicationConfig;
-    }
+    private ApplicationConfig applicationConfig = ApplicationConfig.getInstance();
 
     public PlatformConfig() {
     }
@@ -87,7 +74,7 @@ public class PlatformConfig {
         this.proxy = proxy;
     }
 
-    public PlatformConfig cloneConfig(PlatformConfig platformConfig) {
+    private PlatformConfig cloneConfig(PlatformConfig platformConfig) {
         return new PlatformConfig(platformConfig.getBrowser(),
                 platformConfig.getDimensionH(),
                 platformConfig.getDimensionW(),
@@ -99,6 +86,19 @@ public class PlatformConfig {
                 platformConfig.getAddressHub(),
                 platformConfig.isProxy());
     }
+
+    public static void setConfigToThread(PlatformConfig configToThread) {
+        PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
+    }
+
+    public static PlatformConfig getConfigFromThread(Thread configToThread) {
+        return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
+    }
+
+    public static void removeConfig() {
+        PLATFORM_CONFIG_CONCURRENT_HASH_MAP.remove(Thread.currentThread());
+    }
+
 
     private List<Thread> getFirstThreadFromGroup(final ThreadGroup group) {
         if (group == null)
@@ -116,7 +116,6 @@ public class PlatformConfig {
         return Arrays.asList(threads);
     }
 
-
     private PlatformConfig getPlatformConfig() {
         Thread currentThread = Thread.currentThread();
         List<Thread> mainThreads = getFirstThreadFromGroup(currentThread.getThreadGroup());
@@ -131,20 +130,7 @@ public class PlatformConfig {
     }
 
 
-    public static void setConfigToThread(PlatformConfig configToThread) {
-        PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
-    }
-
-    public static PlatformConfig getConfigOfThread(Thread configToThread) {
-        return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
-    }
-
-    public static void removeConfig() {
-         PLATFORM_CONFIG_CONCURRENT_HASH_MAP.remove(Thread.currentThread());
-    }
-
-
-    public PlatformConfig createOrGetPlatformConfig(){
+    public PlatformConfig createOrGetPlatformConfig() {
         PlatformConfig configFromThread;
         if (getPlatformConfig() == null) {
             Dimension dimension = determineDimension(dimensionH, dimensionW);
@@ -171,10 +157,6 @@ public class PlatformConfig {
         return configFromThread;
     }
 
-
-    @Bean
-    @Lazy
-    @Scope(value = BeanDefinition.SCOPE_PROTOTYPE)
     public Platform determinePlatform() {
         PlatformConfig platformConfig = createOrGetPlatformConfig();
         Platform platform = Platform.createPlatformFromConfig(platformConfig);
@@ -187,10 +169,8 @@ public class PlatformConfig {
 
     private String determineBrowser(String browser) {
         String browserEnv = System.getenv("browser");
-        if (browser == null && browserEnv == null)
-            browser = applicationConfig.BROWSER;
-        if (browserEnv != null)
-            browser = browserEnv;
+        if (browserEnv == null)
+            browser = (browser == null) ? applicationConfig.BROWSER : browser;
         return browser;
     }
 
@@ -251,6 +231,7 @@ public class PlatformConfig {
     private String isProxy() {
         return proxy;
     }
+
     public PlatformConfig setProxy(boolean proxy) {
         this.proxy = String.valueOf(proxy);
         return this;

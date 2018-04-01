@@ -8,9 +8,6 @@ import net.lightbody.bmp.core.har.Har;
 import org.openqa.selenium.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
@@ -21,8 +18,6 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 
-@Service
-@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class ProxyHelper {
 
     private static final Logger log = LoggerFactory.getLogger(ProxyHelper.class);
@@ -30,27 +25,29 @@ public class ProxyHelper {
     private static Proxy proxy;
 
 
-    ProxyHelper(ApplicationConfig applicationConfig) {
-        proxy = new Proxy();
-        if (applicationConfig.ENABLE_PROXY) {
-            if (applicationConfig.REMOTE) {
-                String proxyStr = applicationConfig.REMOTE_PROXY_HOST + ":" + applicationConfig.PROXY_PORT;
-                proxy.setHttpProxy(proxyStr);
-                proxy.setSslProxy(proxyStr);
-            } else {
-                server = new BrowserMobProxyServer();
-                server.setTrustAllServers(true);
-                server.setRequestTimeout(applicationConfig.TIMEOUT, TimeUnit.SECONDS);
-                server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
-                server.start(applicationConfig.PROXY_PORT);
-                proxy = ClientUtil.createSeleniumProxy(server);
-            }
-        } else proxy.setAutodetect(true);
+    public static synchronized Proxy getInstance() {
+        if (proxy == null) {
+            ApplicationConfig applicationConfig=ApplicationConfig.getInstance();
+            proxy = new Proxy();
+            if (applicationConfig.ENABLE_PROXY) {
+                if (applicationConfig.REMOTE) {
+                    String proxyStr = applicationConfig.REMOTE_PROXY_HOST + ":" + applicationConfig.PROXY_PORT;
+                    proxy.setHttpProxy(proxyStr);
+                    proxy.setSslProxy(proxyStr);
+                } else {
+                    server = new BrowserMobProxyServer();
+                    server.setTrustAllServers(true);
+                    server.setRequestTimeout(applicationConfig.TIMEOUT, TimeUnit.SECONDS);
+                    server.newHar(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()));
+                    server.start(applicationConfig.PROXY_PORT);
+                    proxy = ClientUtil.createSeleniumProxy(server);
+                }
+            } else proxy.setAutodetect(true);
+        }
+        return proxy;
+
     }
 
-    public static Proxy getProxy() {
-        return proxy;
-    }
 
     public static void saveHarToDisk(String name) {
         Har har = server.getHar();

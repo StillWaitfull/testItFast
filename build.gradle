@@ -25,9 +25,8 @@ buildscript {
 
 dependencies {
     compile group: 'org.json', name: 'json', version: '20160810'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.9.3'
     compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.2.0'
-    compile group: 'org.springframework', name: 'spring-context', version: '4.3.3.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot', version: '1.5.6.RELEASE'
     compile group: 'net.lightbody.bmp', name: 'browsermob-core', version: '2.1.5'
     compile group: 'com.opera', name: 'operadriver', version: '1.5'
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.8.1'

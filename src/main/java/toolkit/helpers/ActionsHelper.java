@@ -2,6 +2,7 @@ package toolkit.helpers;
 
 import com.google.common.collect.Iterables;
 import composite.IPage;
+import configs.PlatformConfig;
 import configs.StageConfig;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -14,16 +15,17 @@ import toolkit.driver.WebDriverController;
 import java.util.Arrays;
 import java.util.List;
 
-import static configs.GeneralConfig.applicationContext;
 import static toolkit.helpers.OperationsHelper.sendPause;
 
 
 public abstract class ActionsHelper implements IPage {
 
 
-    protected static final String baseUrl = applicationContext.getBean(StageConfig.class).getBaseUrl();
+    protected static final String baseUrl = StageConfig.getInstance().getBaseUrl();
     private static final Logger log = LoggerFactory.getLogger(ActionsHelper.class);
-    private final WebDriverController driver = applicationContext.getBean(WebDriverController.class);
+    private final WebDriverController driver = LocalDriverManager.getDriverController() == null
+            ? new WebDriverController(new PlatformConfig().determinePlatform())
+            : LocalDriverManager.getDriverController();
     private final WaitHelper waitHelper = new WaitHelper();
 
     public void logoutHook() {
