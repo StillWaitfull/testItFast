@@ -1,7 +1,10 @@
 package configs;
 
 import common.Platform;
+import common.Platform.PLATFORM;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Proxy;
+import toolkit.driver.ProxyHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,14 +15,14 @@ public class PlatformConfig {
     private String browser;
     private String dimensionH;
     private String dimensionW;
-    private Platform.PLATFORM platform;
+    private PLATFORM platform;
     private String platformVersion;
     private String deviceName;
     private String mobileBrowser;
     private String udid;
     private String addressHub;
-    private String proxy;
-    private ApplicationConfig applicationConfig = ApplicationConfig.getInstance();
+    private Proxy proxy;
+    private static final ApplicationConfig applicationConfig = ApplicationConfig.getInstance();
 
     public PlatformConfig() {
     }
@@ -27,10 +30,9 @@ public class PlatformConfig {
     public PlatformConfig(String browser,
                           String dimensionW,
                           String dimensionH,
-                          Platform.PLATFORM platform,
+                          PLATFORM platform,
                           String platformVersion,
                           String deviceName,
-                          String mobileBrowser,
                           String udid) {
         this.browser = browser;
         this.dimensionH = dimensionH;
@@ -38,30 +40,30 @@ public class PlatformConfig {
         this.platform = platform;
         this.platformVersion = platformVersion;
         this.deviceName = deviceName;
-        this.mobileBrowser = mobileBrowser;
         this.udid = udid;
     }
 
     public PlatformConfig(String browser,
                           String dimensionW,
                           String dimensionH,
-                          Platform.PLATFORM platform) {
+                          PLATFORM platform) {
         this.browser = browser;
         this.dimensionH = dimensionH;
         this.dimensionW = dimensionW;
         this.platform = platform;
     }
 
+    //FOR CLONE
     private PlatformConfig(String browser,
                            int dimensionH,
                            int dimensionW,
-                           Platform.PLATFORM platform,
+                           PLATFORM platform,
                            String platformVersion,
                            String deviceName,
                            String mobileBrowser,
                            String udid,
                            String addressHub,
-                           String proxy) {
+                           Proxy proxy) {
         this.browser = browser;
         this.dimensionH = String.valueOf(dimensionH);
         this.dimensionW = String.valueOf(dimensionW);
@@ -74,7 +76,7 @@ public class PlatformConfig {
         this.proxy = proxy;
     }
 
-    private PlatformConfig cloneConfig(PlatformConfig platformConfig) {
+    private static PlatformConfig cloneConfig(PlatformConfig platformConfig) {
         return new PlatformConfig(platformConfig.getBrowser(),
                 platformConfig.getDimensionH(),
                 platformConfig.getDimensionW(),
@@ -84,7 +86,7 @@ public class PlatformConfig {
                 platformConfig.getMobileBrowser(),
                 platformConfig.getUdid(),
                 platformConfig.getAddressHub(),
-                platformConfig.isProxy());
+                platformConfig.getProxy());
     }
 
     public static void setConfigToThread(PlatformConfig configToThread) {
@@ -100,7 +102,7 @@ public class PlatformConfig {
     }
 
 
-    private List<Thread> getFirstThreadFromGroup(final ThreadGroup group) {
+    private static List<Thread> getFirstThreadFromGroup(final ThreadGroup group) {
         if (group == null)
             throw new NullPointerException("Null thread group");
         int nAlloc = group.activeCount();
@@ -116,7 +118,7 @@ public class PlatformConfig {
         return Arrays.asList(threads);
     }
 
-    private PlatformConfig getPlatformConfig() {
+    private static PlatformConfig getPlatformConfig() {
         Thread currentThread = Thread.currentThread();
         List<Thread> mainThreads = getFirstThreadFromGroup(currentThread.getThreadGroup());
         if (PLATFORM_CONFIG_CONCURRENT_HASH_MAP.containsKey(currentThread)) {
@@ -130,44 +132,44 @@ public class PlatformConfig {
     }
 
 
-    public PlatformConfig createOrGetPlatformConfig() {
+    public static PlatformConfig createOrGetPlatformConfig() {
         PlatformConfig configFromThread;
         if (getPlatformConfig() == null) {
-            Dimension dimension = determineDimension(dimensionH, dimensionW);
-            if (platform == null)
-                platform = Platform.PLATFORM.valueOf(applicationConfig.PLATFORM.toUpperCase());
-            if ((udid != null && deviceName != null) || !platform.equals(Platform.PLATFORM.PC)) {
+            Dimension dimension = determineDimension();
+            PLATFORM platform = PLATFORM.valueOf(applicationConfig.PLATFORM.toUpperCase());
+            if (!platform.equals(PLATFORM.PC)) {
                 configFromThread = new PlatformConfig(
-                        mobileBrowser = (mobileBrowser == null) ? applicationConfig.BROWSER : mobileBrowser,
+                        applicationConfig.BROWSER,
                         String.valueOf(dimension.width),
                         String.valueOf(dimension.height),
                         platform,
-                        platformVersion = (platformVersion == null) ? applicationConfig.MOBILE_PLATFORM_VERSION : platformVersion,
-                        deviceName = (deviceName == null) ? applicationConfig.MOBILE_DEVICE_NAME : deviceName,
-                        mobileBrowser,
-                        udid = (udid == null) ? applicationConfig.UDID : udid);
+                        applicationConfig.MOBILE_PLATFORM_VERSION,
+                        applicationConfig.MOBILE_DEVICE_NAME,
+                        applicationConfig.UDID);
             } else
-                configFromThread = new PlatformConfig(determineBrowser(browser),
+                configFromThread = new PlatformConfig(
+                        determineBrowser(applicationConfig.BROWSER),
                         String.valueOf(dimension.width),
                         String.valueOf(dimension.height),
                         platform);
+            setConfigToThread(configFromThread);
         } else configFromThread = cloneConfig(getPlatformConfig());
+        if (configFromThread.getProxy() == null) configFromThread.setProxy(ProxyHelper.getInstance());
         configFromThread.setAddressHub(applicationConfig.HUB_ADDRESS);
-        configFromThread.setProxy(configFromThread.proxy == null ? applicationConfig.ENABLE_PROXY : Boolean.parseBoolean(configFromThread.isProxy()));
         return configFromThread;
     }
 
-    public Platform determinePlatform() {
+    public static Platform determinePlatform() {
         PlatformConfig platformConfig = createOrGetPlatformConfig();
         Platform platform = Platform.createPlatformFromConfig(platformConfig);
         String remoteEnv = System.getenv("remote");
         platform.setRemote(remoteEnv == null ? applicationConfig.REMOTE : Boolean.parseBoolean(remoteEnv));
-        platform.setProxy(Boolean.parseBoolean(platformConfig.isProxy()));
+        platform.setProxy(platformConfig.getProxy());
         return platform;
     }
 
 
-    private String determineBrowser(String browser) {
+    private static String determineBrowser(String browser) {
         String browserEnv = System.getenv("browser");
         if (browserEnv == null)
             browser = (browser == null) ? applicationConfig.BROWSER : browser;
@@ -175,20 +177,15 @@ public class PlatformConfig {
     }
 
 
-    private Dimension determineDimension(String dimensionH, String dimensionW) {
-        Dimension dimension;
-        if (dimensionH != null && dimensionW != null)
-            dimension = new Dimension(Integer.parseInt(dimensionW), Integer.parseInt(dimensionH));
-        else {
-            if (applicationConfig.DIMENSION_W.isEmpty() && applicationConfig.DIMENSION_H.isEmpty())
-                throw new RuntimeException("You should set dimension for test in configs");
-            else
-                dimension = new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H));
-        }
-        return dimension;
+    private static Dimension determineDimension() {
+        if (applicationConfig.DIMENSION_W.isEmpty() && applicationConfig.DIMENSION_H.isEmpty())
+            throw new RuntimeException("You should set dimension for test in configs");
+        else
+            return new Dimension(Integer.parseInt(applicationConfig.DIMENSION_W), Integer.parseInt(applicationConfig.DIMENSION_H));
+
     }
 
-    public Platform.PLATFORM getPlatform() {
+    public PLATFORM getPlatform() {
         return platform;
     }
 
@@ -212,7 +209,7 @@ public class PlatformConfig {
         return deviceName;
     }
 
-    public String getMobileBrowser() {
+    private String getMobileBrowser() {
         return mobileBrowser;
     }
 
@@ -224,16 +221,16 @@ public class PlatformConfig {
         return addressHub;
     }
 
-    public void setAddressHub(String addressHub) {
+    private void setAddressHub(String addressHub) {
         this.addressHub = addressHub;
     }
 
-    private String isProxy() {
+    private Proxy getProxy() {
         return proxy;
     }
 
-    public PlatformConfig setProxy(boolean proxy) {
-        this.proxy = String.valueOf(proxy);
+    public PlatformConfig setProxy(Proxy proxy) {
+        this.proxy = proxy;
         return this;
     }
 }
