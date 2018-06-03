@@ -19,7 +19,6 @@ import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import toolkit.driver.ProxyHelper;
 
 import java.io.File;
 import java.net.URL;
@@ -139,7 +138,7 @@ public class BrowserConfig {
     private static FirefoxOptions createCapabilitiesFF(Platform platform) {
         FirefoxOptions options = new FirefoxOptions();
         options.setCapability("enableVNC", true);
-        if (platform.isProxy()) options.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
+        options.setCapability(CapabilityType.PROXY, platform.getProxy());
         options.setCapability("marionette", true);
         System.setProperty("webdriver.gecko.driver", "lib" + File.separator + "geckodriver" + OperationSystem.instance.getExecutableSuffix());
         return options;
@@ -147,7 +146,7 @@ public class BrowserConfig {
 
     private static ChromeOptions createCapabilitiesChrome(Platform platform) {
         ChromeOptions capabilitiesChrome = new ChromeOptions();
-        if (platform.isProxy()) capabilitiesChrome.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
+        capabilitiesChrome.setCapability(CapabilityType.PROXY, platform.getProxy());
         capabilitiesChrome.setCapability("enableVNC", true);
         System.setProperty("webdriver.chrome.driver", "lib" + File.separator + "chromedriver" + OperationSystem.instance.getExecutableSuffix());
         return capabilitiesChrome;
@@ -155,7 +154,7 @@ public class BrowserConfig {
 
     private static InternetExplorerOptions createCapabilitiesIe(Platform platform) {
         InternetExplorerOptions capabilitiesIe = new InternetExplorerOptions();
-        if (platform.isProxy()) capabilitiesIe.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
+        capabilitiesIe.setCapability(CapabilityType.PROXY, platform.getProxy());
         capabilitiesIe.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         System.setProperty("webdriver.ie.driver", "lib" + File.separator + "IEDriverServer64.exe");
         return capabilitiesIe;
@@ -181,7 +180,7 @@ public class BrowserConfig {
     private static DesiredCapabilities createCapabilitiesPhantom(Platform platform) {
         String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
         DesiredCapabilities capabilitiesPhantom = new DesiredCapabilities();
-        if (platform.isProxy()) capabilitiesPhantom.setCapability(CapabilityType.PROXY, ProxyHelper.getInstance());
+        capabilitiesPhantom.setCapability(CapabilityType.PROXY, platform.getProxy());
         String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
         capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "lib" + File.separator + "phantomjs" + OperationSystem.instance.getExecutableSuffix());

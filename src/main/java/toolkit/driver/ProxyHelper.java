@@ -13,6 +13,7 @@ import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -70,6 +71,15 @@ public class ProxyHelper {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static Proxy createSeleniumProxy(InetSocketAddress connectableAddressAndPort) {
+        Proxy proxy = new Proxy();
+        proxy.setProxyType(Proxy.ProxyType.MANUAL);
+        String proxyStr = String.format("%s:%d", connectableAddressAndPort.getHostString(), connectableAddressAndPort.getPort());
+        proxy.setHttpProxy(proxyStr);
+        proxy.setSslProxy(proxyStr);
+        return proxy;
     }
 
 

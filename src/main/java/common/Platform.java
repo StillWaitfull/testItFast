@@ -2,6 +2,7 @@ package common;
 
 import configs.PlatformConfig;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Proxy;
 
 public class Platform {
 
@@ -15,7 +16,7 @@ public class Platform {
     private String platformVersion;
     private PLATFORM platform;
     private boolean remote;
-    private boolean proxy;
+    private Proxy proxy;
 
     public Platform(PLATFORM platform,
                     String platformVersion,
@@ -84,11 +85,11 @@ public class Platform {
         this.remote = remote;
     }
 
-    public void setProxy(boolean proxy) {
+    public void setProxy(Proxy proxy) {
         this.proxy = proxy;
     }
 
-    public boolean isProxy() {
+    public Proxy getProxy() {
         return proxy;
     }
 
