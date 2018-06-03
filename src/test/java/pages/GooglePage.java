@@ -8,7 +8,7 @@ import toolkit.helpers.ActionsHelper;
 
 public class GooglePage extends ActionsHelper {
 
-    private static final String pageUrl = baseUrl + "/";
+    private static final String PAGE_URL = BASE_URL + "/";
 
 
     private static final By QUERY = By.id("lst-ib");
@@ -16,20 +16,18 @@ public class GooglePage extends ActionsHelper {
 
     @Override
     public String getPageUrl() {
-        return pageUrl;
+        return PAGE_URL;
     }
 
     @Override
     public IPage openPage() {
-        openUrl(pageUrl);
+        openUrl(PAGE_URL);
         return this;
     }
 
 
-    public static Runnable[] getGooglePageAssertions(IPage page) {
-        return new Runnable[]{
-                () -> Assert.assertTrue("Google QUERY is not visible", page.validateElementVisible(GooglePage.QUERY))
-        };
+    public static Runnable getGooglePageAssertions(IPage page) {
+        return () -> Assert.assertTrue("Google QUERY is not visible", page.validateElementVisible(GooglePage.QUERY));
     }
 
     public IPage typeTextToQueryField(String text) {

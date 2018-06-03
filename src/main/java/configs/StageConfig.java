@@ -16,7 +16,7 @@ public class StageConfig {
     }
 
     public String getBaseUrl() {
-        String envBaseUrl = System.getenv("baseUrl");
+        String envBaseUrl = System.getenv("BASE_URL");
         baseUrl = (envBaseUrl == null) ? baseUrl : envBaseUrl;
         return StringUtils.removeEnd(baseUrl, "/");
     }

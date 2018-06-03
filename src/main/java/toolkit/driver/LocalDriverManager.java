@@ -7,7 +7,6 @@ public class LocalDriverManager {
     private static final ConcurrentHashMap<Thread, WebDriverController> webDrivers = new ConcurrentHashMap<>();
 
     public static WebDriverController getDriverController() {
-
         return webDrivers.get(Thread.currentThread());
     }
 

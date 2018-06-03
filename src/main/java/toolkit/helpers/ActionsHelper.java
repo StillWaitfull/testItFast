@@ -20,17 +20,16 @@ import static toolkit.helpers.OperationsHelper.sendPause;
 
 public abstract class ActionsHelper implements IPage {
 
-
-    protected static final String baseUrl = StageConfig.getInstance().getBaseUrl();
+    protected static final String BASE_URL = StageConfig.getInstance().getBaseUrl();
     private static final Logger log = LoggerFactory.getLogger(ActionsHelper.class);
     private final WebDriverController driver = LocalDriverManager.getDriverController() == null
-            ? new WebDriverController(new PlatformConfig().determinePlatform())
+            ? new WebDriverController(PlatformConfig.determinePlatform())
             : LocalDriverManager.getDriverController();
     private final WaitHelper waitHelper = new WaitHelper();
 
     public void logoutHook() {
         if (LocalDriverManager.getDriverController() != null) {
-            LocalDriverManager.getDriverController().goToUrl(baseUrl);
+            LocalDriverManager.getDriverController().goToUrl(BASE_URL);
             LocalDriverManager.getDriverController().deleteAllCookies();
         }
 
@@ -38,7 +37,6 @@ public abstract class ActionsHelper implements IPage {
 
 
     //WINDOW ACTIONS
-
     public boolean checkDimensionIsLess(int width) {
         return driver.getDimension().getWidth() <= width;
     }
@@ -396,7 +394,10 @@ public abstract class ActionsHelper implements IPage {
 
     public final void assertThat(Runnable... assertions) {
         Arrays.asList(assertions).forEach(Runnable::run);
+    }
 
+    public final void assertThat(Runnable assertions) {
+        assertions.run();
     }
 
 
