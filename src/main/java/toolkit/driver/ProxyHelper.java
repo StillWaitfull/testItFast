@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class ProxyHelper {
 
     private static final Logger log = LoggerFactory.getLogger(ProxyHelper.class);
-    private static BrowserMobProxy server;
+    private static BrowserMobProxy server= new BrowserMobProxyServer();
     private static Proxy proxy;
     private static final ApplicationConfig APPLICATION_CONFIG = ApplicationConfig.getInstance();
 
@@ -43,8 +43,7 @@ public class ProxyHelper {
 
 
     private static void setUpProxyServer() {
-        if (server==null) {
-            server = new BrowserMobProxyServer();
+        if (!server.isStarted()) {
             server.setTrustAllServers(true);
             server.setRequestTimeout(APPLICATION_CONFIG.TIMEOUT, TimeUnit.SECONDS);
             server.start(APPLICATION_CONFIG.PROXY_PORT);
