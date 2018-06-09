@@ -110,6 +110,8 @@ public class PlatformConfig {
                     dimension,
                     platform);
         }
+        configFromThread.addressHub = APPLICATION_CONFIG.HUB_ADDRESS;
+        configFromThread.proxy=ProxyHelper.getInstance();
         setConfigToThread(configFromThread);
         return configFromThread;
     }
@@ -119,8 +121,6 @@ public class PlatformConfig {
         if (platformConfig == null) platformConfig = createPlatformConfig();
         String remoteEnv = System.getenv("remote");
         platformConfig.remote = (remoteEnv == null ? APPLICATION_CONFIG.REMOTE : Boolean.parseBoolean(remoteEnv));
-        platformConfig.addressHub = APPLICATION_CONFIG.HUB_ADDRESS;
-        platformConfig.proxy=ProxyHelper.getInstance();
         return platformConfig;
     }
 
