@@ -5,6 +5,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Proxy;
 import toolkit.driver.ProxyHelper;
 
+import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -52,8 +53,8 @@ public class PlatformConfig {
         PLATFORM_CONFIG_CONCURRENT_HASH_MAP.put(Thread.currentThread(), configToThread);
     }
 
-    public static PlatformConfig getConfigFromThread(Thread configToThread) {
-        return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(configToThread);
+    public static PlatformConfig getConfigFromThread() {
+        return PLATFORM_CONFIG_CONCURRENT_HASH_MAP.get(Thread.currentThread());
     }
 
     public static void removeConfig() {
@@ -109,10 +110,6 @@ public class PlatformConfig {
                     dimension,
                     platform);
         }
-        String remoteEnv = System.getenv("remote");
-        configFromThread.remote = (remoteEnv == null ? APPLICATION_CONFIG.REMOTE : Boolean.parseBoolean(remoteEnv));
-        configFromThread.addressHub = APPLICATION_CONFIG.HUB_ADDRESS;
-        configFromThread.proxy=ProxyHelper.getInstance();
         setConfigToThread(configFromThread);
         return configFromThread;
     }
@@ -120,6 +117,10 @@ public class PlatformConfig {
     public static PlatformConfig determinePlatform() {
         PlatformConfig platformConfig = getPlatformConfig();
         if (platformConfig == null) platformConfig = createPlatformConfig();
+        String remoteEnv = System.getenv("remote");
+        platformConfig.remote = (remoteEnv == null ? APPLICATION_CONFIG.REMOTE : Boolean.parseBoolean(remoteEnv));
+        platformConfig.addressHub = APPLICATION_CONFIG.HUB_ADDRESS;
+        platformConfig.proxy=ProxyHelper.getInstance();
         return platformConfig;
     }
 
@@ -180,6 +181,12 @@ public class PlatformConfig {
         this.proxy = proxy;
         return this;
     }
+
+    public static void setProxyToCurrentConfig(InetSocketAddress connectableAddressAndPort )
+    {
+       determinePlatform().setProxy(ProxyHelper.createSeleniumProxy(connectableAddressAndPort));
+    }
+
 
     public boolean isMobile() {
         return isMobile;
