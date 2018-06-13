@@ -29,6 +29,7 @@ class JUnitExecutionListener extends RunListener {
     }
 
     public void testFailure(Failure failure) {
+        LocalDriverManager.getDriverController().stopLoading();
         makeScreenshot(failure.getDescription().getMethodName());
         logger.error("Test FAILED! Method:" + failure.getDescription().getMethodName() + ". StackTrace is " + failure.getTrace());
     }

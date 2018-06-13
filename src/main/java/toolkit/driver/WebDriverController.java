@@ -132,6 +132,10 @@ public class WebDriverController {
         driver.manage().addCookie(cookie);
     }
 
+    public void stopLoading() {
+        executeScript("window.stop();");
+    }
+
     public String getAttributeValue(By by, String attribute) {
         return driver.findElement(by).getAttribute(attribute);
     }

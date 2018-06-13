@@ -76,15 +76,15 @@ public class TestItRunner extends ParallelRunner {
         } catch (AssumptionViolatedException e) {
             eachNotifier.addFailedAssumption(e);
         } catch (Throwable e) {
-            if (LocalDriverManager.getDriverController() != null)
-                LocalDriverManager.getDriverController().deleteAllCookies();
             retry(eachNotifier, statement, e);
         } finally {
             eachNotifier.fireTestFinished();
+            LocalDriverManager.closeDriverController();
         }
     }
 
     private void retry(EachTestNotifier notifier, Statement statement, Throwable currentThrowable) {
+        LocalDriverManager.closeDriverController();
         Throwable caughtThrowable = currentThrowable;
         int retryCount = 1;
         while (retryCount > failedAttempts) {
