@@ -28,7 +28,7 @@ public class StageConfig {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             String stage = System.getenv("stage");
             if (stage == null) stage = ApplicationConfig.getInstance().CONFIG_NAME;
-            String path = "src" + File.separator + "test" + File.separator + "resources" + File.separator + "configs" + File.separator + stage;
+            String path = StageConfig.class.getClassLoader().getResource("configs" +File.separator+stage).getPath();
             try {
                 instance = mapper.readValue(new File(path), StageConfig.class);
             } catch (IOException e) {

@@ -60,7 +60,7 @@ public class ApplicationConfig {
 
     public static synchronized ApplicationConfig getInstance() {
         if (instance == null) {
-            String path = "application.yml";
+            String path = StageConfig.class.getClassLoader().getResource("application.yml").getPath();
             try {
                 ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
                 instance = mapper.readValue(new File(path), ApplicationConfig.class);
