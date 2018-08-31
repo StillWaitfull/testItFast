@@ -18,10 +18,10 @@ import java.util.List;
 import static toolkit.helpers.OperationsHelper.sendPause;
 
 
-public abstract class ActionsHelper implements IPage {
+public abstract class AbstractPage implements IPage {
 
     protected static final String BASE_URL = StageConfig.getInstance().getBaseUrl();
-    private static final Logger log = LoggerFactory.getLogger(ActionsHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractPage.class);
     private final WebDriverController driver = LocalDriverManager.getDriverController() == null
             ? new WebDriverController(PlatformConfig.determinePlatform())
             : LocalDriverManager.getDriverController();
@@ -181,7 +181,7 @@ public abstract class ActionsHelper implements IPage {
     }
 
 
-    protected void type(By by, String someText) {
+    public void type(By by, String someText) {
         log.debug("Type:" + someText + " to:" + by.toString());
         waitHelper.waitForVisible(by);
         highlightTheElement(by);

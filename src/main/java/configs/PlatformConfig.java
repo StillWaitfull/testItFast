@@ -5,7 +5,6 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Proxy;
 import toolkit.driver.ProxyHelper;
 
-import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -111,7 +110,7 @@ public class PlatformConfig {
                     platform);
         }
         configFromThread.addressHub = APPLICATION_CONFIG.HUB_ADDRESS;
-        configFromThread.proxy=ProxyHelper.getInstance();
+        configFromThread.proxy=ProxyHelper.getProxy();
         setConfigToThread(configFromThread);
         return configFromThread;
     }
@@ -181,12 +180,6 @@ public class PlatformConfig {
         this.proxy = proxy;
         return this;
     }
-
-    public static void setProxyToCurrentConfig(InetSocketAddress connectableAddressAndPort )
-    {
-       determinePlatform().setProxy(ProxyHelper.createSeleniumProxy(connectableAddressAndPort));
-    }
-
 
     public boolean isMobile() {
         return isMobile;

@@ -1,6 +1,8 @@
 package tests.simpleTests;
 
+import components.SearchResults;
 import io.qameta.allure.Feature;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pages.GooglePage;
@@ -14,32 +16,34 @@ public class GoogleTest extends AbstractTest {
     @Before
     public void init() {
         googlePage = new GooglePage();
-        googlePage.openPage().assertThat(
-                GooglePage.getGooglePageAssertions(googlePage)
-        );
+        googlePage.openPage();
     }
 
     @Test
     public void googleTest() {
-        googlePage.typeTextToQueryField("0").assertThat(
-                GooglePage.getGooglePageAssertions(googlePage)
-        );
-
+        String value = "0";
+        SearchResults searchResults = googlePage.getGoogleSearch()
+                .typeTextToQueryField(value)
+                .clickSearchButton();
+        Assert.assertTrue("There are no results after search " + value, searchResults.getCountOfSearchResults() > 0);
     }
 
     @Test
     public void googleTest1() {
-        googlePage.typeTextToQueryField("1").assertThat(
-                GooglePage.getGooglePageAssertions(googlePage)
-        );
+        String value = "1";
+        SearchResults searchResults = googlePage.getGoogleSearch()
+                .typeTextToQueryField(value)
+                .clickSearchButton();
+        Assert.assertTrue("There are no results after search " + value, searchResults.getCountOfSearchResults() > 0);
     }
 
     @Test
     public void googleTest2() {
-        googlePage.typeTextToQueryField("2").assertThat(
-                GooglePage.getGooglePageAssertions(googlePage)
-        );
-
+        String value = "2";
+        SearchResults searchResults = googlePage.getGoogleSearch()
+                .typeTextToQueryField(value)
+                .clickSearchButton();
+        Assert.assertTrue("There are no results after search " + value, searchResults.getCountOfSearchResults() > 0);
     }
 
 

@@ -31,7 +31,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("ALL")
 public class RequestClient {
     private static final Logger log = LoggerFactory.getLogger(RequestClient.class);
     private static final String ENCODING = "UTF-8";

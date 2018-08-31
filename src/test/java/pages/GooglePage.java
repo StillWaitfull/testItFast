@@ -1,18 +1,20 @@
 package pages;
 
+import components.GoogleSearch;
 import composite.IPage;
-import org.junit.Assert;
-import org.openqa.selenium.By;
-import toolkit.helpers.ActionsHelper;
+import toolkit.helpers.AbstractPage;
 
 
-public class GooglePage extends ActionsHelper {
+public class GooglePage extends AbstractPage {
 
     private static final String PAGE_URL = BASE_URL + "/";
 
+    private GoogleSearch googleSearch;
 
-    private static final By QUERY = By.id("lst-ib");
 
+    public GoogleSearch getGoogleSearch() {
+        return googleSearch;
+    }
 
     @Override
     public String getPageUrl() {
@@ -22,17 +24,9 @@ public class GooglePage extends ActionsHelper {
     @Override
     public IPage openPage() {
         openUrl(PAGE_URL);
+        googleSearch = new GoogleSearch(this);
         return this;
     }
 
-
-    public static Runnable getGooglePageAssertions(IPage page) {
-        return () -> Assert.assertTrue("Google QUERY is not visible", page.validateElementVisible(GooglePage.QUERY));
-    }
-
-    public IPage typeTextToQueryField(String text) {
-        type(QUERY, text);
-        return this;
-    }
 
 }
