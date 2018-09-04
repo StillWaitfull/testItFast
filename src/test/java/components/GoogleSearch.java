@@ -4,6 +4,9 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import toolkit.helpers.AbstractPage;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class GoogleSearch {
 
     private static final By QUERY = By.id("lst-ib");
@@ -26,7 +29,10 @@ public class GoogleSearch {
     }
 
 
-    private Runnable getGoogleSearchAssertions() {
-        return () -> Assert.assertTrue("Google QUERY is not visible", page.validateElementVisible(QUERY));
+    private List<Runnable> getGoogleSearchAssertions() {
+        return Arrays.asList(
+                () -> Assert.assertTrue("Google query is not visible", page.validateElementVisible(QUERY)),
+                () -> Assert.assertTrue("Google search button is not visible", page.validateElementVisible(SEARCH_BUTTON))
+        );
     }
 }

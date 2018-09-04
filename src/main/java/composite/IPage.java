@@ -4,6 +4,8 @@ package composite;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 
 public interface IPage {
     String getPageUrl();
@@ -50,7 +52,7 @@ public interface IPage {
 
 
     //ASSERTIONS
-    void assertThat(Runnable... assertions);
+    void assertThat(List<Runnable> assertions);
 
     //CHECKS
     boolean checkDimensionIsLess(int width);

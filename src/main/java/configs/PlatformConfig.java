@@ -36,6 +36,8 @@ public class PlatformConfig {
         this.platformVersion = platformVersion;
         this.deviceName = deviceName;
         this.udid = udid;
+        this.addressHub = APPLICATION_CONFIG.HUB_ADDRESS;
+        this.proxy=ProxyHelper.getProxy();
         isMobile = true;
     }
 
@@ -45,6 +47,8 @@ public class PlatformConfig {
         this.browser = browser;
         this.dimension = dimension;
         this.platform = platform;
+        this.addressHub = APPLICATION_CONFIG.HUB_ADDRESS;
+        this.proxy=ProxyHelper.getProxy();
         isMobile = false;
     }
 
@@ -109,8 +113,6 @@ public class PlatformConfig {
                     dimension,
                     platform);
         }
-        configFromThread.addressHub = APPLICATION_CONFIG.HUB_ADDRESS;
-        configFromThread.proxy=ProxyHelper.getProxy();
         setConfigToThread(configFromThread);
         return configFromThread;
     }

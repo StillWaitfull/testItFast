@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static toolkit.helpers.OperationsHelper.sendPause;
@@ -392,8 +391,8 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public final void assertThat(Runnable... assertions) {
-        Arrays.asList(assertions).forEach(Runnable::run);
+    public final void assertThat(List<Runnable> assertions) {
+        assertions.forEach(Runnable::run);
     }
 
     public final void assertThat(Runnable assertions) {
