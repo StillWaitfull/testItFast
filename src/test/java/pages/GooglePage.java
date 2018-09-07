@@ -24,9 +24,13 @@ public class GooglePage extends AbstractPage {
     @Override
     public IPage openPage() {
         openUrl(PAGE_URL);
-        googleSearch = new GoogleSearch(this);
+        initComponents();
         return this;
     }
 
 
+    @Override
+    protected void initComponents() {
+        googleSearch = new GoogleSearch(this);
+    }
 }

@@ -21,10 +21,21 @@ public abstract class AbstractPage implements IPage {
 
     protected static final String BASE_URL = StageConfig.getInstance().getBaseUrl();
     private static final Logger log = LoggerFactory.getLogger(AbstractPage.class);
-    private final WebDriverController driver = LocalDriverManager.getDriverController() == null
-            ? new WebDriverController(PlatformConfig.determinePlatform())
-            : LocalDriverManager.getDriverController();
+    private final WebDriverController driver;
     private final WaitHelper waitHelper = new WaitHelper();
+
+    {
+        if (LocalDriverManager.getDriverController() == null) {
+            driver = new WebDriverController(PlatformConfig.determinePlatform());
+        } else {
+            driver = LocalDriverManager.getDriverController();
+            initComponents();
+        }
+
+    }
+
+
+    protected abstract void initComponents();
 
     public void logoutHook() {
         if (LocalDriverManager.getDriverController() != null) {
