@@ -11,7 +11,6 @@ public class GooglePage extends AbstractPage {
 
     private GoogleSearch googleSearch;
 
-
     public GoogleSearch getGoogleSearch() {
         return googleSearch;
     }

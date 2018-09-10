@@ -22,14 +22,18 @@ public abstract class AbstractPage implements IPage {
     protected static final String BASE_URL = StageConfig.getInstance().getBaseUrl();
     private static final Logger log = LoggerFactory.getLogger(AbstractPage.class);
     private final WebDriverController driver;
-    private final WaitHelper waitHelper = new WaitHelper();
+    private boolean isOpen = false;
+    private final WaitHelper waitHelper;
 
-    {
+    public AbstractPage() {
         if (LocalDriverManager.getDriverController() == null) {
             driver = new WebDriverController(PlatformConfig.determinePlatform());
+            waitHelper = new WaitHelper(driver);
         } else {
             driver = LocalDriverManager.getDriverController();
+            waitHelper = new WaitHelper(driver);
             initComponents();
+            isOpen = true;
         }
 
     }

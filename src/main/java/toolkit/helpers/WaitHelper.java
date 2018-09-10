@@ -3,7 +3,6 @@ package toolkit.helpers;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
 
 import java.util.function.Function;
@@ -11,8 +10,13 @@ import java.util.function.Function;
 public class WaitHelper {
 
 
-    private final WebDriverController driver = LocalDriverManager.getDriverController();
-    private final int timeout = driver.getTimeout();
+    private final WebDriverController driver;
+    private final int timeout;
+
+    WaitHelper(WebDriverController driver) {
+        this.driver = driver;
+        timeout = driver.getTimeout();
+    }
 
 
     public void waitForNumberOfWindowsIsMore(final int numberOfWindows) {
