@@ -1,11 +1,14 @@
 package toolkit.driver;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import configs.ApplicationConfig;
+import configs.PlatformConfig;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.core.har.Har;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.client.netty.proxy.ProxyConfiguration;
+import org.mockserver.integration.ClientAndServer;
+import org.mockserver.mockserver.MockServer;
 import org.openqa.selenium.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,25 +55,13 @@ public class ProxyHelper {
         return proxy;
     }
 
-    public static WireMockServer getMockServer() {
-        WireMockServer wireMockServer = new WireMockServer(
-                WireMockConfiguration.options()
-                        .enableBrowserProxying(true)
-                        .proxyVia(host, port)
-                        .needClientAuth(true)
-                        .dynamicPort()
-                        .dynamicHttpsPort()
-        );
-        wireMockServer.start();
-        return wireMockServer;
-    }
-
 
     private static BrowserMobProxy setUpProxyServer() {
         BrowserMobProxy server = new BrowserMobProxyServer();
         server.setTrustAllServers(true);
         server.setRequestTimeout(APPLICATION_CONFIG.TIMEOUT, TimeUnit.SECONDS);
         server.start(APPLICATION_CONFIG.PROXY_PORT);
+        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
         return server;
     }
 
@@ -86,9 +77,13 @@ public class ProxyHelper {
         }
     }
 
-    public static Proxy createProxyForMock(WireMockServer wireMockServer) {
-        return createSeleniumProxy(getWireMockAddress(wireMockServer));
+    public static MockServerClient createMockServer() {
+        ClientAndServer mockServerClient = new ClientAndServer(host, port);
+        PlatformConfig.determinePlatform().setProxy(createSeleniumProxy(mockServerClient.remoteAddress()));
+        Runtime.getRuntime().addShutdownHook(new Thread(mockServerClient::stop));
+        return mockServerClient;
     }
+
 
     private static Proxy createSeleniumProxy(InetSocketAddress connectableAddressAndPort) {
         Proxy proxy = new Proxy();
@@ -99,13 +94,6 @@ public class ProxyHelper {
         return proxy;
     }
 
-    private static InetSocketAddress getWireMockAddress(WireMockServer wireMockServer) {
-        try {
-            return new InetSocketAddress(InetAddress.getLocalHost(), wireMockServer.port());
-        } catch (UnknownHostException e) {
-            throw new RuntimeException("Could not resolve localhost", e);
-        }
-    }
 
     private static InetSocketAddress getBrowserMobAddress(BrowserMobProxy browserMobProxy) {
         try {
