@@ -164,7 +164,6 @@ public class BrowserConfig {
 
     private static DesiredCapabilities createCapabilitiesAndroid(PlatformConfig platform) {
         DesiredCapabilities desiredCapabilities = DesiredCapabilities.android();
-        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM, platform.getPlatform());
         desiredCapabilities.setCapability(MobileCapabilityType.UDID, platform.getUdid());
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platform.getPlatform());
         desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platform.getPlatformVersion());

@@ -60,6 +60,5 @@ class JUnitExecutionListener extends RunListener {
             e1.printStackTrace();
         }
         return new byte[0];
-
     }
 }

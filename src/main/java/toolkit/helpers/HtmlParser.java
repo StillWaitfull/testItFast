@@ -97,11 +97,6 @@ public class HtmlParser {
 
     }
 
-    public HtmlParser getElementsWhichContainsText(String text) {
-        elements = elements.first().getElementsContainingText(text);
-        return this;
-    }
-
     public String getHtmlCodeOfElements() {
         return elements.outerHtml();
     }
