@@ -1,39 +1,37 @@
 package tests.simpleTests;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import configs.PlatformConfig;
 import io.qameta.allure.Feature;
-import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
 import pages.GooglePage;
 import toolkit.driver.ProxyHelper;
 
 @Feature(value = "Google mock tests")
 public class GoogleMockTests {
-    private WireMockServer mockServer;
+
+    private static final String MOCK_TEXT = "Ok google";
 
     @Before
     public void init() {
-        mockServer = ProxyHelper.getMockServer();
-        mockServer.stubFor(
-                WireMock.get(
-                        WireMock.urlMatching(".*google.*"))
-                        .willReturn(
-                                WireMock.aResponse().withBody("You've reached a valid WireMock endpoint")
-                        ));
-        PlatformConfig.determinePlatform().setProxy(ProxyHelper.createProxyForMock(mockServer));
+        MockServerClient mockServer = ProxyHelper.createMockServer();
+        mockServer.when(
+                HttpRequest.request()
+                        .withBody(".*google.*")
+        ).respond(
+                HttpResponse.response()
+                        .withBody(MOCK_TEXT)
+        );
     }
 
     @Test
     public void googleTest() {
         GooglePage googlePage = new GooglePage();
-        googlePage.openPage();
+        googlePage.openUrl(GooglePage.PAGE_URL);
+        Assert.assertTrue(googlePage.getPageSource().contains(MOCK_TEXT));
     }
 
-    @After
-    public void stopServer() {
-        mockServer.shutdown();
-    }
 }

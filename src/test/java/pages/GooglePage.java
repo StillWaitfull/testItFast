@@ -7,7 +7,7 @@ import toolkit.helpers.AbstractPage;
 
 public class GooglePage extends AbstractPage {
 
-    private static final String PAGE_URL = BASE_URL + "/";
+    public static final String PAGE_URL = BASE_URL + "/";
 
     private GoogleSearch googleSearch;
 
