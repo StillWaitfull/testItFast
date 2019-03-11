@@ -1,8 +1,8 @@
 package components;
 
+import elements.AbstractPage;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import toolkit.helpers.AbstractPage;
 
 public class SearchResults {
 
@@ -10,7 +10,7 @@ public class SearchResults {
     private static final By SEARCH_RESULT = By.cssSelector("#search .g");
     private AbstractPage page;
 
-    public SearchResults(AbstractPage page) {
+    SearchResults(AbstractPage page) {
         this.page = page;
         page.assertThat(getSearchResultsAssertions());
     }

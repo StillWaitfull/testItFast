@@ -13,7 +13,7 @@ public class WaitHelper {
     private final WebDriverController driver;
     private final int timeout;
 
-    WaitHelper(WebDriverController driver) {
+    public WaitHelper(WebDriverController driver) {
         this.driver = driver;
         timeout = driver.getTimeout();
     }

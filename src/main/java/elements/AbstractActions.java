@@ -1,9 +1,7 @@
-package toolkit.helpers;
+package elements;
 
 import com.google.common.collect.Iterables;
-import composite.IPage;
 import configs.PlatformConfig;
-import configs.StageConfig;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
@@ -11,21 +9,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import toolkit.driver.LocalDriverManager;
 import toolkit.driver.WebDriverController;
+import toolkit.helpers.WaitHelper;
 
 import java.util.List;
 
 import static toolkit.helpers.OperationsHelper.sendPause;
 
 
-public abstract class AbstractPage implements IPage {
+public abstract class AbstractActions {
 
-    protected static final String BASE_URL = StageConfig.getInstance().getBaseUrl();
-    private static final Logger log = LoggerFactory.getLogger(AbstractPage.class);
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractActions.class);
     private final WebDriverController driver;
-    private boolean isOpen = false;
     private final WaitHelper waitHelper;
 
-    public AbstractPage() {
+    public AbstractActions() {
         if (LocalDriverManager.getDriverController() == null) {
             driver = new WebDriverController(PlatformConfig.determinePlatform());
             waitHelper = new WaitHelper(driver);
@@ -33,7 +31,6 @@ public abstract class AbstractPage implements IPage {
             driver = LocalDriverManager.getDriverController();
             waitHelper = new WaitHelper(driver);
             initComponents();
-            isOpen = true;
         }
 
     }
@@ -41,9 +38,9 @@ public abstract class AbstractPage implements IPage {
 
     protected abstract void initComponents();
 
-    public void logoutHook() {
+    public void logoutHook(String baseUrl) {
         if (LocalDriverManager.getDriverController() != null) {
-            LocalDriverManager.getDriverController().goToUrl(BASE_URL);
+            LocalDriverManager.getDriverController().goToUrl(baseUrl);
             LocalDriverManager.getDriverController().deleteAllCookies();
         }
 
@@ -56,7 +53,7 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage windowSetSize(Dimension windowSize) {
+    public AbstractActions windowSetSize(Dimension windowSize) {
         WebDriver.Window window = driver.getDriver().manage().window();
         Dimension size = window.getSize();
         log.debug("Current windowSize = " + size);
@@ -66,14 +63,14 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage switchTo(String iFrame) {
+    public AbstractActions switchTo(String iFrame) {
         waitHelper.waitForNumberOfWindowsIsMore(2);
         driver.switchTo(iFrame);
         return this;
     }
 
 
-    public IPage switchToOtherWindow() {
+    public AbstractActions switchToOtherWindow() {
         waitHelper.waitForNumberOfWindowsIsMore(2);
         driver.switchToWindow(Iterables.getLast(driver.getWindowHandles()));
         return this;
@@ -88,7 +85,7 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage clickOkInAlert() {
+    public AbstractActions clickOkInAlert() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
         // Get the text of the alert or prompt
@@ -99,7 +96,7 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage clickCancelInAlert() {
+    public AbstractActions clickCancelInAlert() {
         // Get a handle to the open alert, prompt or confirmation
         Alert alert = driver.getDriver().switchTo().alert();
         // Get the text of the alert or prompt
@@ -134,14 +131,14 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage selectValueInDropDown(By by, String optionValue) {
+    public AbstractActions selectValueInDropDown(By by, String optionValue) {
         Select select = new Select(driver.findElement(by));
         select.selectByValue(optionValue);
         return this;
     }
 
 
-    public IPage submit(By by) {
+    public AbstractActions submit(By by) {
         log.debug("Submit:");
         waitHelper.waitForElementPresent(by);
         driver.findElement(by).submit();
@@ -149,13 +146,13 @@ public abstract class AbstractPage implements IPage {
 
     }
 
-    public IPage navigateBack() {
+    public AbstractActions navigateBack() {
         driver.navigationBack();
         return this;
     }
 
 
-    public IPage moveToElement(By by) {
+    public AbstractActions moveToElement(By by) {
         Actions actions = new Actions(driver.getDriver());
         waitHelper.waitForElementPresent(by);
         actions.moveToElement(driver.findElement(by)).build().perform();
@@ -169,7 +166,7 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage pressEnter() {
+    public AbstractActions pressEnter() {
         Actions action = new Actions(driver.getDriver());
         action.sendKeys(Keys.ENTER).perform();
         return this;
@@ -204,14 +201,14 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage openUrl(String url) {
+    public AbstractActions openUrl(String url) {
         log.info("Open page: " + url);
         driver.get(url);
         return this;
     }
 
 
-    public IPage openTab(String url) {
+    public AbstractActions openTab(String url) {
         String script = "var d=document,a=d.createElement('a');a.target='_blank';a.href='%s';a.innerHTML='.';d.body.appendChild(a);return a";
         Object element = driver.executeScript(String.format(script, url));
         if (element instanceof WebElement) {
@@ -227,7 +224,7 @@ public abstract class AbstractPage implements IPage {
 
 
     //CLICKS
-    public IPage click(By by) {
+    public AbstractActions click(By by) {
         log.debug("Click on: " + by.toString());
         waitHelper.waitForElementPresent(by);
         highlightTheElement(by);
@@ -237,7 +234,7 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage clickWithJs(By by) {
+    public AbstractActions clickWithJs(By by) {
         log.debug("Click on: " + by.toString());
         waitHelper.waitForVisible(by);
         highlightTheElement(by);
@@ -246,7 +243,7 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage actionClick(By by) {
+    public AbstractActions actionClick(By by) {
         log.debug("Click on: " + by.toString());
         waitHelper.waitForVisible(by);
         highlightTheElement(by);
@@ -255,25 +252,25 @@ public abstract class AbstractPage implements IPage {
     }
 
 
-    public IPage refreshPage() {
+    public AbstractActions refreshPage() {
         driver.refresh();
         return this;
     }
 
-    public IPage addCookie(String key, String value) {
+    public AbstractActions addCookie(String key, String value) {
         driver.addCookie(key, value);
         return this;
     }
 
 
-    public IPage hoverOn(By by) {
+    public AbstractActions hoverOn(By by) {
         new Actions(driver.getDriver()).moveToElement(findElement(by)).build().perform();
         log.info("Action - hover on to locator: " + by.toString());
         return this;
     }
 
 
-    public IPage scrollOnTop() {
+    public AbstractActions scrollOnTop() {
         driver.executeScript("window.scrollTo(0,0)");
         return this;
     }

@@ -1,15 +1,15 @@
 package components;
 
+import elements.AbstractPage;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import toolkit.helpers.AbstractPage;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class GoogleSearch {
 
-    private static final By QUERY = By.id("lst-ib");
+    private static final By QUERY = By.cssSelector("input[name=q]");
     private static final By SEARCH_BUTTON = By.cssSelector("input[name='btnK']");
     private AbstractPage page;
 

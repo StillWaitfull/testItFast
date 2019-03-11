@@ -1,8 +1,7 @@
 package pages;
 
 import components.GoogleSearch;
-import composite.IPage;
-import toolkit.helpers.AbstractPage;
+import elements.AbstractPage;
 
 
 public class GooglePage extends AbstractPage {
@@ -21,7 +20,7 @@ public class GooglePage extends AbstractPage {
     }
 
     @Override
-    public IPage openPage() {
+    public AbstractPage openPage() {
         openUrl(PAGE_URL);
         initComponents();
         return this;

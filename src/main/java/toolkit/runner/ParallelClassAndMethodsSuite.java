@@ -18,7 +18,6 @@ public class ParallelClassAndMethodsSuite extends Suite {
 
     private static final int numberOfThreads = (System.getenv("numberOfThreads") == null ? 10 : Integer.parseInt(System.getenv("numberOfThreads")));
     public static final int PARALLEL_METHODS = 3;
-    private final ExecutorService fService = Executors.newFixedThreadPool(numberOfThreads / PARALLEL_METHODS);
 
 
     private RunnerScheduler getSchedulerForClasses(ExecutorService executorService) {
@@ -40,6 +39,7 @@ public class ParallelClassAndMethodsSuite extends Suite {
 
     public ParallelClassAndMethodsSuite(Class<?> klass, RunnerBuilder builder) throws InitializationError {
         super(klass, builder);
+        ExecutorService fService = Executors.newWorkStealingPool(numberOfThreads / PARALLEL_METHODS);
         setScheduler(getSchedulerForClasses(fService));
         List<Runner> children = getChildren();
         children.forEach(this::parallelize);
