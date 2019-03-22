@@ -13,8 +13,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -46,9 +44,6 @@ public class BrowserConfig {
                 }
                 case "opera": {
                     return getDriverOpera(platform);
-                }
-                case "phantom": {
-                    return getDriverPhantom(platform);
                 }
                 default:
                     throw new RuntimeException("There is no such driver");
@@ -120,17 +115,6 @@ public class BrowserConfig {
         }
     }
 
-    private static WebDriver getDriverPhantom(PlatformConfig platform) {
-        try {
-            DesiredCapabilities capabilitiesPhantom = createCapabilitiesPhantom(platform);
-            return platform.isRemote()
-                    ? new RemoteWebDriver(new URL(platform.getAddressHub()), capabilitiesPhantom)
-                    : new PhantomJSDriver(capabilitiesPhantom);
-        } catch (Exception e) {
-            throw new RuntimeException("There was a problem with start phantom driver");
-        }
-    }
-
     private static FirefoxOptions createCapabilitiesFF(PlatformConfig platform) {
         FirefoxOptions options = new FirefoxOptions();
         options.setCapability("enableVNC", true);
@@ -172,14 +156,4 @@ public class BrowserConfig {
         return desiredCapabilities;
     }
 
-    private static DesiredCapabilities createCapabilitiesPhantom(PlatformConfig platform) {
-        String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36";
-        DesiredCapabilities capabilitiesPhantom = new DesiredCapabilities();
-        capabilitiesPhantom.setCapability(CapabilityType.PROXY, platform.getProxy());
-        String[] phantomArgs = new String[]{"--webdriver-loglevel=NONE"};
-        capabilitiesPhantom.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
-        if (!platform.isRemote()) WebDriverManager.phantomjs().setup();
-        capabilitiesPhantom.setCapability("phantomjs.page.settings.userAgent", userAgent);
-        return capabilitiesPhantom;
-    }
 }

@@ -29,8 +29,7 @@ public class GoogleMockTests {
 
     @Test
     public void googleTest() {
-        GooglePage googlePage = new GooglePage();
-        googlePage.openUrl(GooglePage.PAGE_URL);
+        GooglePage googlePage = new GooglePage().openPage();
         Assert.assertTrue(googlePage.getPageSource().contains(MOCK_TEXT));
     }
 

@@ -6,7 +6,6 @@ import elements.AbstractPage;
 
 public class GooglePage extends AbstractPage {
 
-    public static final String PAGE_URL = BASE_URL + "/";
 
     private GoogleSearch googleSearch;
 
@@ -14,16 +13,10 @@ public class GooglePage extends AbstractPage {
         return googleSearch;
     }
 
-    @Override
-    public String getPageUrl() {
-        return PAGE_URL;
-    }
 
     @Override
-    public AbstractPage openPage() {
-        openUrl(PAGE_URL);
-        initComponents();
-        return this;
+    protected void setURI() {
+        URI = "/";
     }
 
 

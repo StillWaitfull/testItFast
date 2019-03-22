@@ -12,6 +12,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import toolkit.driver.LocalDriverManager;
+import toolkit.driver.WebDriverController;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,7 +30,8 @@ class JUnitExecutionListener extends RunListener {
     }
 
     public void testFailure(Failure failure) {
-        LocalDriverManager.getDriverController().stopLoading();
+        WebDriverController driverController = LocalDriverManager.getDriverController();
+        if (driverController != null) driverController.stopLoading();
         makeScreenshot(failure.getDescription().getMethodName());
         logger.error("Test FAILED! Method:" + failure.getDescription().getMethodName() + ". StackTrace is " + failure.getTrace());
     }

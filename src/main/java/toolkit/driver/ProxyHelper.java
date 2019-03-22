@@ -6,14 +6,11 @@ import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.core.har.Har;
 import org.mockserver.client.MockServerClient;
-import org.mockserver.client.netty.proxy.ProxyConfiguration;
 import org.mockserver.integration.ClientAndServer;
-import org.mockserver.mockserver.MockServer;
 import org.openqa.selenium.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -61,7 +58,7 @@ public class ProxyHelper {
         server.setTrustAllServers(true);
         server.setRequestTimeout(APPLICATION_CONFIG.TIMEOUT, TimeUnit.SECONDS);
         server.start(APPLICATION_CONFIG.PROXY_PORT);
-        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
+        Runtime.getRuntime().addShutdownHook(new Thread(ProxyHelper::stopProxy));
         return server;
     }
 
@@ -103,9 +100,7 @@ public class ProxyHelper {
         }
     }
 
-
-    @PreDestroy
-    public void stopProxy() {
+    public static void stopProxy() {
         if (server.isStarted()) {
             try {
                 server.stop();
